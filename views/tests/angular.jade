@@ -1,0 +1,11 @@
+extends ../layout
+
+block content
+	include ../nav
+	input(class="form-control" placeholder="text 1" ng-model="text1")
+	h4
+	input(class="form-control" placeholder="text 2" ng-model="text2")
+	h4
+	input(class="form-control" placeholder="test" ng-model="test")
+	h4 {{test}}
+	p(ng-bind="text1 + text2")

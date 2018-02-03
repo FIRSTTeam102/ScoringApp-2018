@@ -12,7 +12,7 @@ var index = require('./routes/index');
 //var users = require('./routes/users');
 
 var app = express();
-var db = monk("localhost:27017/experiments");
+var db = monk("localhost:27017/local");
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

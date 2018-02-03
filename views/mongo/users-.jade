@@ -1,0 +1,21 @@
+extends ../layout
+
+block content
+	p
+		a(href="./..") home
+	table(class="table table-striped table-hover table-bordered")
+		tr
+			th name
+			th email
+			th id
+		each user, i in userlist
+			tr
+				- if (user.name == "Callahan O'C") {
+				td= user.name
+				td= user.email
+				td= user.name
+				- } else {
+				td= user.name
+				td= user.email
+				td= user._id
+				- }

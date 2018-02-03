@@ -1,0 +1,26 @@
+extends ../layout
+
+block content
+	include ../nav
+	table(class="table" ng-init="myButton=false")
+		tr
+			th programming
+			th mechanical
+			th electrical
+		tr
+			td
+				ul(class="list-group")
+					each member, i in prog
+						li(class="list-group-item")
+							button(class="btn btn-block" ng-class="{disabled:myButton==false}" ng-click="myButton=!myButton")= member.name
+			td
+				ul(class="list-group")
+					each member, i in mech
+						li(class="list-group-item")
+							button(class="btn btn-block" ng-class="{disabled:myButton==false}" ng-click="myButton=!myButton")= member.name
+			td
+				ul(class="list-group")
+					each member, i in elec
+						li(class="list-group-item")
+							button(class="btn btn-block" ng-class="{disabled:myButton==false}" ng-click="myButton=!myButton")= member.name
+	button(class="btn btn-info btn-block") submit

@@ -2,6 +2,7 @@ extends ../layout
 
 block content
 	include ../nav
+	script(src="js/table.js")
 	table(class="table" ng-init="myButton=false")
 		tr
 			th programming
@@ -24,3 +25,4 @@ block content
 						li(class="list-group-item")
 							button(class="btn btn-block" ng-class="{disabled:myButton==false}" ng-click="myButton=!myButton")= member.name
 	button(class="btn btn-info btn-block") submit
+	div(id="js-text")

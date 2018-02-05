@@ -2,15 +2,45 @@ extends ../layout
 
 block content
 	include ../nav
-	button(type="button" class="btn btn-default" onclick="alert('hello')") hello
+	button(type="button" class="btn btn-default" onclick="clicked()") hello
 	br
-	button(type="button" id="button1" ng-class="btn btn-info disabled:btnClicked==true" ng-click="btnClicked=true && !btnClicked") {{btnLabel}}
+	button(type="button" id="button1" class="btn btn-info" onclick="clicked2()") click this
 	br
 	center
 		div
 			div(class="row")
 				label(class="col-3")
-				button(class="col-1 btn btn-danger" type="button" onclick="minus()" ng-click="btnTest--") -
-				label(id="label" class="col-4") {{btnTest}}
-				button(class="col-1 btn btn-success" type="button" onclick="plus()" ng-click="btnTest++") +
+				button(class="col-1 btn btn-danger" type="button" onclick="minus()") -
+				label(id="label" class="col-4") 0
+				button(class="col-1 btn btn-success" type="button" onclick="plus()") +
 				label(class="col-3")
+	script(type="text/javascript").
+		var unclicked = true;
+		
+		var value = 0;
+		
+		function minus()
+		{
+			value--;
+			document.getElementById("label").innerHTML = value;
+		}
+		
+		function plus()
+		{
+			value++;
+			document.getElementById("label").innerHTML = value;
+		}
+		
+		function clicked()
+		{
+			alert("hello");
+		}
+		
+		function clicked2()
+		{
+			if (unclicked)
+			{
+				document.getElementById("button1").innerHTML = "clicked";
+				document.getElementById("button1").className += " disabled";
+			}
+		}

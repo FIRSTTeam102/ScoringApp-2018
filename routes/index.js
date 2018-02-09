@@ -27,6 +27,7 @@ router.get("/tables", function(req, res) {
 			mechTeam = docs;
 			collection.find({"subteam":"elec"},{}, function(e, docs){
 				elecTeam = docs;
+				console.log("aoidp");
 				res.render("./tests/table", {
 					title: "Tables",
 					prog: progTeam,

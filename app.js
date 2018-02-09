@@ -8,8 +8,10 @@ var bodyParser = require('body-parser');
 var mongo = require("mongodb");
 var monk = require("monk");
 
+//ADD ROUTES HERE
 var index = require('./routes/index');
-//var users = require('./routes/users');
+var tests = require('./routes/tests');
+var ajax = require('./routes/ajax'); //Ajax example (was used for test originally)
 
 var app = express();
 var db = monk("localhost:27017/local");
@@ -18,8 +20,7 @@ var db = monk("localhost:27017/local");
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -31,8 +32,10 @@ app.use(function(req,res,next) {
 	next();
 });
 
+//ADD ROUTES HERE
 app.use('/', index);
-//app.use('/users', users);
+app.use('/tests', tests);
+app.use('/ajax-example', ajax);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

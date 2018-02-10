@@ -1,0 +1,30 @@
+body{
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	background-color:#232323;
+}
+
+#left-container{
+	width:100%;
+	height:100%;
+	background-color:#232323;
+}
+
+.no-select{
+	-moz-user-select: none; 
+	-webkit-user-select: none; 
+	user-select:none;
+	cursor:default;
+}
+
+.memberBtn{
+	margin-left:10%;
+	min-width:10%;
+	min-height:50px;
+	margin-top:20px;
+	background-color:#FFFF33;
+}
+
+.memberSelected{
+
+}

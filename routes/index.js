@@ -10,7 +10,9 @@ var router = express.Router();
 
 //GET index page.
 router.get('/', function(req, res) {
-  res.render('./index', { title: 'Index' });
+	
+  res.render('./index', { tournament: 'TOURNAMENT TITLE' });
+  
 });
 
 module.exports = router;

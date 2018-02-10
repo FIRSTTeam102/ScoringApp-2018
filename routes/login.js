@@ -14,7 +14,13 @@ router.get('/scouter', function(req, res) {
 
 router.post('/scouter-submit', function(req, res) {
 	
+	var name = req.body.name;
+	var pass = req.body.passwd;
 	
+	console.log(name);
+	console.log(pass);
+	
+	res.redirect("/login/scouter");
 	
 });
 

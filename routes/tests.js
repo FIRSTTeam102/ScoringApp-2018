@@ -41,27 +41,77 @@ router.get("/tables", function(req, res) {
 	
 	//Searches for and sets variables for each subteam.
 	//Each subteam var is an array with team member names inside.
-	collection.find({"subteam":"prog"},{}, function(e, docs){
+	collection.find({"subteam":"prog","present":"true","assigned":"false"},{}, function(e, docs){
 		
 		if(e){ //if error, log to console
 			console.log(e);
 		}
 		progTeam = docs;
-		collection.find({"subteam":"mech"},{}, function(e, docs){
+		
+		collection.find({"subteam":"mech","present":"true","assigned":"false"},{}, function(e, docs){
 			mechTeam = docs;
-			collection.find({"subteam":"elec"},{}, function(e, docs){
+			collection.find({"subteam":"elec","present":"true","assigned":"false"},{}, function(e, docs){
 				elecTeam = docs;
 				
-				//Renders page through Jade.
-				res.render("./tests/table", {
-					title: "Tables",
-					prog: progTeam,
-					mech: mechTeam,
-					elec: elecTeam
-					});
+				// Get assigned pairs
+				var collection2 = db.get("assignedpairs");
+				collection2.find({}, {}, function (e, docs) {;
+					assigned = docs;
+					
+					//Renders page through Jade.
+					res.render("./tests/table", {
+						title: "Tables",
+						prog: progTeam,
+						mech: mechTeam,
+						elec: elecTeam,
+						assigned: assigned
+						});
+				});
 			});
 		});
 	});
+});
+
+/* POST to Set MemberPair Service */
+router.post('/setmemberpair', function(req, res) {
+	// Log message so we can see on the server side when we enter this
+	console.log("setmemberpair: ENTER");
+
+    // Set our internal DB variable
+    var db = req.db;
+
+    // Get our form values. These rely on the "name" attributes of form elements (e.g., named 'data' in the form)
+	// We log the raw data
+    var data = req.body.data;
+    console.log(data);
+	// The javascript Object was JSON.stringify() on the client end; we need to re-hydrate it with JSON.parse()
+	var selectedMembers = JSON.parse(data);
+
+	////// Update selected teams to reflect the newly-picked team
+	
+    // Set collection to 'assignedpairs'
+    var collection = db.get('assignedpairs');
+	
+	// Submit to the DB
+	collection.insert(selectedMembers);
+	
+	////// Update members in 'teammembers' so that they're marked as "assigned" (and won't be available to choose afterwards)
+	
+    // Set collection to 'teammembers'
+    var collection = db.get('teammembers');
+
+    // Submit to the DB
+	for (var member in selectedMembers)
+	{
+		collection.update(
+			{ "name" : member },
+			{ $set: { "assigned" : "true" } }
+		)
+	}
+	
+	console.log("setmemberpair: REDIRECTING");
+	res.redirect("tables");
+	console.log("setmemberpair: DONE");
 });
 
 router.get('/mongo', function(req, res) {

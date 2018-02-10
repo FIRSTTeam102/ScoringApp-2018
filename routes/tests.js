@@ -57,6 +57,7 @@ router.get("/tables", function(req, res) {
 				var collection2 = db.get("assignedpairs");
 				collection2.find({}, {}, function (e, docs) {;
 					assigned = docs;
+					console.log(assigned);
 					
 					//Renders page through Jade.
 					res.render("./tests/table", {
@@ -86,6 +87,8 @@ router.post('/setmemberpair', function(req, res) {
     console.log(data);
 	// The javascript Object was JSON.stringify() on the client end; we need to re-hydrate it with JSON.parse()
 	var selectedMembers = JSON.parse(data);
+	//var insertArray = [];
+	//insertArray["pair"] = selectedMembers;
 
 	////// Update selected teams to reflect the newly-picked team
 	

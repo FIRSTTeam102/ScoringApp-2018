@@ -23,8 +23,22 @@ block content
 							button(class='btn btn-block' chosenstate='false' id='#{member.name}' onclick='toggle("#{member.name}")')= member.name
 	form#setmemberpair(name="setmemberpair",method="post",action="/tests/setmemberpair")
 		input#setmemberpairdata(type="hidden", name="data")
-	button(class="btn btn-info btn-block" onclick="submitPair()") submit
+	button(class="btn btn-info btn-block" onclick="submitPair()") Submit selected members as a new scouting group
 
+	if assigned.length > 0
+		hr
+		h2 Assigned pairs
+	ul
+		each pair in assigned
+			li
+				- var selectedArray = [];
+				- var pairId;
+				- for (var key in pair) if (key != "_id") selectedArray.push(key);
+				- for (var key in pair) if (key == "_id") pairId=pair[key];
+				- thisButtonLabel = selectedArray.toString();
+				button(onclick='delete("#{pairId}")') Delete pair
+				|    #{thisButtonLabel}
+	
 	script.
 		var selectedDict = {};
 	
@@ -56,7 +70,7 @@ block content
 				selectedArray.push(selectedDict[key]);
 			}
 			console.log(selectedArray.toString());
-			document.getElementById("selectedString").innerHTML = selectedArray.toString();
+			//document.getElementById("selectedString").innerHTML = selectedArray.toString();
 			document.getElementById("setmemberpairdata").value = JSON.stringify(selectedDict);
 			
 			document.getElementById("setmemberpair").submit();

@@ -1,68 +1,84 @@
 extends ../layout
 
 block content
-	table(class="table")
+	table(class="w3-table")
 		th programming
 		th mechanical
 		th electrical
 		tr
 			td
-				ul(class="list-group")
+				ul(class="w3-ul w3-card")
 					each member, i in prog
-						li(class="list-group-item")
-							button(class='btn btn-block' chosenstate='false' id='#{member.name}' onclick='toggle("#{member.name}")')= member.name
+						li(class="gear-no-border")
+							button(class='w3-btn w3-block gear-light-gray' chosenstate='false' id="#{member.name}" onclick='toggle("#{member.name}")')= member.name
 			td
-				ul(class="list-group")
+				ul(class="w3-ul")
 					each member, i in mech
-						li(class="list-group-item")
-							button(class='btn btn-block' chosenstate='false' id='#{member.name}' onclick='toggle("#{member.name}")')= member.name
+						li(class="gear-no-border")
+							button(class='w3-btn w3-block gear-light-gray' chosenstate='false' id="#{member.name}" onclick='toggle("#{member.name}")')= member.name
 			td
-				ul(class="list-group")
+				ul(class="w3-ul")
 					each member, i in elec
-						li(class="list-group-item")
-							button(class='btn btn-block' chosenstate='false' id='#{member.name}' onclick='toggle("#{member.name}")')= member.name
-	form#setmemberpair(name="setmemberpair",method="post",action="/tests/setmemberpair")
+						li(class="gear-no-border")
+							button(class='w3-btn w3-block gear-light-gray' chosenstate='false' id="#{member.name}" onclick='toggle("#{member.name}")')= member.name
+	form#setmemberpair(name="setmemberpair" method="post" action="/tests/setmemberpair")
 		input#setmemberpairdata(type="hidden", name="data")
-	button(class="btn btn-info btn-block" onclick="submitPair()") Submit selected members as a new scouting group
+	button(class="w3-btn w3-block w3-cyan" onclick="submitPair()") Submit selected members as a new scouting group
 
 	if assigned.length > 0
 		hr
 		h2 Assigned pairs
-	ul
+	ul(class="w3-ul")
 		each pair in assigned
-			li
+			li(class="gear-no-border")
 				- var selectedArray = [];
 				- var pairId;
 				- for (var key in pair) if (key != "_id") selectedArray.push(key);
 				- for (var key in pair) if (key == "_id") pairId=pair[key];
 				- thisButtonLabel = selectedArray.toString();
-				button(onclick='delete("#{pairId}")') Delete pair
+				button(onclick='deletePair("#{pairId}")' class="w3-btn w3-red") Delete pair
 				|    #{thisButtonLabel}
+	form(method="post" action="/tests/deletememberpair" id="deletememberpair")
+		input(id="deletememberpairinput" name="data" type="hidden")
 	
 	script.
 		var selectedDict = {};
-	
+		
+		var selected = 0;
+		
 		function toggle(id)
 		{
 			console.log(id);
 			var currentstate = document.getElementById(id).getAttribute("chosenstate");
 			console.log(currentstate);
+			
 			if (currentstate == "false")
 			{
-				document.getElementById(id).className = "btn btn-success btn-block";
+				if (selected >= 3)
+					return;
+				
+				document.getElementById(id).className = "w3-btn w3-green w3-block";
 				document.getElementById(id).setAttribute("chosenstate", "true");
 				selectedDict[id] = id;
+				
+				selected++;
 			}
 			else
 			{
-				document.getElementById(id).className = "btn btn-block";
+				document.getElementById(id).className = "gear-light-gray w3-btn w3-block";
 				document.getElementById(id).setAttribute("chosenstate", "false");
 				delete selectedDict[id];
+				
+				if (selected > 0)
+					selected--;
 			}
 		}
 		
 		function submitPair()
 		{
+			if (selected < 1)
+				return;
+			
 			console.log(selectedArray);
 			var selectedArray = [];
 			for (var key in selectedDict)
@@ -76,4 +92,12 @@ block content
 			document.getElementById("setmemberpair").submit();
 		}
 		
+		function deletePair(pairId)
+		{
+			console.log("deleted " + pairId);
+			
+			document.getElementById("deletememberpairinput").value = pairId;
+			
+			document.getElementById("deletememberpair").submit();
+		}
 	div(id="selectedString")

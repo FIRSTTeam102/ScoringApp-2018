@@ -6,23 +6,11 @@ html
 		link(rel="stylesheet" href="./css/scoringAppStyles.css")
 		link(rel="stylesheet" href="/lib/bootstrap/css/bootstrap.min.css")
 		link(rel="stylesheet" href="/lib/bootstrap/css/bootstrap-grid.min.css")
-		
-		link(rel="stylesheet" href="./fonts/font-awesome-4.4.0/css/font-awesome.min.css")
-		link(rel="stylesheet" href="./bower_components/mobile-angular-ui/dist/css/mobile-angular-ui-hover.min.css")
-		link(rel="stylesheet" href="./bower_components/mobile-angular-ui/dist/css/mobile-angular-ui-base.min.css")
-		link(rel="stylesheet" href="./bower_components/mobile-angular-ui/dist/css/mobile-angular-ui-desktop.min.css")
-		
+				
 		link(rel="shortcut icon" href="../images/favicon.ico" type="image/x-icon")
 		link(rel="icon" href="/favicon.ico" type="image/x-icon")
-		script(src="./bower_components/angular/angular.min.js")
-		script(src="./bower_components/angular-socket-io/socket.min.js")
-		script(src='/socket.io/socket.io.js')
-		script(src="./js/scoringAppClient.js")
-		script(src="./bower_components/mobile-angular-ui/dist/js/mobile-angular-ui.min.js")
-		script(src="./bower_components/mobile-angular-ui/dist/js/mobile-angular-ui.gestures.min.js")
-
 		
-		script(type="text/javascript" src="/lib/angular/angular.min.js")
-		script(src="/js/scoringAppClient.js")
-	body(ng="strict-di" ng-app="scoringAppClientApp" ng-controller="scoringAppClientCtrl" ng-cloak)
+	body
+		include nav
+
 		block content

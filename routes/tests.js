@@ -57,7 +57,6 @@ router.get("/tables", function(req, res) {
 				var collection2 = db.get("assignedpairs");
 				collection2.find({}, {}, function (e, docs) {;
 					assigned = docs;
-					console.log(assigned);
 					
 					//Renders page through Jade.
 					res.render("./tests/table", {
@@ -115,6 +114,42 @@ router.post('/setmemberpair', function(req, res) {
 	console.log("setmemberpair: REDIRECTING");
 	res.redirect("tables");
 	console.log("setmemberpair: DONE");
+});
+
+router.post("/deletememberpair", function(req, res) {
+	var db = req.db;
+	
+	var data = req.body.data;
+	
+	var collection = db.get("assignedpairs");
+	
+	collection.find({"_id": data}, {}, function(e, docs){
+		
+		if(e){ //if error, log to console
+			console.log(e);
+		}
+		thisPair = docs;
+		console.log("thisPair=" + thisPair);
+
+		var collection2 = db.get('teammembers');
+		
+		for (var member in thisPair[0])
+		{
+//			console.log('member=' + member);
+			
+			if (member != "_id")
+			{
+				collection2.update(
+					{ "name" : member },
+					{ $set: { "assigned" : "false" } }
+				)
+			}
+		}
+		
+		collection.remove({"_id": data});
+	
+		res.redirect("tables");		
+	});
 });
 
 router.get('/mongo', function(req, res) {

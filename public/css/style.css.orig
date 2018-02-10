@@ -13,7 +13,11 @@ a {
 .gear-white,.gear-hover-white:hover{color:#1E1E23!important;background-color:#f2f2f8!important}
 .gear-black,.gear-hover-black:hover{color:#fff!important;background-color:#1E1E23!important}
 .gear-orange,.gear-hover-orange:hover{color:#fff!important;background-color:#FF5F0B!important}
+<<<<<<< HEAD
+.gear-light-orange,.gear-hover-light-orange:hover{color:#1E1E23!important;background-color:#F5AB7D!important}
+=======
 .gear-light-gray,.gear-hover-light-gray:hover{color:#1e1e23!important;background-color:#ddd!important}
+>>>>>>> 564e7884a4cebca90ef0be142a082efa03a06a30
 
 .gear-text-red,.gear-text-hover-red:hover{color:#EC0D00!important}
 .gear-text-blue,.gear-text-hover-blue:hover{color:#2623B8!important}
@@ -27,8 +31,7 @@ a {
 .gear-border-black,.gear-border-hover-black:hover{border-color:#1E1E23!important}
 .gear-border-orange,.gear-border-hover-orange:hover{border-color:#FF5F0B!important}
 
-.gear-no-border{border:none!important}
-
+<<<<<<< HEAD
 .gear-btn{ min-width:100px; }
 
 @media (min-width: 601px){
@@ -37,3 +40,8 @@ a {
 		padding-right: 8px;
 	}
 }
+=======
+.gear-no-border{border:none!important}
+
+.gear-btn{ min-width:100px; }
+>>>>>>> 564e7884a4cebca90ef0be142a082efa03a06a30

@@ -11,6 +11,7 @@ var monk = require("monk");
 //ADD ROUTES HERE
 var index = require('./routes/index');
 var tests = require('./routes/tests');
+var login = require('./routes/login');
 var ajax = require('./routes/ajax'); //Ajax example (was used for test originally)
 
 var app = express();
@@ -35,6 +36,7 @@ app.use(function(req,res,next) {
 //ADD ROUTES HERE
 app.use('/', index);
 app.use('/tests', tests);
+app.use('/login', login);
 app.use('/ajax-example', ajax);
 
 // catch 404 and forward to error handler

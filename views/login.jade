@@ -1,0 +1,32 @@
+extends layout
+
+block content
+	main(class="w3-mobile w3-center" style="font-size:1.4em")
+		form#login-form(name="login-form" method="post" action="#{submitLink}")
+			h3(class="gear-text-white")=title
+			div(class="w3-container w3-padding-16")
+				label(class="w3-quarter gear-label") Name: 
+				input(class="w3-half" type="text" name="name")
+			div(class="w3-container w3-padding-16")
+				label(class="w3-quarter gear-label") Password: 
+				input(class="w3-half" type="password" name="passwd")
+			div(class="w3-padding-16")
+				input(type="submit" class="gear-btn gear-orange gear-hover-white w3-btn" value="Submit")
+				
+	script.
+		var submitLink = "#{submitLink}";
+		$("#btnSubmit").on("", function(e){
+			var nameInput = $("#name").val();
+			var passwdInput = $("#passwd").val();
+			
+			if(nameInput == "" || passwdInput == ""){
+				alert("Please enter a name and password.");
+			}else{
+				$.post(submitLink,{}, function(data){
+					console.log(data);
+				}).fail(function(e){
+					console.log(e);
+				});
+			}
+		});
+	

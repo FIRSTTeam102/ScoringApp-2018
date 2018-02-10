@@ -65,7 +65,7 @@ router.get("/tables", function(req, res) {
 						mech: mechTeam,
 						elec: elecTeam,
 						assigned: assigned
-						});
+					});
 				});
 			});
 		});
@@ -170,5 +170,29 @@ router.get("/newuser", function(req, res) {
 });
 
 router.post("/adduser", function(){});
+
+router.get("/maintainmembers", function(req, res) {
+	var db = req.db;
+	
+	if(db._state == 'closed'){ //If database does not exist, send error
+		res.render('./error',{
+			message: "Database error: Offline",
+			error: {status: "If the database is running, try restarting the Node server."}
+		});
+	}
+	
+	//Gets collection ("table") from db
+	var collection = db.get("teammembers");	
+	
+	collection.find({},{}, function(e, docs){
+		
+		if(e){ //if error, log to console
+			console.log(e);
+		}
+		teamMembers = docs;
+		
+		res.render("./tests/members", { "members": teamMembers });
+	});
+});
 
 module.exports = router;

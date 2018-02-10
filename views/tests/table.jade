@@ -21,7 +21,10 @@ block content
 					each member, i in elec
 						li(class="list-group-item")
 							button(class='btn btn-block' chosenstate='false' id='#{member.name}' onclick='toggle("#{member.name}")')= member.name
+	form#setmemberpair(name="setmemberpair",method="post",action="/tests/setmemberpair")
+		input#setmemberpairdata(type="hidden", name="data")
 	button(class="btn btn-info btn-block" onclick="submitPair()") submit
+
 	script.
 		var selectedDict = {};
 	
@@ -54,6 +57,9 @@ block content
 			}
 			console.log(selectedArray.toString());
 			document.getElementById("selectedString").innerHTML = selectedArray.toString();
+			document.getElementById("setmemberpairdata").value = JSON.stringify(selectedDict);
+			
+			document.getElementById("setmemberpair").submit();
 		}
 		
 	div(id="selectedString")

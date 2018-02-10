@@ -1,5 +1,5 @@
 body {
-  padding: 50px;
+  /*padding: 50px;*/
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
@@ -25,3 +25,5 @@ a {
 .gear-border-white,.gear-border-hover-white:hover{border-color:#C8C8DC!important}
 .gear-border-black,.gear-border-hover-black:hover{border-color:#1E1E23!important}
 .gear-border-orange,.gear-border-hover-orange:hover{border-color:#FF5F0B!important}
+
+.gear-btn{ min-width:100px; }

@@ -4,13 +4,13 @@ block content
 	script(src="lib/jquery.min.js")
 	script.
 		$(document).ready(function(){
-		var user,pass;
-		$("#submit").click(function(){
-		text=$("#text").val();
-		$.post("./ajax-example/submit",{text: text}, function(data){
-		console.log(data);
-		});
-		});
+			var user,pass;
+			$("#submit").click(function(){
+				text=$("#text").val();
+				$.post("./ajax-example/submit",{text: text}, function(data){
+					console.log(data);
+				});
+			});
 		});
 			
 	h1 AJAX example

@@ -1,28 +1,65 @@
 extends ../layout
 
 block content
-	include ../nav
-	script(src="js/table.js")
-	table(class="table" ng-init="myButton=false")
-		tr
-			th programming
-			th mechanical
-			th electrical
+	table(class="table")
+		th programming
+		th mechanical
+		th electrical
 		tr
 			td
 				ul(class="list-group")
-					li(class="list-group-item" ng-repeat="member in prog")
-						button(class="btn btn-block" ng-class="{disabled:myButton==false}" ng-click="myButton=!myButton")= {{x}}member.name
+					each member, i in prog
+						li(class="list-group-item")
+							button(class='btn btn-block' chosenstate='false' id='#{member.name}' onclick='toggle("#{member.name}")')= member.name
 			td
 				ul(class="list-group")
 					each member, i in mech
 						li(class="list-group-item")
-							button(class="btn btn-block" ng-class="{disabled:myButton==false}" ng-click="myButton=!myButton")= member.name
+							button(class='btn btn-block' chosenstate='false' id='#{member.name}' onclick='toggle("#{member.name}")')= member.name
 			td
 				ul(class="list-group")
 					each member, i in elec
 						li(class="list-group-item")
-							button(class="btn btn-block" ng-class="{disabled:myButton==false}" ng-click="myButton=!myButton")= member.name
+							button(class='btn btn-block' chosenstate='false' id='#{member.name}' onclick='toggle("#{member.name}")')= member.name
+	form#setmemberpair(name="setmemberpair",method="post",action="/tests/setmemberpair")
+		input#setmemberpairdata(type="hidden", name="data")
+	button(class="btn btn-info btn-block" onclick="submitPair()") submit
+
+	script.
+		var selectedDict = {};
 	
-	button(class="btn btn-info btn-block") submit
-	div(id="js-text")
+		function toggle(id)
+		{
+			console.log(id);
+			var currentstate = document.getElementById(id).getAttribute("chosenstate");
+			console.log(currentstate);
+			if (currentstate == "false")
+			{
+				document.getElementById(id).className = "btn btn-success btn-block";
+				document.getElementById(id).setAttribute("chosenstate", "true");
+				selectedDict[id] = id;
+			}
+			else
+			{
+				document.getElementById(id).className = "btn btn-block";
+				document.getElementById(id).setAttribute("chosenstate", "false");
+				delete selectedDict[id];
+			}
+		}
+		
+		function submitPair()
+		{
+			console.log(selectedArray);
+			var selectedArray = [];
+			for (var key in selectedDict)
+			{
+				selectedArray.push(selectedDict[key]);
+			}
+			console.log(selectedArray.toString());
+			document.getElementById("selectedString").innerHTML = selectedArray.toString();
+			document.getElementById("setmemberpairdata").value = JSON.stringify(selectedDict);
+			
+			document.getElementById("setmemberpair").submit();
+		}
+		
+	div(id="selectedString")

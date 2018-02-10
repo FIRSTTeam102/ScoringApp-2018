@@ -3,9 +3,16 @@ html
 	head
 		title= title
 		link(rel="stylesheet" href="/css/style.css")
+		link(rel="stylesheet" href="./css/scoringAppStyles.css")
 		link(rel="stylesheet" href="/lib/bootstrap/css/bootstrap.min.css")
 		link(rel="stylesheet" href="/lib/bootstrap/css/bootstrap-grid.min.css")
-		//script(type="text/javascript" src="/lib/angular/angular.min.js")
-		//script(src="/js/app.js")
-	body(ng-app="app" ng="strict-di" ng-controller="AppController" ng-init="btnTest=0,btnLabel='click this',btnClicked=false")
+				
+		link(rel="shortcut icon" href="../images/favicon.ico" type="image/x-icon")
+		link(rel="icon" href="/favicon.ico" type="image/x-icon")
+		
+		link(rel="stylesheet" href="./lib/w3.css")
+
+	body
+		include nav
+
 		block content

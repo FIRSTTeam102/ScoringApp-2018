@@ -12,7 +12,8 @@ var stopAnimating;
 var toggle = document.createElement("p");
 toggle.style.opacity = "0.15";
 toggle.style.cursor = "pointer";
-toggle.style.position = "absolute";
+toggle.style.position = "fixed";
+toggle.style.margin = "0px";
 
 $(function(){
 	if(localStorage.getItem("animation") != "false"){

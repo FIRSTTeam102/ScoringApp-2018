@@ -7,6 +7,12 @@ a {
   color: #00B7FF;
 }
 
+canvas{
+    z-index: -1;
+    position: fixed;
+    left: 0;
+    top: 0;
+}
 
 .gear-red,.gear-hover-red:hover{color:#fff!important;background-color:#EC0D00!important}
 .gear-blue,.gear-hover-blue:hover{color:#fff!important;background-color:#2623B8!important}

@@ -6,7 +6,7 @@ var firstColor, lastColor, firstLineColor, lastLineColor;
 var stop = false;
 var frameCount = 0;
 var fps, fpsInterval, startTime, now, then, elapsed;
-fps = 10;
+fps = 15;
 var stopAnimating;
 
 var toggle = document.createElement("p");
@@ -49,7 +49,7 @@ function init(){
 	tilesY = Math.floor(height / tileSize) + 1;
 
 	firstColor = [30,30,35];
-	lastColor = firstColor;//[60,60,70];
+	lastColor = [42,42,55];
 	firstLineColor = firstColor;//[15,15,15];
 	lastLineColor = [0,0,0];
 	
@@ -106,10 +106,10 @@ function animate() {
 			for(var j = 0; j < tilesY; j++){
 				
 				var color = lerpColor(firstColor, lastColor, 
-					Math.pow(Math.sin((time+((tilesX-i)*j-j))/500),8)
+					Math.pow(Math.sin(((tilesX/30)*time+((tilesX-i)*j-j))/(45*tilesX)),8)
 				);
 				var lineColor = lerpColor(firstLineColor, lastLineColor, 
-					Math.pow(Math.sin((time+((tilesX-i)*j-j))/500),8)
+					Math.pow(Math.sin(((tilesX/30)*time+((tilesX-i)*j-j))/(45*tilesX)),8)
 				);
 				drawTile(i,j,color,lineColor);
 			}

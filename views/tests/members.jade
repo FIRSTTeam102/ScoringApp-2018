@@ -9,7 +9,6 @@ block content
 			div(class="w3-col m3 w3-padding-small") class
 			div(class="w3-col m2 w3-padding-small") yrs on team
 		each member, i in members
-<<<<<<< HEAD
 			div(class="w3-row")
 				form(action="updatemember" method="post")
 					div(class="w3-col m2 w3-padding-small")
@@ -34,17 +33,3 @@ block content
 									option(value="#{option}") #{option}
 					div(class="w3-col m2 w3-padding-small")
 						input(type="text" value="#{member.years}" name="years" class="w3-input w3-dark-gray gear-no-border" style="min-height:18px;padding:9px")
-=======
-			form(action="updatemember" method="post" class="w3-container")
-				tr
-					td
-						input(value="#{member.name}" onclick="this.select()" name="name" type="text" class="w3-input w3-dark-gray gear-no-border")
-					td
-						input(value="#{member.subteam}" onclick="this.select()" name="subteam" type="text" class="w3-input w3-dark-gray gear-no-border")
-					td
-						input(value="#{member.class}" onclick="this.select()" name="class" type="text" class="w3-input w3-dark-gray gear-no-border")
-					td
-						input(value="#{member.years}" onclick="this.select()" name="years" type="text" class="w3-input w3-dark-gray gear-no-border")
-					td
-						input(value="#{member.present}" name="present" type="checkbox")
->>>>>>> adbd56c75fd2620ab11f9a40f824c3079bfc0157

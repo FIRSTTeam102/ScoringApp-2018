@@ -7,8 +7,11 @@ a {
   color: #00B7FF;
 }
 
-button {
-	transition: 0.3s all!important
+canvas{
+    z-index: -1;
+    position: fixed;
+    left: 0;
+    top: 0;
 }
 
 .gear-red,.gear-hover-red:hover{color:#fff!important;background-color:#EC0D00!important}

@@ -7,6 +7,9 @@ a {
   color: #00B7FF;
 }
 
+button {
+	transition: 0.3s all!important
+}
 
 .gear-red,.gear-hover-red:hover{color:#fff!important;background-color:#EC0D00!important}
 .gear-blue,.gear-hover-blue:hover{color:#fff!important;background-color:#2623B8!important}

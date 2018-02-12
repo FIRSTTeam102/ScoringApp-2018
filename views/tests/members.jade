@@ -1,21 +1,35 @@
 extends ../layout
 
 block content
-	table(class="w3-table")
-		th name
-		th subteam
-		th class
-		th yrs on team
+	div(class="w3-container")
+		div(class="w3-row")
+			div(class="w3-col m2 w3-padding-small") actions
+			div(class="w3-col m3 w3-padding-small") name
+			div(class="w3-col m2 w3-padding-small") subteam
+			div(class="w3-col m3 w3-padding-small") class
+			div(class="w3-col m2 w3-padding-small") yrs on team
 		each member, i in members
-			form(action="updatemember" method="post" class="w3-container")
-				tr
-					td
-						input(value="#{member.name}" name="name" type="text" class="w3-input w3-dark-gray gear-no-border")
-					td
-						input(value="#{member.subteam}" name="subteam" type="text" class="w3-input w3-dark-gray gear-no-border")
-					td
-						input(value="#{member.class}" name="class" type="text" class="w3-input w3-dark-gray gear-no-border")
-					td
-						input(value="#{member.years}" name="years" type="text" class="w3-input w3-dark-gray gear-no-border")
-					td
-						input(value="#{member.present}" name="present" type="checkbox")
+			div(class="w3-row")
+				form(action="updatemember" method="post")
+					div(class="w3-col m2 w3-padding-small")
+						button(class="w3-btn w3-green w3-block" type="submit") Update
+					div(class="w3-col m3 w3-padding-small")
+						input(type="text" value="#{member.name}" name="name" class="w3-input w3-dark-gray gear-no-border" style="min-height:18px;padding:9px")
+					div(class="w3-col m2 w3-padding-small")
+						select(class="w3-select w3-dark-gray gear-no-border" name="subteam")
+							- options = ["mech", "elec", "prog", "exec", "lead", "driv"];
+							each option in options
+								- if (member.subteam == option)
+									option(value="#{option}" selected) #{option}
+								- else
+									option(value="#{option}") #{option}
+					div(class="w3-col m3 w3-padding-small")
+						select(class="w3-select w3-dark-gray gear-no-border" name="class")
+							- classNames = ["middleschool", "freshman", "sophomore", "junior", "senior"];
+							each option in classNames
+								- if (member.className == option)
+									option(value="#{option}" selected) #{option}
+								- else
+									option(value="#{option}") #{option}
+					div(class="w3-col m2 w3-padding-small")
+						input(type="text" value="#{member.years}" name="years" class="w3-input w3-dark-gray gear-no-border" style="min-height:18px;padding:9px")

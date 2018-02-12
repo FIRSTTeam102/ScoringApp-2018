@@ -10,12 +10,12 @@ block content
 			form(action="updatemember" method="post" class="w3-container")
 				tr
 					td
-						input(value="#{member.name}" name="name" type="text" class="w3-input w3-dark-gray gear-no-border")
+						input(value="#{member.name}"onclick="this.select()" name="name" type="text" class="w3-input w3-dark-gray gear-no-border")
 					td
-						input(value="#{member.subteam}" name="subteam" type="text" class="w3-input w3-dark-gray gear-no-border")
+						input(value="#{member.subteam}"onclick="this.select()" name="subteam" type="text" class="w3-input w3-dark-gray gear-no-border")
 					td
-						input(value="#{member.class}" name="class" type="text" class="w3-input w3-dark-gray gear-no-border")
+						input(value="#{member.class}"onclick="this.select()" name="class" type="text" class="w3-input w3-dark-gray gear-no-border")
 					td
-						input(value="#{member.years}" name="years" type="text" class="w3-input w3-dark-gray gear-no-border")
+						input(value="#{member.years}"onclick="this.select()" name="years" type="text" class="w3-input w3-dark-gray gear-no-border")
 					td
 						input(value="#{member.present}" name="present" type="checkbox")

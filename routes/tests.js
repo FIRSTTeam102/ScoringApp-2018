@@ -169,7 +169,29 @@ router.get("/newuser", function(req, res) {
 	res.render("./mongo/newuser", { "title": "New User" });
 });
 
-router.post("/adduser", function(){});
+router.post("/updatemember", function(req, res){
+	var db = req.db;
+	
+	if (db._state == "closed"){
+		res.render("./error",{
+			message: "database error: offline",
+			error: {status: "if the database is running, try restarting the node server"}
+		});
+	}
+	
+	var collection = db.get("teammembers");
+	
+	var memberId = req.body.memberId;
+	var name = req.body.name;
+	var subteam = req.body.subteam;
+	var className = req.body.className;
+	var years = req.body.years;
+	console.log({memberId, name, subteam, className, years});
+	
+	collection.update({"_id": memberId}, {$set: {"name": name, "subteam": subteam, "className": className, "years": years}});
+	
+	res.redirect("/tests/maintainmembers");
+});
 
 router.get("/maintainmembers", function(req, res) {
 	var db = req.db;

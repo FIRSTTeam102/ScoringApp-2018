@@ -37,6 +37,8 @@ canvas{
 
 .gear-btn{ min-width:100px; }
 
+.gear-input-height {min-height:18px;padding:9px}
+
 @media (min-width: 601px){
 	.gear-label{
 		text-align: right;

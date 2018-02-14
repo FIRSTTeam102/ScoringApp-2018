@@ -217,4 +217,26 @@ router.get("/maintainmembers", function(req, res) {
 	});
 });
 
+router.post("/addmember", function(req, res){
+	var db = req.db;
+	
+	if(db._state == 'closed'){ //If database does not exist, send error
+		res.render('./error',{
+			message: "Database error: Offline",
+			error: {status: "If the database is running, try restarting the Node server."}
+		});
+	}
+	
+	var collection = db.get("teammembers");
+	
+	var name = req.body.name;
+	var subteam = req.body.subteam;
+	var className = req.body.className;
+	var years = req.body.years;
+	
+	collection.insert({"name": name, "subteam": subteam, "className": className, "years": years});
+	
+	res.redirect("/tests/maintainmembers");
+});
+
 module.exports = router;

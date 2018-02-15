@@ -6,13 +6,13 @@ router.get('/scouter', function(req, res) {
   res.render('./login', { 
 		tournament: 'Sample Tournament Title',
 		title: "Scouter Login",
-		submitLink: "scouter-submit"
+		submitLink: "scouter"
 	});
   
   
 });
 
-router.post('/scouter-submit', function(req, res) {
+router.post('/scouter', function(req, res) {
 	
 	var name = req.body.name;
 	var pass = req.body.passwd;
@@ -26,19 +26,33 @@ router.post('/scouter-submit', function(req, res) {
 
 router.get('/admin', function(req, res) {
 	
-  res.render('./login', { 
-  
+	res.render('./login', { 
 		tournament: 'Sample Tournament Title',
 		title: "Admin Login",
-		submitLink: "admin-submit"
+		submitLink: "admin"/*,
+		error: "false"*/
 	});
   
 });
 
-router.post('/admin-submit', function(req, res) {
+router.post('/admin', function(req, res) {
 	
-	
-	
+	if(req.body.username == "test" && req.body.password == "pass"){
+		req.cookies.isLoggedIn = "true";
+		console.log("logged in");
+		res.redirect("/");
+	}else{
+		req.cookies.isLoggedIn = "false";
+		console.log("not logged in");
+		
+		res.render('./login', {
+			tournament: 'Sample Tournament Title',
+			title: "Admin Login",
+			submitLink: "admin",
+			error: "true"
+		});
+	}
+	res.end();
 });
 
 module.exports = router;

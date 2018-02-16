@@ -14,6 +14,7 @@ var index = require('./routes/index');
 var tests = require('./routes/tests');
 var login = require('./routes/login');
 var ajax = require('./routes/ajax'); 			//Ajax example (was used for test originally)
+var assignedpairs = require('./routes/assignedpairs');
 
 var app = express();
 var db = monk("localhost:27017/local");
@@ -46,6 +47,7 @@ app.use('/', index);
 app.use('/tests', tests);
 app.use('/login', login);
 app.use('/ajax-example', ajax);
+app.use('/admin/assignedpairs', assignedpairs);
 
 // This middleware will check if user's cookie is still saved in browser and user is not set, then automatically log the user out.
 // This usually happens when you stop your express server after login, your cookie still remains saved in the browser.

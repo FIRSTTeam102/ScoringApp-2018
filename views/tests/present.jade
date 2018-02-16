@@ -1,0 +1,10 @@
+//present members page
+extends ../layout
+
+block content
+	include ../nav
+	form(action="/tests/updatepresent" method="post")
+		div(class="gear-container-1")
+			div(class="w3-row")
+				each member in members
+					

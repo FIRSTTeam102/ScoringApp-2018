@@ -21,7 +21,7 @@ block content
 					each member, i in elec
 						li(class="gear-no-border")
 							button(class='w3-btn w3-block gear-light-gray' chosenstate='false' id="#{member.name}" onclick='toggle("#{member.name}")')= member.name
-	form#setmemberpair(name="setmemberpair" method="post" action="./setassignedpair")
+	form#setmemberpair(name="setmemberpair" method="post" action="setassignedpair")
 		input#setmemberpairdata(type="hidden", name="data")
 	button(class="w3-btn w3-block w3-cyan" onclick="submitPair()") Submit selected members as a new scouting group
 

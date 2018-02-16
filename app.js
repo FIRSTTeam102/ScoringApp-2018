@@ -37,6 +37,7 @@ app.use(function(req,res,next) {
 
 //ADD ROUTES HERE
 var index = require('./routes/index');
+var adminindex = require('./routes/adminindex');
 var tests = require('./routes/tests');
 var login = require('./routes/login');
 var ajax = require('./routes/ajax'); 			//Ajax example (was used for test originally)
@@ -44,6 +45,7 @@ var scoutingpairs = require('./routes/scoutingpairs');
 
 //CONNECT URLS TO ROUTES
 app.use('/', index);
+app.use('/admin', adminindex);
 app.use('/tests', tests);
 app.use('/login', login);
 app.use('/ajax-example', ajax);

@@ -9,13 +9,6 @@ var session = require('express-session');		//session middleware (uses cookies)
 //var mongo = require("mongodb");				//mongodb
 var monk = require("monk");						//for connecting to mongo
 
-//ADD ROUTES HERE
-var index = require('./routes/index');
-var tests = require('./routes/tests');
-var login = require('./routes/login');
-var ajax = require('./routes/ajax'); 			//Ajax example (was used for test originally)
-var assignedpairs = require('./routes/assignedpairs');
-
 var app = express();
 var db = monk("localhost:27017/local");
 
@@ -43,11 +36,20 @@ app.use(function(req,res,next) {
 });
 
 //ADD ROUTES HERE
+var index = require('./routes/index');
+var adminindex = require('./routes/adminindex');
+var tests = require('./routes/tests');
+var login = require('./routes/login');
+var ajax = require('./routes/ajax'); 			//Ajax example (was used for test originally)
+var scoutingpairs = require('./routes/scoutingpairs');
+
+//CONNECT URLS TO ROUTES
 app.use('/', index);
+app.use('/admin', adminindex);
 app.use('/tests', tests);
 app.use('/login', login);
 app.use('/ajax-example', ajax);
-app.use('/admin/assignedpairs', assignedpairs);
+app.use('/admin/scoutingpairs', scoutingpairs);
 
 // This middleware will check if user's cookie is still saved in browser and user is not set, then automatically log the user out.
 // This usually happens when you stop your express server after login, your cookie still remains saved in the browser.

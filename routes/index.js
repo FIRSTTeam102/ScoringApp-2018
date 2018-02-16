@@ -10,7 +10,11 @@ var router = express.Router();
 
 //GET index page.
 router.get('/', function(req, res) {
-	
+  
+	if(req.cookies.isLoggedIn == "true"){
+		console.log("is logged in! cookie:" + req.cookies.isLoggedIn);
+	}
+  
   res.render('./index', { tournament: 'Sample Tournament Title' });
   
 });

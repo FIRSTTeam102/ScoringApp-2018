@@ -6,10 +6,10 @@ block content
 			h3(class="gear-text-white")=title
 			div(class="w3-container w3-padding-16")
 				label(class="w3-quarter gear-label") Name: 
-				input(class="w3-half" type="text" name="name")
+				input(class="w3-half" type="text" name="username")
 			div(class="w3-container w3-padding-16")
 				label(class="w3-quarter gear-label") Password: 
-				input(class="w3-half" type="password" name="passwd")
+				input(class="w3-half" type="password" name="password")
 			div(class="w3-padding-16")
 				input(type="submit" class="gear-btn gear-orange gear-hover-white w3-btn" value="Submit")
 				
@@ -30,3 +30,5 @@ block content
 			}
 		});
 	
+	- if(error == "true"){
+		script alert("Didn't log in.");

@@ -1,19 +1,19 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+var express = require('express');				//main express shiz
+var path = require('path');						//for filesystem
+var favicon = require('serve-favicon');			//serves favicon
+var logger = require('morgan'); 				//logger
+var cookieParser = require('cookie-parser');	//parser of cookies
+var bodyParser = require('body-parser');		//parses http request information
+var session = require('express-session');		//session middleware (uses cookies)
 
-var mongo = require("mongodb");
-var monk = require("monk");
+//var mongo = require("mongodb");				//mongodb
+var monk = require("monk");						//for connecting to mongo
 
 //ADD ROUTES HERE
 var index = require('./routes/index');
-var assignedpairs = require('./routes/assignedpairs');
-var login = require('./routes/login');
-var ajax = require('./routes/ajax'); //Ajax example (was used for test originally)
 var tests = require('./routes/tests');
+var login = require('./routes/login');
+var ajax = require('./routes/ajax'); 			//Ajax example (was used for test originally)
 
 var app = express();
 var db = monk("localhost:27017/local");
@@ -28,6 +28,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({
+	key: 'user_sid',
+	secret: 'keyboard cat',
+	resave: false,
+	saveUninitialized: true,
+	cookie: {}
+}));
 
 app.use(function(req,res,next) {
 	req.db = db;
@@ -36,10 +43,18 @@ app.use(function(req,res,next) {
 
 //ADD ROUTES HERE
 app.use('/', index);
-app.use('/admin/assignedpairs', assignedpairs);
+app.use('/tests', tests);
 app.use('/login', login);
 app.use('/ajax-example', ajax);
-app.use('/tests', tests);
+
+// This middleware will check if user's cookie is still saved in browser and user is not set, then automatically log the user out.
+// This usually happens when you stop your express server after login, your cookie still remains saved in the browser.
+app.use((req, res, next) => {
+    if (req.cookies.user_sid && !req.session.user) {
+        res.clearCookie('user_sid');        
+    }
+    next();
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

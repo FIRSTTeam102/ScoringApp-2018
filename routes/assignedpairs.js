@@ -69,7 +69,7 @@ router.get("/", function(req, res) {
 });
 
 /* POST to Set AssignedPair Service */
-router.post('setassignedpair', function(req, res) {
+router.post('/setassignedpair', function(req, res) {
 	var thisFuncName = "setassignedpair: ";
 	
 	// Log message so we can see on the server side when we enter this

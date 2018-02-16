@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 router.get("/", function(req, res) {
-	var thisFuncName = "assignedpairs root: ";
+	var thisFuncName = "scoutingpairs root: ";
 	
 	// Log message so we can see on the server side when we enter this
 	console.log(thisFuncName + "ENTER");
@@ -36,14 +36,15 @@ router.get("/", function(req, res) {
 				console.log(thisFuncName + e);
 			}
 			mechTeam = docs;
+			
 			collection.find({"subteam":"elec","present":"true","assigned":"false"},{}, function(e, docs){
 				if(e){ //if error, log to console
 					console.log(thisFuncName + e);
 				}
 				elecTeam = docs;
 				
-				// Get assigned pairs
-				var collection2 = db.get("assignedpairs");
+				// Get scouting pairs
+				var collection2 = db.get("scoutingpairs");
 				collection2.find({}, {}, function (e, docs) {;
 					if(e){ //if error, log to console
 						console.log(thisFuncName + e);
@@ -53,8 +54,8 @@ router.get("/", function(req, res) {
 					//Renders page through Jade.
 					console.log(thisFuncName + "RENDERING");
 					
-					res.render("./assignedpairs", {
-						title: "Tables",
+					res.render("./scoutingpairs", {
+						title: "Scouting Pairs",
 						prog: progTeam,
 						mech: mechTeam,
 						elec: elecTeam,
@@ -68,9 +69,9 @@ router.get("/", function(req, res) {
 	console.log(thisFuncName + "DONE");
 });
 
-/* POST to Set AssignedPair Service */
-router.post('/setassignedpair', function(req, res) {
-	var thisFuncName = "setassignedpair: ";
+/* POST to Set scoutingPair Service */
+router.post('/setscoutingpair', function(req, res) {
+	var thisFuncName = "setscoutingpair: ";
 	
 	// Log message so we can see on the server side when we enter this
 	console.log(thisFuncName + "ENTER");
@@ -96,8 +97,8 @@ router.post('/setassignedpair', function(req, res) {
 
 	////// Update selected teams to reflect the newly-picked team
 	
-    // Set collection to 'assignedpairs'
-    var collection = db.get('assignedpairs');
+    // Set collection to 'scoutingpairs'
+    var collection = db.get('scoutingpairs');
 	
 	// Submit to the DB
 	collection.insert(selectedMembers);
@@ -122,8 +123,8 @@ router.post('/setassignedpair', function(req, res) {
 	console.log(thisFuncName + "DONE");
 });
 
-router.post("/deleteassignedpair", function(req, res) {
-	var thisFuncName = "deleteassignedpair: ";
+router.post("/deletescoutingpair", function(req, res) {
+	var thisFuncName = "deletescoutingpair: ";
 	
 	// Log message so we can see on the server side when we enter this
 	console.log(thisFuncName + "ENTER");
@@ -139,7 +140,7 @@ router.post("/deleteassignedpair", function(req, res) {
 	
 	var data = req.body.data;
 	
-	var collection = db.get("assignedpairs");
+	var collection = db.get("scoutingpairs");
 	
 	collection.find({"_id": data}, {}, function(e, docs){
 		

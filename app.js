@@ -10,9 +10,10 @@ var monk = require("monk");
 
 //ADD ROUTES HERE
 var index = require('./routes/index');
-var tests = require('./routes/tests');
+var assignedpairs = require('./routes/assignedpairs');
 var login = require('./routes/login');
 var ajax = require('./routes/ajax'); //Ajax example (was used for test originally)
+var tests = require('./routes/tests');
 
 var app = express();
 var db = monk("localhost:27017/local");
@@ -35,9 +36,10 @@ app.use(function(req,res,next) {
 
 //ADD ROUTES HERE
 app.use('/', index);
-app.use('/tests', tests);
+app.use('/admin/assignedpairs', assignedpairs);
 app.use('/login', login);
 app.use('/ajax-example', ajax);
+app.use('/tests', tests);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -1,7 +1,9 @@
 doctype html
 html
 	head
-		title= title
+		if !title
+			- title = "Untitled Page"
+		title #{title} | Team 102 Scoring App
 		link(rel="stylesheet" href="/lib/bootstrap/css/bootstrap.min.css")
 		link(rel="stylesheet" href="/lib/bootstrap/css/bootstrap-grid.min.css")
 		link(rel="stylesheet" href="/lib/w3.css")

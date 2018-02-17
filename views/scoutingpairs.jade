@@ -21,13 +21,13 @@ block content
 					each member, i in elec
 						li(class="gear-no-border")
 							button(class='w3-btn w3-block gear-light-gray' chosenstate='false' id="#{member.name}" onclick='toggle("#{member.name}")')= member.name
-	form#setmemberpair(name="setmemberpair" method="post" action="/admin/assignedpairs/setassignedpair")
+	form#setmemberpair(name="setmemberpair" method="post" action="/admin/scoutingpairs/setscoutingpair")
 		input#setmemberpairdata(type="hidden", name="data")
 	button(class="w3-btn w3-block w3-cyan" onclick="submitPair()") Submit selected members as a new scouting group
 
 	if assigned.length > 0
 		hr
-		h2 Assigned pairs
+		h2 Scouting pairs
 	ul(class="w3-ul")
 		each pair in assigned
 			li(class="gear-no-border")
@@ -38,7 +38,7 @@ block content
 				- thisButtonLabel = selectedArray.toString();
 				button(onclick='deletePair("#{pairId}")' class="w3-btn w3-red") Delete pair
 				|    #{thisButtonLabel}
-	form(method="post" action="/admin/assignedpairs/deleteassignedpair" id="deletememberpair")
+	form(method="post" action="/admin/scoutingpairs/deletescoutingpair" id="deletememberpair")
 		input(id="deletememberpairinput" name="data" type="hidden")
 	
 	script.

@@ -107,7 +107,7 @@ router.post('/admin', function(req, res) {
 	
 });
 
-router.get("./secret"), function(req, res){
+router.get("/secret"), function(req, res){
 	
 	//checks auth
 	if( !require('./checkAuthentication')(req, res) ){

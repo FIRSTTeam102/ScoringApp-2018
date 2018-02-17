@@ -20,15 +20,15 @@ block content
 		function uncheck(){
 			var elements = document.getElementsByTagName("input");
 			
-			for(var element in elements){
-				element.removeAttribute("checked");
+			for(var i in elements){
+				elements[i].removeAttribute("checked");
 			}
 		}
 		
 		function check(){
 			var elements = document.getElementsByTagName("input");
 			
-			for(var element in elements){
-				element.setAttribute("checked", "checked");
+			for(var i in elements){
+				elements[i].setAttribute("checked", "checked");
 			}
 		}

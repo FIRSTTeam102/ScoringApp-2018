@@ -25,6 +25,51 @@ router.get("/", function(req, res) {
 	});
 });
 
+router.get("/present", function(req, res) {
+	var db = req.db;
+	
+	if(db._state == 'closed'){ //If database does not exist, send error
+		res.render('./error',{
+			message: "Database error: Offline",
+			error: {status: "If the database is running, try restarting the Node server."}
+		});
+	}
+	
+	var collection = db.get("teammembers");
+	
+	collection.find({}, {}, function(e, docs) {
+		if(e)
+			console.log(e);
+		
+		teammembers = docs;
+		
+		res.render("./present", {"members": teammembers});
+	});
+});
+
+router.post("/updatepresent", function(req, res){
+	var db = req.db;
+	
+	if(db._state == 'closed'){ //If database does not exist, send error
+		res.render('./error',{
+			message: "Database error: Offline",
+			error: {status: "If the database is running, try restarting the Node server."}
+		});
+	}
+	
+	var collection = db.get("teammembers");
+	
+	collection.bulkWrite([{updateMany:{filter:{}, update:{ $set: { "present" : "false" } }}}], function(e, docs){
+		for(var i in req.body){
+			console.log(i);
+			collection.update({"_id": i}, {$set: {"present": "true"}});
+		}
+		
+		res.redirect("./present");
+	});
+	
+});
+
 router.post("/addmember", function(req, res){
 	var db = req.db;
 	

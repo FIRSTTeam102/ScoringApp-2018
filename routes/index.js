@@ -11,7 +11,10 @@ var router = express.Router();
 //GET index page.
 router.get('/', function(req, res) {
     
-  res.render('./index', { tournament: 'Sample Tournament Title' });
+	res.render('./index', { 
+		tournament: 'Sample Tournament Title', 
+		title: 'Home'
+	});
   
 });
 

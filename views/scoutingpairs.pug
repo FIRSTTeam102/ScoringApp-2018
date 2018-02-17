@@ -10,17 +10,17 @@ block content
 				ul(class="w3-ul w3-card")
 					each member, i in prog
 						li(class="gear-no-border")
-							button(class='w3-btn w3-block gear-light-gray' chosenstate='false' id="#{member.name}" onclick='toggle("#{member.name}")')= member.name
+							button(class='w3-btn w3-block gear-light-gray' chosenstate='false' id=member.name onclick=`toggle("${member.name}")`)= member.name
 			td
 				ul(class="w3-ul")
 					each member, i in mech
 						li(class="gear-no-border")
-							button(class='w3-btn w3-block gear-light-gray' chosenstate='false' id="#{member.name}" onclick='toggle("#{member.name}")')= member.name
+							button(class='w3-btn w3-block gear-light-gray' chosenstate='false' id=member.name onclick=`toggle("${member.name}")`)= member.name
 			td
 				ul(class="w3-ul")
 					each member, i in elec
 						li(class="gear-no-border")
-							button(class='w3-btn w3-block gear-light-gray' chosenstate='false' id="#{member.name}" onclick='toggle("#{member.name}")')= member.name
+							button(class='w3-btn w3-block gear-light-gray' chosenstate='false' id=member.name onclick=`toggle("${member.name}")`)= member.name
 	form#setmemberpair(name="setmemberpair" method="post" action="/admin/scoutingpairs/setscoutingpair")
 		input#setmemberpairdata(type="hidden", name="data")
 	button(class="w3-btn w3-block w3-cyan" onclick="submitPair()") Submit selected members as a new scouting group
@@ -36,7 +36,7 @@ block content
 				- for (var key in pair) if (key != "_id") selectedArray.push(key);
 				- for (var key in pair) if (key == "_id") pairId=pair[key];
 				- thisButtonLabel = selectedArray.toString();
-				button(onclick='deletePair("#{pairId}")' class="w3-btn w3-red") Delete pair
+				button(onclick=`deletePair("${pairId}")` class="w3-btn w3-red") Delete pair
 				|    #{thisButtonLabel}
 	form(method="post" action="/admin/scoutingpairs/deletescoutingpair" id="deletememberpair")
 		input(id="deletememberpairinput" name="data" type="hidden")

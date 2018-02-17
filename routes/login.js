@@ -25,12 +25,13 @@ router.post('/scouter', function(req, res) {
 });
 
 router.get('/admin', function(req, res) {
+	console.log("hi");
 	
 	res.render('./login', { 
 		tournament: 'Sample Tournament Title',
 		title: "Admin Login",
-		submitLink: "admin"/*,
-		error: "false"*/
+		submitLink: "admin", //no longer used
+		error: "false"
 	});
   
 });
@@ -40,7 +41,7 @@ router.post('/admin', function(req, res) {
 	if(req.body.username == "test" && req.body.password == "pass"){
 		req.cookies.isLoggedIn = "true";
 		console.log("logged in");
-		res.redirect("/");
+		res.redirect("/admin");
 	}else{
 		req.cookies.isLoggedIn = "false";
 		console.log("not logged in");

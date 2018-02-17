@@ -18,4 +18,13 @@ router.get('/', function(req, res) {
   
 });
 
+router.get("/logout", function(req, res) {
+	req.logout();
+	res.render('./index', {
+		tournament: 'Sample Tournament Title',
+		title: 'Home',
+		message: "Logged out successfully."		
+	});
+});
+
 module.exports = router;

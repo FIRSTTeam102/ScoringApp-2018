@@ -64,10 +64,6 @@ router.post('/scouter', function(req, res) {
 
 router.get('/admin', function(req, res) {
 	
-	if( !require('./checkAuthentication')(req, res) ){
-		return null;
-	}
-	
 	
 	res.render('./login', { 
 		tournament: 'Sample Tournament Title',
@@ -109,38 +105,15 @@ router.post('/admin', function(req, res) {
             });
         })(req, res);
 	
-	/*
-	collection.find({
-		"username": username
-	},{}, function(err, user){
-		if(err){console.log(err);}
-		
-		if(user[0] != undefined){
-			var hash = user[0].password;
-			console.log(hash);
-			
-			bcrypt.compare( password, hash, function(err, output){
-				if(err){console.log(err);}
-				
-				if(output == true){
-					res.send("LOGGED IN");
-				}else{
-					res.send("NOT LOGGED IN");
-				}
-			});
-			
-		}else{
-			res.send("USER DOES NOT EXIST");
-		}
-	});
-	*/
 });
 
-router.get("/logout", function(req, res) {
-        req.logout();
-        res.send(200, {
-            status: "OK"
-        });
-    });
+router.get("./secret"), function(req, res){
+	
+	//checks auth
+	if( !require('./checkAuthentication')(req, res) ){
+		return null;
+	}
+	res.send("you got into the secret");
+}
 
 module.exports = router;

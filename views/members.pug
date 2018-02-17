@@ -44,11 +44,11 @@ block content
 					select(name="subteam" class="w3-select w3-dark-gray gear-no-border")
 						- options = ["mech", "elec", "prog", "driv", "lead", "exec"];
 						each option in options
-							option(value=option) option
+							option(value=option)= option
 				div(class="w3-col m3 w3-padding-small")
 					select(name="className" class="w3-select w3-dark-gray gear-no-border")
 						- options = ["freshman", "sophomore", "junior", "senior", "middleschool"];
 						each option in options
-							option(value=option) option
+							option(value=option)= option
 				div(class="w3-col m2 w3-padding-small")
 					input(class="w3-input w3-dark-gray gear-no-border gear-input-height" name="years" type="text" placeholder="years on team")

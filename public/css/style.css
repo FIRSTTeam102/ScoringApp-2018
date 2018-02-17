@@ -43,8 +43,6 @@ pre{
 
 .gear-input-height {min-height:18px;padding:9px}
 
-.gear-container-1 {width:800px;margin:auto}
-
 @media (min-width: 601px){
 	.gear-label{
 		text-align: right;

@@ -1,0 +1,34 @@
+extends layout
+
+block content
+	div(style="width:200px;margin:auto")
+		div(class="w3-btn-group w3-block")
+			button(class="w3-red w3-btn" onclick="uncheck()" style="width:100px") uncheck all
+			button(class="w3-green w3-btn" onclick="check()" style="width:100px") check all
+	form(action="/admin/teammembers/updatepresent" method="post")
+		each member in members
+			div(style="width:200px;margin:auto")
+				- if(member.present == "true")
+					input(type="checkbox" class="w3-check" name=member._id checked="checked")
+				- else
+					input(type="checkbox" class="w3-check" name=member._id)
+				label(class="w3-text-white")= member.name
+				br
+		div(style="width:200px;margin:auto;text-align:center")
+			button(type="submit" class="w3-btn w3-orange") update
+	script(type="text/javascript").
+		function uncheck(){
+			var elements = document.getElementsByTagName("input");
+			
+			for(var element in elements){
+				element.removeAttribute("checked");
+			}
+		}
+		
+		function check(){
+			var elements = document.getElementsByTagName("input");
+			
+			for(var element in elements){
+				element.setAttribute("checked", "checked");
+			}
+		}

@@ -63,7 +63,11 @@ router.post('/scouter', function(req, res) {
 });
 
 router.get('/admin', function(req, res) {
-	console.log("hi");
+	
+	if( !require('./checkAuthentication')(req, res) ){
+		return null;
+	}
+	
 	
 	res.render('./login', { 
 		tournament: 'Sample Tournament Title',
@@ -78,10 +82,34 @@ router.post('/admin', function(req, res) {
 	
 	var username = req.body.username;
 	var password = req.body.password;
-	
+	console.log(username + password);
 	var db = req.db;
 	var collection = db.get("adminusers");
 	
+	//console.log(req.passport);
+	//console.log(req.passport.authenticate);
+	console.log("requesting passport authenticate");
+	
+	req.passport.authenticate("local", function(err, user, info) {
+            // if any problems exist, error out
+            if (err) {
+                return err;
+            }
+            if (!user) {
+                return res.send(500, info.message);
+            }
+
+            // log in the user
+            req.logIn(user, function(err) {
+                if (err) {
+                    return next(err);
+                }
+                // once login succeeded, return the user and session created 201
+                return res.send(201, user);
+            });
+        })(req, res);
+	
+	/*
 	collection.find({
 		"username": username
 	},{}, function(err, user){
@@ -105,24 +133,14 @@ router.post('/admin', function(req, res) {
 			res.send("USER DOES NOT EXIST");
 		}
 	});
-	
-	/*
-	if(req.body.username == "test" && req.body.password == "pass"){
-		req.cookies.isLoggedIn = "true";
-		console.log("logged in");
-		res.redirect("/admin");
-	}else{
-		req.cookies.isLoggedIn = "false";
-		console.log("not logged in");
-		
-		res.render('./login', {
-			tournament: 'Sample Tournament Title',
-			title: "Admin Login",
-			submitLink: "admin",
-			error: "true"
-		});
-	}
 	*/
 });
+
+router.get("/logout", function(req, res) {
+        req.logout();
+        res.send(200, {
+            status: "OK"
+        });
+    });
 
 module.exports = router;

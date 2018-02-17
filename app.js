@@ -5,6 +5,7 @@ var logger = require('morgan'); 				//logger
 var cookieParser = require('cookie-parser');	//parser of cookies
 var bodyParser = require('body-parser');		//parses http request information
 var session = require('express-session');		//session middleware (uses cookies)
+var passport = require('passport');				//for user sessions
 
 //var mongo = require("mongodb");				//mongodb
 var monk = require("monk");						//for connecting to mongo
@@ -20,18 +21,21 @@ app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
+//app.use(cookieParser()); don't believe this is necessary
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
-	key: 'user_sid',
 	secret: 'keyboard cat',
 	resave: false,
-	saveUninitialized: true,
-	cookie: {}
+	saveUninitialized: true
 }));
+
+require('./passport-config');
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(function(req,res,next) {
 	req.db = db;
+	req.passport = passport;
 	next();
 });
 
@@ -52,15 +56,6 @@ app.use('/login', login);
 app.use('/ajax-example', ajax);
 app.use('/admin/scoutingpairs', scoutingpairs);
 app.use("/admin/teammembers", teammembers);
-
-// This middleware will check if user's cookie is still saved in browser and user is not set, then automatically log the user out.
-// This usually happens when you stop your express server after login, your cookie still remains saved in the browser.
-app.use((req, res, next) => {
-    if (req.cookies.user_sid && !req.session.user) {
-        res.clearCookie('user_sid');        
-    }
-    next();
-});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

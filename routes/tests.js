@@ -239,4 +239,82 @@ router.post("/addmember", function(req, res){
 	res.redirect("/tests/maintainmembers");
 });
 
+router.get("/showpartnersformember", function(req, res) {
+	var db = req.db;
+
+	if(db._state == 'closed'){ //If database does not exist, send error
+		res.render('./error',{
+			message: "Database error: Offline",
+			error: {status: "If the database is running, try restarting the Node server."}
+		});
+	}
+	
+	var assignedMembers;
+	
+	var collection = db.get("teammembers");
+	collection.find({"assigned":"true"}, {sort: {"name": 1}}, function(e, docs){
+		if(e){ //if error, log to console
+			console.log(e);
+		}
+		assignedMembers = docs;
+		
+		//Renders page through Jade.
+		res.render("./tests/showpartnersformember", {
+			members: assignedMembers
+		});
+	});
+});
+
+router.post("/setmembertoseepartners", function(req, res) {
+	var db = req.db;
+
+	var assignedMembers;
+	var scoutingTeam;
+
+	var name = req.body.name;
+	console.log("tests.setmembertoseepartners: name=" + name);
+	
+	var collection = db.get("teammembers");
+	collection.find({"assigned":"true"}, {sort: {"name": 1}}, function(e, docs){
+		if(e){ //if error, log to console
+			console.log(e);
+		}
+		assignedMembers = docs;
+		
+		//Gets the current set of already-assigned pairs
+		//Search them for a match
+		var collection2 = db.get("scoutingpairs");
+		collection2.find({}, {}, function (e, docs) {
+			if(e){ //if error, log to console
+				console.log(e);
+			}
+			
+			for (pair in docs) {
+				console.log("tests.setmembertoseepartners: pair=" + pair);
+				matched = false;
+				var selectedArray = [];
+				var pairId;
+				for (var key in docs[pair]) if (key != "_id") {
+					selectedArray.push(key);
+					console.log("tests.setmembertoseepartners: key=" + key);
+					if (key == name) matched = true;
+				}
+				for (var key in docs[pair]) if (key == "_id") pairId=pair[key];
+				
+				if (matched == true)
+					scoutingTeam = selectedArray.toString();
+			}
+			
+			//scoutingTeam = docs;
+			console.log("tests.setmembertoseepartners: scoutingTeam=" + scoutingTeam);
+
+			//Renders page through Jade.
+			res.render("./tests/showpartnersformember", {
+				members: assignedMembers,
+				scouting: scoutingTeam
+			});
+		});
+	});	
+});
+
 module.exports = router;

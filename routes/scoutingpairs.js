@@ -18,32 +18,34 @@ router.get("/", function(req, res) {
 	
 	//Gets collection (aka a "table") from db
 	var collection = db.get("teammembers");
+	
 	var progTeam;
 	var mechTeam;
 	var elecTeam;
-	
+	var assigned;
+
 	//Searches for and sets variables for each subteam.
 	//Each subteam var is an array with team member names inside.
-	collection.find({"subteam":"prog","present":"true","assigned":"false"},{}, function(e, docs){
+	collection.find({"subteam":"prog","present":"true","assigned":"false"}, {sort: {"name": 1}}, function(e, docs){
 		
 		if(e){ //if error, log to console
 			console.log(thisFuncName + e);
 		}
 		progTeam = docs;
 		
-		collection.find({"subteam":"mech","present":"true","assigned":"false"},{}, function(e, docs){
+		collection.find({"subteam":"mech","present":"true","assigned":"false"}, {sort: {"name": 1}}, function(e, docs){
 			if(e){ //if error, log to console
 				console.log(thisFuncName + e);
 			}
 			mechTeam = docs;
 			
-			collection.find({"subteam":"elec","present":"true","assigned":"false"},{}, function(e, docs){
+			collection.find({"subteam":"elec","present":"true","assigned":"false"}, {sort: {"name": 1}}, function(e, docs){
 				if(e){ //if error, log to console
 					console.log(thisFuncName + e);
 				}
 				elecTeam = docs;
 				
-				// Get scouting pairs
+				//Gets the current set of already-assigned pairs
 				var collection2 = db.get("scoutingpairs");
 				collection2.find({}, {}, function (e, docs) {;
 					if(e){ //if error, log to console
@@ -65,6 +67,49 @@ router.get("/", function(req, res) {
 			});
 		});
 	});
+
+/*
+	//Searches for and sets variables for each subteam.
+	//Each subteam var is an array with team member names inside.
+	collection.find({"subteam":"prog","present":"true","assigned":"false"}, {sort: {"name": 1}}).then(function(e, docs){
+		if(e){ //if error, log to console
+			console.log(thisFuncName + e);
+		}
+		progTeam = docs;
+	});
+	collection.find({"subteam":"mech","present":"true","assigned":"false"}, {sort: {"name": 1}}).then(function(e, docs){
+		if(e){ //if error, log to console
+			console.log(thisFuncName + e);
+		}
+		mechTeam = docs;
+	});
+	collection.find({"subteam":"elec","present":"true","assigned":"false"}, {sort: {"name": 1}}).then(function(e, docs){
+		if(e){ //if error, log to console
+			console.log(thisFuncName + e);
+		}
+		elecTeam = docs;
+	});
+
+	//Gets the current set of already-assigned pairs
+	var collection2 = db.get("scoutingpairs");
+	collection2.find({}, {}).then( function (e, docs) {;
+		if(e){ //if error, log to console
+			console.log(thisFuncName + e);
+		}
+		assigned = docs;
+	});
+
+	//Renders page through Jade.
+	console.log(thisFuncName + "RENDERING");
+	
+	res.render("./scoutingpairs", {
+		title: "Scouting Pairs",
+		prog: progTeam,
+		mech: mechTeam,
+		elec: elecTeam,
+		assigned: assigned
+	});
+*/
 	
 	console.log(thisFuncName + "DONE");
 });

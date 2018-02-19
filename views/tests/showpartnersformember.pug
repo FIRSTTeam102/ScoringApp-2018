@@ -1,0 +1,10 @@
+extends ../layout
+
+block content
+	form(action="/tests/setmembertoseepartners" method="post")
+		button(class="w3-btn w3-green w3-block" type="submit") Select
+		select(class="w3-select w3-dark-gray gear-no-border" name="name")
+			each member in members
+				option(value=member.name)= member.name
+	- var scoutJson = JSON.stringify(scouting)
+	p= scoutJson

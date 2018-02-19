@@ -4,8 +4,6 @@ var bcrypt = require('bcrypt');
 
 router.get('/adduser', function(req, res){
 	
-	
-	
 	res.render('./login', { 
 		tournament: 'sdlfkjdslk',
 		title: "Create User"
@@ -64,53 +62,60 @@ router.post('/scouter', function(req, res) {
 
 router.get('/admin', function(req, res) {
 	
-	
 	res.render('./login', { 
-		tournament: 'Sample Tournament Title',
-		title: "Admin Login",
-		submitLink: "admin", //no longer used
-		error: "false"
+		tournament: req.tournament.id,
+		title: "Admin Login"
 	});
   
 });
 
 router.post('/admin', function(req, res) {
 	
-	var username = req.body.username;
-	var password = req.body.password;
-	console.log(username + password);
-	var db = req.db;
-	var collection = db.get("adminusers");
-	
-	//console.log(req.passport);
-	//console.log(req.passport.authenticate);
-	console.log("requesting passport authenticate");
+	//if form is empty, alert w/ plz login
+	if(!req.body.password || !req.body.username){
+		res.render('./login', {
+			tournament: req.tournament.id,
+			title: "Admin Login",
+			alert: "Please enter a username and password."
+		});
+	}
+	//Request auth for user.
+	console.log("Requesting authentication for user: " + req.body.username || "error" );
 	
 	req.passport.authenticate("local", function(err, user, info) {
-            // if any problems exist, error out
+            
+			// if any problems exist, error out
             if (err) {
-                return err;
+				return err;
             }
+			
+			//If user isn't passed, render login with the error message.
             if (!user) {
-                return res.send(500, info.message);
+				var alert = info.alert || null;
+				
+                return res.render('./login', {
+					tournament: req.tournament.id,
+					title: "Admin Login",
+					alert: alert
+				});
             }
 
             // log in the user
             req.logIn(user, function(err) {
                 if (err) {
-                    return next(err);
+                    return err;
                 }
-                // once login succeeded, return the user and session created 201
-                return res.send(201, user);
+                // once login succeeded, send user to admin page
+                return res.redirect('/admin');
             });
         })(req, res);
 	
 });
 
-router.get("/secret", function(req, res){
+router.get('/secret'), function(req, res){
 	
 	//checks auth
-	if( !require('./checkAuthentication')(req, res) ){
+	if( !require('./checkauthentication')(req, res, 'admin') ){
 		return null;
 	}
 	res.send("you got into the secret");

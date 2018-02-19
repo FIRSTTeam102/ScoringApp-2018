@@ -36,6 +36,10 @@ app.use(passport.session());
 app.use(function(req,res,next) {
 	req.db = db;
 	req.passport = passport;
+	req.tournament = {
+		id: "Sample Tournament Title!"
+	}; //WILL CHANGE ONCE WE GET API CALLS UP AND RUNNING
+	
 	next();
 });
 

@@ -6,7 +6,16 @@ var router = express.Router();
 
 /* GET index page. */
 router.get('/', function(req, res) {
-  res.render('./adminindex', { title: 'Admin pages' });
+	
+	if( !require('./checkauthentication')(req, res, 'admin') ){
+		return null;
+	}
+	
+	res.render('./adminindex', { 
+		tournament: req.tournament.id,
+		title: 'Admin pages' 
+	});
+
 });
 
 module.exports = router;

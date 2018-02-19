@@ -7,15 +7,15 @@ module.exports = function(req, res){
 			return true;
 			
 		}else{
-			//isn't logged in; redirect to homepage
+			//isn't logged in; redirect to homepage w/ message
 			console.log("Unauthenticated attempt to access page.");
-			res.redirect('/');
+			res.redirect('/?alert=Sorry, please log in again to access this page.');
 			return false;
 		}
 	}else{
-		//isn't logged in; redirect to homepage	
+		//isn't logged in; redirect to homepage	w/ message
 		console.log("Unauthenticated attempt to access page.");
-		res.redirect('/');
+		res.redirect('/?alert=You must log in to access this page.');
 		return false;
 	}
 }

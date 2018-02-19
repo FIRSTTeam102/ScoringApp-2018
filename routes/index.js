@@ -10,21 +10,24 @@ var router = express.Router();
 
 //GET index page.
 router.get('/', function(req, res) {
-    
+	
+	//If there's been a GET request, prepare an alert
+	if(req.query)
+		var alert = req.query.alert || null;
+	
 	res.render('./index', { 
-		tournament: 'Sample Tournament Title', 
-		title: 'Home'
+		tournament: req.tournament.id, 
+		title: 'Home',
+		alert: alert
 	});
   
 });
 
 router.get("/logout", function(req, res) {
+	
+	//Logs out user with message
 	req.logout();
-	res.render('./index', {
-		tournament: 'Sample Tournament Title',
-		title: 'Home',
-		message: "Logged out successfully."		
-	});
+	res.redirect('/?alert=Logged out successfully.')
 });
 
 module.exports = router;

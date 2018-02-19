@@ -107,13 +107,13 @@ router.post('/admin', function(req, res) {
 	
 });
 
-router.get("/secret"), function(req, res){
+router.get("/secret", function(req, res){
 	
 	//checks auth
 	if( !require('./checkAuthentication')(req, res) ){
 		return null;
 	}
 	res.send("you got into the secret");
-}
+});
 
 module.exports = router;

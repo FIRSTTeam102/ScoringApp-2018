@@ -14,7 +14,7 @@ router.get("/", function(req, res) {
 	//Gets collection ("table") from db
 	var collection = db.get("teammembers");	
 	
-	collection.find({},{}, function(e, docs){
+	collection.find({},{sort: {"name": 1}}, function(e, docs){
 		
 		if(e){ //if error, log to console
 			console.log(e);
@@ -37,7 +37,7 @@ router.get("/present", function(req, res) {
 	
 	var collection = db.get("teammembers");
 	
-	collection.find({}, {}, function(e, docs) {
+	collection.find({}, {sort: {"name": 1}}, function(e, docs) {
 		if(e)
 			console.log(e);
 		

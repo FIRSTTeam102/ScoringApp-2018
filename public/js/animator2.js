@@ -44,10 +44,17 @@ if($){
 		animator.toggle.style.top = window.innerHeight - 25 + "px";
 		document.body.append(animator.toggle);
 		
-		$(window).resize(function() {
+		var resizeTimer;
+		$(window).on('resize', function() {
 			//resize just happened, pixels changed
-			console.log("resize event occurred");
 			
+			clearTimeout(resizeTimer);
+			resizeTimer = setTimeout(function() {
+				
+				animator.stopAnimating();
+				animator.init();
+					
+			}, 250);
 		});
 	});
 	

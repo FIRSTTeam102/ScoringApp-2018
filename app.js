@@ -8,10 +8,10 @@ var session = require('express-session');		//session middleware (uses cookies)
 var passport = require('passport');				//for user sessions
 
 //var mongo = require("mongodb");				//mongodb
-var monk = require("monk");						//for connecting to mongo
+var monk = require("monk");		
+var db = monk("localhost:27017/local");				//for connecting to mongo
 
 var app = express();
-var db = monk("localhost:27017/local");
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

@@ -4,80 +4,56 @@ var bcrypt = require('bcrypt');
 
 router.get('/adduser', function(req, res){
 	
-	res.render('./login', { 
-		tournament: 'sdlfkjdslk',
-		title: "Create User"
+	res.render('./adduser', { 
+		tournament: req.tournament.id,
+		title: "Create Admin User"
 	});
 	
-});
-router.post('/adduser', function(req, res){
-	
-	var name = req.body.username;
-	var pass = req.body.password;
-	
-	console.log(name);
-	console.log(pass);
-	
-	const saltRounds = 10;
-	const myPlaintextPassword = pass;
-	const someOtherPlaintextPassword = 'not_bacon';
-	
-	bcrypt.hash(myPlaintextPassword, saltRounds, function(err, hash) {
-		// Store hash in your password DB.
-		
-		var db = req.db;
-		var collection = db.get("adminusers");
-		
-		collection.insert({
-			"username": name,
-			"password": hash
-		});
-	});
-	
-	res.redirect('/login/adduser');
 });
 
 router.get('/scouter', function(req, res) {
 	
-  res.render('./login', { 
-		tournament: 'Sample Tournament Title',
-		title: "Scouter Login",
-		submitLink: "scouter"
+	var teammembers = req.db.get("teammembers");
+	
+	//gets all users
+	teammembers.find( {}, {}, function(e, users){
+		
+		if(e){
+			console.log(e);
+			return res.send(500);
+		}
+		return res.render('./login', { 
+			tournament: req.tournament.id,
+			title: "Scouter Login",
+			members: users
+		});
 	});
-  
-  
-});
-
-router.post('/scouter', function(req, res) {
-	
-	var name = req.body.name;
-	var pass = req.body.passwd;
-	
-	console.log(name);
-	console.log(pass);
-	
-	res.redirect("/login/scouter");
-	
 });
 
 router.get('/admin', function(req, res) {
 	
-	res.render('./login', { 
-		tournament: req.tournament.id,
-		title: "Admin Login"
-	});
-  
+	var teammembers = req.db.get("teammembers");
+	
+	teammembers.find( { "subteam": "support" }, {}, function(e, users){
+		
+		if(e){
+			console.log(e);
+			return res.send(500);
+		}
+		
+		return res.render('./login', { 
+			tournament: req.tournament.id,
+			title: "Admin Login",
+			members: users
+		});
+	});  
 });
 
-router.post('/admin', function(req, res) {
+router.post('/scouter', function(req, res) {
 	
 	//if form is empty, alert w/ plz login
 	if(!req.body.password || !req.body.username){
-		res.render('./login', {
-			tournament: req.tournament.id,
-			title: "Admin Login",
-			alert: "Please enter a username and password."
-		});
+		return res.redirect('/?alert=Please select a name and enter a password.');
 	}
 	//Request auth for user.
 	console.log("Requesting authentication for user: " + req.body.username || "error" );
@@ -86,12 +62,14 @@ router.post('/admin', function(req, res) {
             
 			// if any problems exist, error out
             if (err) {
+				res.send(500);
+				console.log(err);
 				return err;
             }
 			
 			//If user isn't passed, render login with the error message.
             if (!user) {
-				var alert = info.alert || null;
+				var alert = info != undefined ? info.alert || null : null;
 				
                 return res.render('./login', {
 					tournament: req.tournament.id,
@@ -99,14 +77,62 @@ router.post('/admin', function(req, res) {
 					alert: alert
 				});
             }
-
+			
             // log in the user
             req.logIn(user, function(err) {
-                if (err) {
-                    return err;
-                }
-                // once login succeeded, send user to admin page
-                return res.redirect('/admin');
+                if (err) 
+					return err;
+				
+				//if logged in, redirect to scoring app
+				return res.redirect('/?alert=LOGIN AUTH SUCCESSFUL FOR SCOUTER');
+				
+            });
+        })(req, res);
+	
+});
+
+router.post('/admin', function(req, res) {
+	
+	//if form is empty, alert w/ plz login
+	if(!req.body.password || !req.body.username){
+		return res.redirect('/?alert=Please select a name and enter a password.');
+	}
+	//Request auth for user.
+	console.log("Requesting authentication for user: " + req.body.username || "error" );
+	
+	req.passport.authenticate("local", function(err, user, info) {
+            
+			// if any problems exist, error out
+            if (err) {
+				res.send(500);
+				console.log(err);
+				return err;
+            }
+			
+			//If user isn't passed, render login with the error message.
+            if (!user) {
+				var alert = info != undefined ? info.alert || null : null;
+				
+                return res.render('./login', {
+					tournament: req.tournament.id,
+					title: "Admin Login",
+					alert: alert
+				});
+            }
+			
+            // log in the user
+            req.logIn(user, function(err) {
+                if (err) 
+					return err;
+                
+				if( user.subteam == 'support'){
+					//if user is admin (support) send to admin page
+					return res.redirect('/admin');
+				}
+				else{
+					//if subteam isn't support, redirect to home with message
+					return res.redirect('/?alert=Scouters have to log in with the Scouter login page.');					
+				}
             });
         })(req, res);
 });
@@ -118,6 +144,66 @@ router.get('/secret', function(req, res){
 		return null;
 	}
 	res.send("you got into the secret");
+});
+
+router.post('/adduser', function(req, res){
+	
+	//set all attributes that will go into the new user
+	var name = req.body.username;
+	var subteam = "support";
+	var className = req.body.className;
+	var years = req.body.years;
+	var present = "true";
+	var txtPassword = req.body.password;
+	
+	//if not all the forms are full, reload page
+	if(name == null || className == null || years == null || txtPassword == null){
+		
+		return res.render('./adduser', { 
+			tournament: req.tournament.id,
+			title: "Create Admin User",
+			alert: "You must fill all parameters"
+		});
+	}
+	
+	var teammembers = req.db.get("teammembers");
+	
+	teammembers.findOne( { "name": name }, {}, function( e, user ){
+		
+		//if user already exists, reload w/ warning thingy
+		if( user != null ){
+			return res.render('./adduser', { 
+				tournament: req.tournament.id,
+				title: "Create Admin User",
+				alert: "Error: User already exists."
+			});
+		}
+		const saltRounds = 10;
+		
+		bcrypt.hash(txtPassword, saltRounds, function(err, hash) {
+			
+			//if error, err out
+			if(err){
+				console.log(err);
+				return res.send(500);
+			}
+						
+			teammembers.insert({
+				"name": name,
+				"subteam": subteam,
+				"className": className,
+				"years": years,
+				"present": present,
+				"password": hash
+			});
+			
+			return res.render('./adduser', { 
+				tournament: req.tournament.id,
+				title: "Create Admin User",
+				alert: "User" + name + " created successfully."
+			});
+		});
+	});
 });
 
 module.exports = router;

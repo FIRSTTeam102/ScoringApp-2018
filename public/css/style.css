@@ -7,6 +7,14 @@ a {
   color: #00B7FF;
 }
 
+select{
+	padding: 1px 0px;
+	border-width: 2px;
+	border-style: solid;
+	border-color: white;
+	border-image: initial;
+}
+
 canvas{
     z-index: -1;
     position: fixed;

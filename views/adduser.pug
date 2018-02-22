@@ -6,13 +6,16 @@ block content
 			h3(class="gear-text-white")=title
 			div(class="w3-container w3-padding-16")
 				label(class="w3-quarter gear-label") Name: 
-				select(class="w3-half w3-border-light-grey" type="text" name="username")
-					option
-					each member, i in members
-						option(value=member.name class="w3-bar-item") #{member.name}
+				input(class="w3-half" type="text" name="username")
 			div(class="w3-container w3-padding-16")
 				label(class="w3-quarter gear-label") Password: 
-				input(class="w3-half" type="password" name="password")
+				input(class="w3-half" type="text" name="password")
+			div(class="w3-container w3-padding-16")
+				label(class="w3-quarter gear-label") className: 
+				input(class="w3-half" type="text" name="className" placeholder="post-HS or mentor")
+			div(class="w3-container w3-padding-16")
+				label(class="w3-quarter gear-label") Years on team: 
+				input(class="w3-half" type="text" name="years")
 			div(class="w3-padding-16")
 				input(type="submit" class="gear-btn gear-orange gear-hover-white w3-btn" value="Submit")
 	if error == "true"

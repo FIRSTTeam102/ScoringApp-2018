@@ -17,6 +17,10 @@ router.get('/adduser', function(req, res){
 
 router.get('/scouter', function(req, res) {
 	
+	//If there's been a GET request, prepare an alert
+	if(req.query)
+		var alert = req.query.alert || null;
+	
 	var teammembers = req.db.get("teammembers");
 	
 	//gets all users
@@ -29,12 +33,17 @@ router.get('/scouter', function(req, res) {
 		return res.render('./login', { 
 			tournament: req.tournament.id,
 			title: "Scouter Login",
-			members: users
+			members: users,
+			alert: alert
 		});
 	});
 });
 
 router.get('/admin', function(req, res) {
+
+	//If there's been a GET request, prepare an alert
+	if(req.query)
+		var alert = req.query.alert || null;
 	
 	var teammembers = req.db.get("teammembers");
 	
@@ -48,7 +57,8 @@ router.get('/admin', function(req, res) {
 		return res.render('./login', { 
 			tournament: req.tournament.id,
 			title: "Admin Login",
-			members: users
+			members: users,
+			alert: alert
 		});
 	});  
 });
@@ -57,7 +67,7 @@ router.post('/scouter', function(req, res) {
 	
 	//if form is empty, alert w/ plz login
 	if(!req.body.password || !req.body.username){
-		return res.redirect('/?alert=Please select a name and enter a password.');
+		return res.redirect('./scouter?alert=Please select a name and enter a password.');
 	}
 	//Request auth for user.
 	console.log("Requesting authentication for user: " + req.body.username || "error" );
@@ -75,11 +85,7 @@ router.post('/scouter', function(req, res) {
             if (!user) {
 				var alert = info != undefined ? info.alert || null : null;
 				
-                return res.render('./login', {
-					tournament: req.tournament.id,
-					title: "Admin Login",
-					alert: alert
-				});
+                return res.redirect('./scouter?alert='+alert);
             }
 			
             // log in the user
@@ -99,7 +105,7 @@ router.post('/admin', function(req, res) {
 	
 	//if form is empty, alert w/ plz login
 	if(!req.body.password || !req.body.username){
-		return res.redirect('/?alert=Please select a name and enter a password.');
+		return res.redirect('./admin?alert=Please select a name and enter a password.');
 	}
 	//Request auth for user.
 	console.log("Requesting authentication for user: " + req.body.username || "error" );
@@ -117,11 +123,7 @@ router.post('/admin', function(req, res) {
             if (!user) {
 				var alert = info != undefined ? info.alert || null : null;
 				
-                return res.render('./login', {
-					tournament: req.tournament.id,
-					title: "Admin Login",
-					alert: alert
-				});
+                return res.redirect('./admin?alert='+alert);
             }
 			
             // log in the user

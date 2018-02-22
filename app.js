@@ -2,12 +2,11 @@ var express = require('express');				//main express shiz
 var path = require('path');						//for filesystem
 var favicon = require('serve-favicon');			//serves favicon
 var logger = require('morgan'); 				//logger
-var cookieParser = require('cookie-parser');	//parser of cookies
 var bodyParser = require('body-parser');		//parses http request information
 var session = require('express-session');		//session middleware (uses cookies)
 var passport = require('passport');				//for user sessions
+var fs = require('fs');							//for reading whether this device is server or not
 
-//var mongo = require("mongodb");				//mongodb
 var monk = require("monk");		
 var db = monk("localhost:27017/local");				//for connecting to mongo
 
@@ -21,7 +20,6 @@ app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-//app.use(cookieParser()); don't believe this is necessary
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
 	secret: 'keyboard cat',
@@ -80,6 +78,17 @@ app.use(function(err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
+});
+
+fs.readFile('./isDev', "binary", function(err, data){
+	if(err)
+		console.log(err);
+		app.locals.isDev = false;
+	if(data){
+		console.log("isDev: " + data);
+		//set isDev equal to data (true or false)
+		app.locals.isDev = data;
+	}
 });
 
 module.exports = app;

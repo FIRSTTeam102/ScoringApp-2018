@@ -23,8 +23,8 @@ router.get('/scouter', function(req, res) {
 	
 	var teammembers = req.db.get("teammembers");
 	
-	//gets all users
-	teammembers.find( {}, {}, function(e, users){
+	//gets all users and spits them on dropdown
+	teammembers.find( {}, { password: -1, name: 1}, function(e, users){
 		
 		if(e){
 			console.log(e);
@@ -45,9 +45,11 @@ router.get('/admin', function(req, res) {
 	if(req.query)
 		var alert = req.query.alert || null;
 	
+	
+	//Get a list of all admin/exec members
 	var teammembers = req.db.get("teammembers");
 	
-	teammembers.find( { "subteam": "support" }, {}, function(e, users){
+	teammembers.find( {subteam: {$in: ["exec", "support"]} }, { password: -1, name: 1}, function(e, users){
 		
 		if(e){
 			console.log(e);
@@ -93,8 +95,8 @@ router.post('/scouter', function(req, res) {
                 if (err) 
 					return err;
 				
-				//if logged in, redirect to scoring app
-				return res.redirect('/?alert=LOGIN AUTH SUCCESSFUL FOR SCOUTER');
+				//if logged in, redirect to scoring app (CURRENTLY INDEX)
+				return res.redirect('/');
 				
             });
         })(req, res);

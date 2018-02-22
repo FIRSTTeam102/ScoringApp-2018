@@ -4,6 +4,10 @@ var bcrypt = require('bcrypt');
 
 router.get('/adduser', function(req, res){
 	
+	if( !require('./checkauthentication')(req, res, 'admin') ){
+		return null;
+	}
+	
 	res.render('./adduser', { 
 		tournament: req.tournament.id,
 		title: "Create Admin User"

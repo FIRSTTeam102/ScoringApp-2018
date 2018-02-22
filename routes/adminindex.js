@@ -12,7 +12,6 @@ router.get('/', function(req, res) {
 	}
 	
 	res.render('./adminindex', { 
-		tournament: req.tournament.id,
 		title: 'Admin pages' 
 	});
 

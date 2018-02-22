@@ -2,8 +2,12 @@ var passport = require('passport');
 
 module.exports = function(req, res, type){
     
-	//Checks if user is logged in
+	//if dev server, always return true.
+	if(req.app.locals.isDev){
+		return true;
+	}
 	
+	//Checks if user is logged in
 	if(req.user){
 		
 		if( type == 'admin' ){

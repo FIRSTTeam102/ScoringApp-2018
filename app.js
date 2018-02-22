@@ -34,12 +34,17 @@ app.use(passport.session());
 app.use(function(req,res,next) {
 	req.db = db;
 	req.passport = passport;
+	/*
 	req.tournament = {
 		id: "Sample Tournament Title!"
 	}; //WILL CHANGE ONCE WE GET API CALLS UP AND RUNNING
+	*/
+	res.locals.tournament=  "Tournament Title";
 	
 	if(req.user)
 		res.locals.user = req.user;
+	else if(req.app.locals.isDev)
+		res.locals.user = {name: '[Dev]', subteam: 'support'}
 	
 	next();
 });
@@ -80,6 +85,7 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+//reads if server is marked as dev or not
 fs.readFile('./isDev', "binary", function(err, data){
 	if(err)
 		console.log(err);
@@ -88,6 +94,18 @@ fs.readFile('./isDev', "binary", function(err, data){
 		console.log("isDev: " + data);
 		//set isDev equal to data (true or false)
 		app.locals.isDev = data;
+	}
+});
+
+//reads if server is marked as SERVER or not (used for subdirectory thingamajiggies)
+fs.readFile('./isServer', "binary", function(err, data){
+	if(err)
+		console.log(err);
+		app.locals.isServer = false;
+	if(data){
+		console.log("isServer: " + data);
+		//set isServer equal to data (true or false)
+		app.locals.isServer = data;
 	}
 });
 

@@ -51,6 +51,8 @@ if($){
 			clearTimeout(resizeTimer);
 			resizeTimer = setTimeout(function() {
 				
+				//fix sizes of everything
+				//animator.toggle.style.top = window.innerHeight - 25 + "px"; i don't like this when keyboard pops up on mobile
 				animator.stopAnimating();
 				animator.init();
 					

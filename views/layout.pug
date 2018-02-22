@@ -4,6 +4,8 @@ html
 		if !title
 			- title = "Untitled Page"
 		title #{title} | Team 102 Scoring App
+		if isServer
+			base(href="/app/2018/")
 		link(rel="stylesheet" href="/lib/bootstrap/css/bootstrap.min.css")
 		link(rel="stylesheet" href="/lib/bootstrap/css/bootstrap-grid.min.css")
 		link(rel="stylesheet" href="/lib/w3.css")
@@ -19,7 +21,7 @@ html
 				$(function(){
 					alert("#{alert}");
 				});
-		meta(name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=1.0, user-scalable=no")
+		meta(name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no")
 
 	body(class="gear-black")
 		include nav

@@ -16,7 +16,6 @@ router.get('/', function(req, res) {
 		var alert = req.query.alert || null;
 	
 	res.render('./index', { 
-		tournament: req.tournament.id, 
 		title: 'Home',
 		alert: alert
 	});

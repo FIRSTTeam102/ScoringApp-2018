@@ -1,13 +1,14 @@
 if user
 	nav(class="w3-bar gear-opacity w3-container gear-text-white" )
-		div(href="#" class="w3-dropdown-hover gear-clear gear-text-white w3-text-black-hover")
-			a(href="/" class="w3-button")=user.name
+		div(href="#" class="w3-dropdown-hover w3-dropdown-mobile gear-clear gear-text-white w3-text-black-hover")
+			div(class="w3-button")=user.name
 			div(class="w3-dropdown-content w3-bar-block")
 				a(href="/logout" class="w3-bar-item w3-button") Log out
 				
 		a(href="#" class="w3-bar-item w3-button gear-clear") Scoring App
 		if user.subteam == "support" || user.subteam == "exec"
 			a(href="/admin" class="w3-bar-item w3-button gear-clear") Admin Index
+			a(href="/tests" class="w3-bar-item w3-button gear-clear") test pages (do we still need this directory?)
 	br
 header(class="w3-center w3-container w3-content w3-padding-8")
 	a(href="/") 

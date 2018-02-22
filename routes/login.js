@@ -9,7 +9,6 @@ router.get('/adduser', function(req, res){
 	}
 	
 	res.render('./adduser', { 
-		tournament: req.tournament.id,
 		title: "Create Admin User"
 	});
 	
@@ -31,7 +30,6 @@ router.get('/scouter', function(req, res) {
 			return res.send(500);
 		}
 		return res.render('./login', { 
-			tournament: req.tournament.id,
 			title: "Scouter Login",
 			members: users,
 			alert: alert
@@ -57,7 +55,6 @@ router.get('/admin', function(req, res) {
 		}
 		
 		return res.render('./login', { 
-			tournament: req.tournament.id,
 			title: "Admin Login",
 			members: users,
 			alert: alert
@@ -133,7 +130,7 @@ router.post('/admin', function(req, res) {
                 if (err) 
 					return err;
                 
-				if( user.subteam == 'support'){
+				if( user.subteam == 'support' || 'exec'){
 					
 					//if user is admin (support) send to admin page
 					return res.redirect('/admin');
@@ -169,7 +166,6 @@ router.post('/adduser', function(req, res){
 	if(name == null || className == null || years == null || txtPassword == null){
 		
 		return res.render('./adduser', { 
-			tournament: req.tournament.id,
 			title: "Create Admin User",
 			alert: "You must fill all parameters"
 		});
@@ -182,7 +178,6 @@ router.post('/adduser', function(req, res){
 		//if user already exists, reload w/ warning thingy
 		if( user != null ){
 			return res.render('./adduser', { 
-				tournament: req.tournament.id,
 				title: "Create Admin User",
 				alert: "Error: User already exists."
 			});
@@ -207,7 +202,6 @@ router.post('/adduser', function(req, res){
 			});
 			
 			return res.render('./adduser', { 
-				tournament: req.tournament.id,
 				title: "Create Admin User",
 				alert: "User" + name + " created successfully."
 			});

@@ -27,6 +27,7 @@ router.get("/logout", function(req, res) {
 	
 	//Logs out user with message
 	req.logout();
+	
 	res.redirect('/?alert=Logged out successfully.')
 });
 

@@ -6,6 +6,9 @@ body {
 a {
   color: #00B7FF;
 }
+a:link, a:hover { 
+	text-decoration: none;
+}
 
 select{
 	padding: 1px 0px;
@@ -32,6 +35,8 @@ pre{
 .gear-black,.gear-hover-black:hover{color:#fff!important;background-color:#1E1E23!important}
 .gear-orange,.gear-hover-orange:hover{color:#fff!important;background-color:#FF5F0B!important}
 .gear-light-gray,.gear-hover-light-gray:hover{color:#1e1e23!important;background-color:#ddd!important}
+.gear-opacity,.gear-hover-opacity:hover{background-color:rgba(255,255,255,0.2)!important}
+.gear-clear,.gear-clear-hover:hover{background-color:rgba(0,0,0,0)!important}
 
 .gear-text-red,.gear-text-hover-red:hover{color:#EC0D00!important}
 .gear-text-blue,.gear-text-hover-blue:hover{color:#2623B8!important}

@@ -8,7 +8,6 @@ var db = monk("localhost:27017/local");
 //Configure local strategy for use by Passport.
 passport.use(new LocalStrategy(
 	function(username, password, done) {
-		console.log("AUTHENTICATE CALLED");
 		
 		var teammembers = db.get("teammembers");
 		
@@ -16,10 +15,7 @@ passport.use(new LocalStrategy(
 			
 			if(err) 
 				return done(err);
-			
-			console.log("user: " + username);
-			console.log("pass: " + password);
-						
+									
 			if(user == undefined){
 				
 				//if user doesn't exist in database
@@ -34,7 +30,6 @@ passport.use(new LocalStrategy(
 				
 				if( user.password == undefined ){
 					
-					console.log("hi");
 					//if db user doesn't have a pass, something must be wrong with the db collection
 					return done("User in database has no password?");
 				}			
@@ -49,8 +44,6 @@ passport.use(new LocalStrategy(
 							return done(err);
 						if(!doc)
 							return done("Password document or collection does not exist");
-						console.log(doc);
-						console.log(doc.password);
 						
 						hash = doc.password;
 						
@@ -71,8 +64,6 @@ passport.use(new LocalStrategy(
 	}));
 
 function compare( password, hash, user, done ){
-	
-	console.log("Comparing info for hash: " + hash);
 	
 	//Compare hash to entered password
 	bcrypt.compare( password, hash, function(err, output){
@@ -114,15 +105,16 @@ passport.deserializeUser(function(id, done) {
         done(err, user);
     });
 	*/
+	
 	var mid = monk.id(id);
 	var teammembers = db.get("teammembers");
 	
-	teammembers.find( { "_id": mid }, {}, function(err, user){
+	teammembers.findOne( { "_id": mid }, {}, function(err, user){
 		
-		if(!user[0] || err)
+		if(!user || err)
 			console.log( err || "User not found in db: deserializeUser " + id);
 		else
-			done(null, user[0]);
+			done(null, user);
 	});
 	//done(null, id);
 });

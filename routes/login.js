@@ -132,6 +132,7 @@ router.post('/admin', function(req, res) {
 					return err;
                 
 				if( user.subteam == 'support'){
+					
 					//if user is admin (support) send to admin page
 					return res.redirect('/admin');
 				}

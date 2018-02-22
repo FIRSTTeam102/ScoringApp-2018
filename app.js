@@ -40,6 +40,9 @@ app.use(function(req,res,next) {
 		id: "Sample Tournament Title!"
 	}; //WILL CHANGE ONCE WE GET API CALLS UP AND RUNNING
 	
+	if(req.user)
+		res.locals.user = req.user;
+	
 	next();
 });
 

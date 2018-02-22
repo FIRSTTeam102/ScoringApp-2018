@@ -47,6 +47,8 @@ passport.use(new LocalStrategy(
 												
 						if(err)
 							return done(err);
+						if(!doc)
+							return done("Password document or collection does not exist");
 						console.log(doc);
 						console.log(doc.password);
 						

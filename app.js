@@ -44,7 +44,8 @@ app.use(function(req,res,next) {
 	if(req.user)
 		res.locals.user = req.user;
 	else if(req.app.locals.isDev == true)
-		res.locals.user = {name: '[Dev]', subteam: 'support'}
+		res.locals.user = {name: '[Dev]', subteam: 'support'};
+	
 	
 	next();
 });
@@ -93,7 +94,7 @@ fs.readFile('./isDev', "binary", function(err, data){
 	if(data){
 		console.log("isDev: " + data);
 		//set isDev equal to data (true or false)
-		app.locals.isDev = data;
+		app.locals.isDev = (data == 'true');
 	}
 });
 
@@ -105,7 +106,7 @@ fs.readFile('./isServer', "binary", function(err, data){
 	if(data){
 		console.log("isServer: " + data);
 		//set isServer equal to data (true or false)
-		app.locals.isServer = data;
+		app.locals.isServer = (data == 'true');
 	}
 });
 

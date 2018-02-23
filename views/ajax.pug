@@ -1,20 +1,11 @@
 extends layout
 
 block content
-	script(src="lib/jquery.min.js")
-	script.
-		$(document).ready(function(){
-			var user,pass;
-			$("#submit").click(function(){
-				text=$("#text").val();
-				$.post("./ajax-example/submit",{text: text}, function(data){
-					console.log(data);
-				});
-			});
-		});
+	script(src="/lib/jquery.min.js")
+	script(src="/js/ajax-sample.js")
 			
-	h1 AJAX example
+	h3(class="gear-text-white") AJAX example
 	p Make sure to check console.
 	input(type="TEXT" id="text" placeholder="Input some data" size="40")
 	br
-	input(type="button" id="submit" value="Submit")
+	input(type="button" class="w3-button gear-hover-white gear-orange" id="submit" value="Submit")

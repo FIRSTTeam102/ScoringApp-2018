@@ -4,8 +4,6 @@ html
 		if !title
 			- title = "Untitled Page"
 		title #{title} | Team 102 Scoring App
-		if isServer
-			base(href="/app/2018/")
 		meta(name="keywords" content="first robotics,frc,first robotics competition,somerville,new jersey,102,team 102,gearheads,gearheads 102,the gearheads,scoring,scoring app,standings,match standings,team 102 scoring app,scouting,gearheads scouting,team 102 scouting")
 		link(rel="stylesheet" href="/lib/bootstrap/css/bootstrap.min.css")
 		link(rel="stylesheet" href="/lib/bootstrap/css/bootstrap-grid.min.css")
@@ -26,5 +24,6 @@ html
 
 	body(class="gear-black")
 		include nav
+		include tests/notification
 		include main
 			block content

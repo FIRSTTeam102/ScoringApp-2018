@@ -6,6 +6,8 @@ var bodyParser = require('body-parser');		//parses http request information
 var session = require('express-session');		//session middleware (uses cookies)
 var passport = require('passport');				//for user sessions
 var fs = require('fs');							//for reading whether this device is server or not
+var Client = require('node-rest-client').Client;//for reading from REST APIs (e.g., TheBlueAlliance)
+var client = new Client();
 
 var monk = require("monk");		
 var db = monk("localhost:27017/local");				//for connecting to mongo
@@ -58,6 +60,7 @@ var login = require('./routes/login');
 var ajax = require('./routes/ajax'); 			//Ajax example (was used for test originally)
 var scoutingpairs = require('./routes/scoutingpairs');
 var teammembers = require("./routes/teammembers");
+var externaldata = require("./routes/externaldata");
 
 //CONNECT URLS TO ROUTES
 app.use('/', index);
@@ -67,6 +70,7 @@ app.use('/login', login);
 app.use('/ajax-example', ajax);
 app.use('/admin/scoutingpairs', scoutingpairs);
 app.use("/admin/teammembers", teammembers);
+app.use('/admin/data', externaldata);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

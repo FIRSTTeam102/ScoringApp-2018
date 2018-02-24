@@ -317,4 +317,14 @@ router.post("/setmembertoseepartners", function(req, res) {
 	});	
 });
 
+router.get("/testurlparams", function(req, res) {
+	var db = req.db;
+
+	var id = req.query.id;
+	var foo = req.query.foo;
+	console.log("tests.setmembertoseepartners: id=" + id + ",foo=" + foo);
+	
+    res.render('./tests', { title: foo	 });
+});
+	
 module.exports = router;

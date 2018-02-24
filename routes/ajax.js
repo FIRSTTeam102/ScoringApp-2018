@@ -15,7 +15,7 @@ router.post('/submit', function(req, res){
 	console.log("Data sent: " + data_text);
 	
 	//res.send can directly send objects.
-	res.send({"success":"true", "data sent": data_text});
+	res.send({"success":"true", "data": data_text});
 	
 	//res.end must be used if we don't render a page with res.render or res.sendFile.
 	res.end("yes");

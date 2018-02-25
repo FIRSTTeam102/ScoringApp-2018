@@ -100,13 +100,14 @@ router.post("/events", function(req, res) {
 					eventCol.insert(array, function(e, docs) {
 						// Then read it back in order
 						eventCol.find({"year": parseInt(year)},{sort: {"start_date": 1, "end_date": 1, "name": 1}}, function(e, docs){
+							var eventData = docs;
 							
 							// Re-read the unique years (in case we just added a new one)
 							eventCol.distinct("year", function(e, docs) {
 								uniqueYears = docs.sort();
 
 								res.render("./events", {
-									"events": docs,
+									"events": eventData,
 									"years": uniqueYears,
 									"selectedYear": year
 								});

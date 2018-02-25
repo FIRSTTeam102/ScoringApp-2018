@@ -2,12 +2,13 @@ extends layout
 
 block content
 	- if (selectedYear == null) selectedYear = (new Date()).getFullYear();
-	select#yearSelect(name="selectedYear" onChange="submitForYear()")
-		each year in years
-			- if (year == selectedYear)
-				option(value=year selected)= year
-			- else
-				option(value=year)= year
+	if locals.years
+		select#yearSelect(name="selectedYear" onChange="submitForYear()")
+			each year in years
+				- if (year == selectedYear)
+					option(value=year selected)= year
+				- else
+					option(value=year)= year
 	form#updateForYear(name="updateForYear" method="post" action="/admin/data/events")
 		input#setmemberpairdata(type="text", name="year")
 		button#btnSubmit(type="submit") Update DB for specified year

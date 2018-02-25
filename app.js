@@ -61,6 +61,7 @@ var ajax = require('./routes/ajax'); 			//Ajax example (was used for test origin
 var scoutingpairs = require('./routes/scoutingpairs');
 var teammembers = require("./routes/teammembers");
 var externaldata = require("./routes/externaldata");
+var scoring = require("./routes/scoring");
 
 //CONNECT URLS TO ROUTES
 app.use('/', index);
@@ -71,6 +72,7 @@ app.use('/ajax-example', ajax);
 app.use('/admin/scoutingpairs', scoutingpairs);
 app.use("/admin/teammembers", teammembers);
 app.use('/admin/data', externaldata);
+app.use("/scoring", scoring);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

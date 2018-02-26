@@ -18,7 +18,7 @@ block content
 			div(class="gear-btn gear-orange gear-hover-white w3-btn w3-section gear-margin-sides")
 				span Load/Update events
 		h4(class="gear-text-white") Current Event
-		form#setCurrentEvent(name="setCurrentEvent" method="post" action="/admin/data/events")
+		form#setCurrentEvent(name="setCurrentEvent" method="post" action="/admin/setcurrent")
 			input#setEvent(type="text", name="eventId")
 			button#btnSubmit(type="submit") Set current eventId
 

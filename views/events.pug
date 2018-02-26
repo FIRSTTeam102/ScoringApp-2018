@@ -34,9 +34,11 @@ block content
 					td= event.start_date
 					td= event.end_date
 					td
-						button Matches
+						button(onClick=`getMatchesForEvent('${event.key}')`) Matches
 					td
 						button Teams
+	form#getmatchdata(name="getmatchdata" method="post" action="/admin/data/matches")
+		input#eventId(type="hidden", name="eventId")
 	script.
 		function submitForYear()
 		{
@@ -44,4 +46,11 @@ block content
 			var yearSelect = e.options[e.selectedIndex].value;
 			window.location = "/admin/data/events?year=" + yearSelect;
 			//console.log(yearSelect);
+		}
+		
+		function getMatchesForEvent(eventId)
+		{
+			console.log('eventId='+eventId);
+			document.getElementById("eventId").value = eventId;
+			document.getElementById("getmatchdata").submit();
 		}

@@ -6,5 +6,5 @@ block content
 		select(class="w3-select w3-dark-gray gear-no-border" name="name")
 			each member in members
 				option(value=member.name)= member.name
-	- var scoutJson = JSON.stringify(scouting)
+	- var scoutJson = scouting.toString();
 	p= scoutJson

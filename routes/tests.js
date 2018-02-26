@@ -17,10 +17,6 @@ router.get('/buttons', function(req, res) {
   res.render('./tests/buttons', { title: 'Buttons' });
 });
 
-router.get("/angular", function(req, res) {
-	res.render("./tests/angular", {title: "Angular"});
-});
-
 router.get("/tables", function(req, res) {
 	//res.render("./tests/table", {title: "Tables"});
 	

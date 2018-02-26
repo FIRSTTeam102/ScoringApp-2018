@@ -1,0 +1,47 @@
+extends layout
+
+block content
+	- if (selectedYear == null) selectedYear = (new Date()).getFullYear();
+	if locals.years
+		select#yearSelect(name="selectedYear" onChange="submitForYear()")
+			each year in years
+				- if (year == selectedYear)
+					option(value=year selected)= year
+				- else
+					option(value=year)= year
+	form#updateForYear(name="updateForYear" method="post" action="/admin/data/events")
+		input#setmemberpairdata(type="text", name="year")
+		button#btnSubmit(type="submit") Update DB for specified year
+	if locals.events
+		table(class="w3-table")
+			tr
+				th Key
+				th Name
+				th Country
+				th State
+				th City
+				th Start
+				th End
+				th Update
+				th 
+			each event in events
+				tr
+					td= event.key
+					td= event.name
+					td= event.country
+					td= event.state_prov
+					td= event.city
+					td= event.start_date
+					td= event.end_date
+					td
+						button Matches
+					td
+						button Teams
+	script.
+		function submitForYear()
+		{
+			var e = document.getElementById("yearSelect");
+			var yearSelect = e.options[e.selectedIndex].value;
+			window.location = "/admin/data/events?year=" + yearSelect;
+			//console.log(yearSelect);
+		}

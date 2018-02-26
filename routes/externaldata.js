@@ -229,4 +229,117 @@ router.post("/matches", function(req, res) {
 	});
 });
 
+////////////////////////
+// Teams by event
+////////////////////////
+
+router.get("/teams", function(req, res) {
+	var thisFuncName = "externaldata.teams[get]: ";
+	console.log(thisFuncName + 'ENTER')
+	
+	var matches = {};
+	
+    // Set our internal DB variable
+    var db = req.db;
+
+	/*
+    // Get our query value(s)
+    var eventId = req.query.eventId;
+	if (!eventId)
+	{
+		console.log(thisFuncName + 'No event specified');
+		res.redirect("./events");
+	}
+	console.log(thisFuncName + 'eventId=' + eventId);
+	*/
+	
+	// Read all teams from DB
+	var teamCol = db.get("teams");
+	teamCol.find({},{sort: {"key": 1}}, function(e, docs){
+		
+		if(e){ //if error, log to console
+			console.log(e);
+		}
+		teams = docs;
+		
+		res.render("./teams", {
+			"teams": teams
+		});
+	});
+});
+
+router.post("/teams", function(req, res) {
+	var thisFuncName = "externaldata.teams[post]: ";
+	console.log(thisFuncName + 'ENTER')
+	
+    // Set our internal DB variable
+    var db = req.db;
+	var matchCol = db.get("matches");
+	var eventCol = db.get("events");
+
+    // Get our form value(s)
+    var eventId = req.body.eventId;
+
+	console.log(thisFuncName + 'eventId=' + eventId);
+
+	//// TODO
+	// Read teams from TBA
+	// Read teams from DB
+	// If any TBA teams are not yet in DB, add them to DB
+	// Return all teams to client
+	
+	// nodeclient from earlier?
+	var Client = require('node-rest-client').Client;
+	var client = new Client();
+	
+	var args = {
+		headers: { "accept": "application/json", "X-TBA-Auth-Key": "iSpbq2JH2g27Jx2CI5yujDsoKYeC8pGuMw94YeK3gXFU6lili7S2ByYZYZOYI3ew" }
+	}
+
+	var url = "https://www.thebluealliance.com/api/v3/event/" + eventId + "/matches";
+	console.log(thisFuncName + "url=" + url);
+	
+	// Read unique list of years in DB (for redirect)
+	var uniqueYears;
+	eventCol.distinct("year", function(e, docs) {
+		uniqueYears = docs.sort();
+	
+		client.get(url, args, function (data, response) {
+			var array = JSON.parse(data);
+			var arrayLength = array.length;
+			if (arrayLength == null)
+			{
+				console.log(thisFuncName + "Whoops, there was an error!")
+				console.log(thisFuncName + "data=" + data);
+				year = (new Date()).getFullYear();
+				
+				res.render("./events", {
+					"years": uniqueYears,
+					"selectedYear": year
+				});
+			}
+			else
+			{
+				console.log(thisFuncName + 'Found ' + arrayLength + ' data for event ' + eventId);
+				//console.log(thisFuncName + 'Stringify array: ' + JSON.stringify(array));
+				
+				// First delete existing match data for the given event
+				matchCol.remove({"event_key": eventId}, function(e, docs) {
+					// Now, insert the new data
+					matchCol.insert(array, function(e, docs) {
+						// Then read it back in order
+						matchCol.find({"event_key": eventId},{sort: {"time": 1}}, function(e, docs){
+							var matches = docs;
+							
+							res.render("./matches", {
+								"matches": matches
+							});
+						});
+					});
+				});
+			}
+		});
+	});
+});
+
 module.exports = router;

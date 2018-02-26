@@ -13,9 +13,15 @@ block content
 		a(href="/admin/teammembers/present") 
 			div(class="gear-btn gear-orange gear-hover-white w3-btn w3-section gear-margin-sides")
 				span Set who is present at current event
+		h4(class="gear-text-white") API Data Management
 		a(href="/admin/data/events") 
 			div(class="gear-btn gear-orange gear-hover-white w3-btn w3-section gear-margin-sides")
 				span Load/Update events
+		h4(class="gear-text-white") Current Event
+		form#setCurrentEvent(name="setCurrentEvent" method="post" action="/admin/data/events")
+			input#setEvent(type="text", name="eventId")
+			button#btnSubmit(type="submit") Set current eventId
+
 	//-
 		h1= title
 		p Welcome to #{title}

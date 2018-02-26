@@ -10,7 +10,7 @@ block content
 				- else
 					option(value=year)= year
 	form#updateForYear(name="updateForYear" method="post" action="/admin/data/events")
-		input#setmemberpairdata(type="text", name="year")
+		input#setyear(type="text", name="year")
 		button#btnSubmit(type="submit") Update DB for specified year
 	if locals.events
 		table(class="w3-table")

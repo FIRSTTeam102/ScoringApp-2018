@@ -1,0 +1,39 @@
+extends layout
+
+block content
+	form#updateForEvent(name="updateForEvent" method="post" action="/admin/data/matches")
+		input#seteventid(type="text", name="eventId")
+		button#btnSubmit(type="submit") Update DB for specified event ID
+	if locals.matches
+		table(class="w3-table")
+			tr
+				th Level
+				th Num
+				th Time
+				th Blue
+				th 
+				th
+				th
+				th Red
+				th
+				th
+				th
+				th Winner
+				th Update
+			each match in matches
+				tr
+					td= match.comp_level
+					td= match.match_number
+					td= match.time
+					td= match.alliances.blue.team_keys[0]
+					td= match.alliances.blue.team_keys[1]
+					td= match.alliances.blue.team_keys[2]
+					td Score: #{match.alliances.blue.score}
+					td= match.alliances.red.team_keys[0]
+					td= match.alliances.red.team_keys[1]
+					td= match.alliances.red.team_keys[2]
+					td Score: #{match.alliances.red.score}
+					td= match.winning_alliance
+					td
+						button #{match.key}
+	

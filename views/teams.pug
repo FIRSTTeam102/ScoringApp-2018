@@ -8,15 +8,18 @@ block content
 		table(class="w3-table")
 			tr
 				th Number
-				th City
 				th Nickname
-				th Name
+				th City
+				th State
+				th Country
+				th Update
 			each team in teams
 				tr
 					td= team.team_number
-					td= team.city
 					td= team.nickname
-					td= team.name
+					td= team.city
+					td= team.state_prov
+					td= team.country
 					td
 						button #{team.key}
 	

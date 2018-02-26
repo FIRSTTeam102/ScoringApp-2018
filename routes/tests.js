@@ -29,29 +29,29 @@ router.get("/tables", function(req, res) {
 		});
 	}
 	
-	//Gets collection ("table") from db
-	var collection = db.get("teammembers");
+	//Gets teammembers ("table") from db
+	var teammembers = db.get("teammembers");
 	var progTeam;
 	var mechTeam;
 	var elecTeam;
 	
 	//Searches for and sets variables for each subteam.
 	//Each subteam var is an array with team member names inside.
-	collection.find({"subteam":"prog","present":"true","assigned":"false"},{}, function(e, docs){
+	teammembers.find({"subteam":"prog","present":"true","assigned":"false"},{}, function(e, docs){
 		
 		if(e){ //if error, log to console
 			console.log(e);
 		}
 		progTeam = docs;
 		
-		collection.find({"subteam":"mech","present":"true","assigned":"false"},{}, function(e, docs){
+		teammembers.find({"subteam":"mech","present":"true","assigned":"false"},{}, function(e, docs){
 			mechTeam = docs;
-			collection.find({"subteam":"elec","present":"true","assigned":"false"},{}, function(e, docs){
+			teammembers.find({"subteam":"elec","present":"true","assigned":"false"},{}, function(e, docs){
 				elecTeam = docs;
 				
 				// Get assigned pairs
-				var collection2 = db.get("assignedpairs");
-				collection2.find({}, {}, function (e, docs) {;
+				var teammembers2 = db.get("assignedpairs");
+				teammembers2.find({}, {}, function (e, docs) {;
 					assigned = docs;
 					
 					//Renders page through Jade.
@@ -87,21 +87,21 @@ router.post('/setmemberpair', function(req, res) {
 
 	////// Update selected teams to reflect the newly-picked team
 	
-    // Set collection to 'assignedpairs'
-    var collection = db.get('assignedpairs');
+    // Set teammembers to 'assignedpairs'
+    var teammembers = db.get('assignedpairs');
 	
 	// Submit to the DB
-	collection.insert(selectedMembers);
+	teammembers.insert(selectedMembers);
 	
 	////// Update members in 'teammembers' so that they're marked as "assigned" (and won't be available to choose afterwards)
 	
-    // Set collection to 'teammembers'
-    var collection = db.get('teammembers');
+    // Set teammembers to 'teammembers'
+    var teammembers = db.get('teammembers');
 
     // Submit to the DB
 	for (var member in selectedMembers)
 	{
-		collection.update(
+		teammembers.update(
 			{ "name" : member },
 			{ $set: { "assigned" : "true" } }
 		)
@@ -117,9 +117,9 @@ router.post("/deletememberpair", function(req, res) {
 	
 	var data = req.body.data;
 	
-	var collection = db.get("assignedpairs");
+	var teammembers = db.get("assignedpairs");
 	
-	collection.find({"_id": data}, {}, function(e, docs){
+	teammembers.find({"_id": data}, {}, function(e, docs){
 		
 		if(e){ //if error, log to console
 			console.log(e);
@@ -127,7 +127,7 @@ router.post("/deletememberpair", function(req, res) {
 		thisPair = docs;
 		console.log("thisPair=" + thisPair);
 
-		var collection2 = db.get('teammembers');
+		var teammembers2 = db.get('teammembers');
 		
 		for (var member in thisPair[0])
 		{
@@ -135,14 +135,14 @@ router.post("/deletememberpair", function(req, res) {
 			
 			if (member != "_id")
 			{
-				collection2.update(
+				teammembers2.update(
 					{ "name" : member },
 					{ $set: { "assigned" : "false" } }
 				)
 			}
 		}
 		
-		collection.remove({"_id": data});
+		teammembers.remove({"_id": data});
 	
 		res.redirect("tables");		
 	});
@@ -150,8 +150,8 @@ router.post("/deletememberpair", function(req, res) {
 
 router.get('/mongo', function(req, res) {
     var db = req.db;
-    var collection = db.get('test');
-    collection.find({},{},function(e,data){
+    var teammembers = db.get('test');
+    teammembers.find({},{},function(e,data){
         res.render('./mongo/users', {
             "title": "Mongo Test", "userlist": data
         });
@@ -175,7 +175,7 @@ router.post("/updatemember", function(req, res){
 		});
 	}
 	
-	var collection = db.get("teammembers");
+	var teammembers = db.get("teammembers");
 	
 	var memberId = req.body.memberId;
 	var name = req.body.name;
@@ -184,7 +184,7 @@ router.post("/updatemember", function(req, res){
 	var years = req.body.years;
 	console.log({memberId, name, subteam, className, years});
 	
-	collection.update({"_id": memberId}, {$set: {"name": name, "subteam": subteam, "className": className, "years": years}});
+	teammembers.update({"_id": memberId}, {$set: {"name": name, "subteam": subteam, "className": className, "years": years}});
 	
 	res.redirect("/tests/maintainmembers");
 });
@@ -199,10 +199,10 @@ router.get("/maintainmembers", function(req, res) {
 		});
 	}
 	
-	//Gets collection ("table") from db
-	var collection = db.get("teammembers");	
+	//Gets teammembers ("table") from db
+	var teammembers = db.get("teammembers");	
 	
-	collection.find({},{}, function(e, docs){
+	teammembers.find({},{}, function(e, docs){
 		
 		if(e){ //if error, log to console
 			console.log(e);
@@ -223,14 +223,14 @@ router.post("/addmember", function(req, res){
 		});
 	}
 	
-	var collection = db.get("teammembers");
+	var teammembers = db.get("teammembers");
 	
 	var name = req.body.name;
 	var subteam = req.body.subteam;
 	var className = req.body.className;
 	var years = req.body.years;
 	
-	collection.insert({"name": name, "subteam": subteam, "className": className, "years": years});
+	teammembers.insert({"name": name, "subteam": subteam, "className": className, "years": years});
 	
 	res.redirect("/tests/maintainmembers");
 });
@@ -247,13 +247,13 @@ router.get("/showpartnersformember", function(req, res) {
 	
 	var assignedMembers;
 	
-	var collection = db.get("teammembers");
-	collection.find({"assigned":"true"}, {sort: {"name": 1}}, function(e, docs){
+	var teammembers = db.get("teammembers");
+	teammembers.find({"assigned":"true"}, {sort: {"name": 1}}, function(e, docs){
 		if(e){ //if error, log to console
 			console.log(e);
 		}
 		assignedMembers = docs;
-		
+		console.log(assignedMembers);
 		//Renders page through Jade.
 		res.render("./tests/showpartnersformember", {
 			members: assignedMembers
@@ -270,8 +270,8 @@ router.post("/setmembertoseepartners", function(req, res) {
 	var name = req.body.name;
 	console.log("tests.setmembertoseepartners: name=" + name);
 	
-	var collection = db.get("teammembers");
-	collection.find({"assigned":"true"}, {sort: {"name": 1}}, function(e, docs){
+	var teammembers = db.get("teammembers");
+	teammembers.find({"assigned":"true"}, {sort: {"name": 1}}, function(e, docs){
 		if(e){ //if error, log to console
 			console.log(e);
 		}
@@ -279,30 +279,37 @@ router.post("/setmembertoseepartners", function(req, res) {
 		
 		//Gets the current set of already-assigned pairs
 		//Search them for a match
-		var collection2 = db.get("scoutingpairs");
-		collection2.find({}, {}, function (e, docs) {
+		var scoutingpairs = db.get("scoutingpairs");
+		scoutingpairs.find({}, {}, function (e, docs) {
 			if(e){ //if error, log to console
 				console.log(e);
 			}
 			
-			for (pair in docs) {
-				console.log("tests.setmembertoseepartners: pair=" + pair);
-				matched = false;
+			for (var pairNum in docs) {
+				//console.log("tests.setmembertoseepartners: pair=" + pair);
+				
+				var pair = docs[pairNum];
+				console.log(pair);
+				var matched = false;
 				var selectedArray = [];
 				var pairId;
-				for (var key in docs[pair]) if (key != "_id") {
-					selectedArray.push(key);
-					console.log("tests.setmembertoseepartners: key=" + key);
-					if (key == name) matched = true;
-				}
-				for (var key in docs[pair]) if (key == "_id") pairId=pair[key];
 				
+				for( var key in pair ){
+					
+					if (key == "_id"){
+						pairId=pair[key];
+					}
+					else{
+						selectedArray.push(" " + pair[key]);
+						if (pair[key] == name) matched = true;
+					}
+				}				
 				if (matched == true)
 					scoutingTeam = selectedArray.toString();
 			}
 			
 			//scoutingTeam = docs;
-			console.log("tests.setmembertoseepartners: scoutingTeam=" + scoutingTeam);
+			console.log("tests.setmembertoseepartners: scoutingTeam = " + scoutingTeam);
 
 			//Renders page through Jade.
 			res.render("./tests/showpartnersformember", {

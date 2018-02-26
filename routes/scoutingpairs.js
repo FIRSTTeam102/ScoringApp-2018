@@ -137,6 +137,7 @@ router.post('/setscoutingpair', function(req, res) {
 	
 	// The javascript Object was JSON.stringify() on the client end; we need to re-hydrate it with JSON.parse()
 	var selectedMembers = JSON.parse(data);
+	console.log(selectedMembers);
 	//var insertArray = [];
 	//insertArray["pair"] = selectedMembers;
 
@@ -156,8 +157,9 @@ router.post('/setscoutingpair', function(req, res) {
     // Submit to the DB
 	for (var member in selectedMembers)
 	{
+		console.log(selectedMembers[member]);
 		collection.update(
-			{ 	"name" : member },
+			{ 	"name" : selectedMembers[member] },
 			{ $set: { "assigned" : "true" } }
 		)
 	}

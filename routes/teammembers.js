@@ -71,6 +71,9 @@ router.post("/updatepresent", function(req, res){
 });
 
 router.post("/addmember", function(req, res){
+	var thisFuncName = "teammembers.addmember[post]: ";
+	console.log(thisFuncName + 'ENTER')
+
 	var db = req.db;
 	
 	if(db._state == 'closed'){ //If database does not exist, send error
@@ -86,13 +89,39 @@ router.post("/addmember", function(req, res){
 	var subteam = req.body.subteam;
 	var className = req.body.className;
 	var years = req.body.years;
+
+	// calculate seniority
+	var seniority = parseInt(years);
+	// sanity-check!
+	if (isNaN(seniority)) seniority = 0;
 	
-	collection.insert({"name": name, "subteam": subteam, "className": className, "years": years});
+	// Get the first 3 characters, all lower case
+	var classPre = className.toLowerCase().substring(0, 3);
+	switch(classPre) {
+		case "fre":
+			seniority += .1;
+			break;
+		case "sop":
+			seniority += .2;
+			break;
+		case "jun":
+			seniority += .3;
+			break;
+		case "sen":
+			seniority += .4;
+			break;
+	}
+	console.log(thisFuncName + 'seniority=' + seniority);
+	
+	collection.insert({"name": name, "subteam": subteam, "className": className, "years": years, "seniority": seniority});
 	
 	res.redirect("./");
 });
 
 router.post("/updatemember", function(req, res){
+	var thisFuncName = "teammembers.updatemember[post]: ";
+	console.log(thisFuncName + 'ENTER')
+	
 	var db = req.db;
 	
 	if (db._state == "closed"){
@@ -109,9 +138,33 @@ router.post("/updatemember", function(req, res){
 	var subteam = req.body.subteam;
 	var className = req.body.className;
 	var years = req.body.years;
+	
+	// recalculate seniority
+	var seniority = parseInt(years);
+	// sanity-check!
+	if (isNaN(seniority)) seniority = 0;
+	
+	// Get the first 3 characters, all lower case
+	var classPre = className.toLowerCase().substring(0, 3);
+	switch(classPre) {
+		case "fre":
+			seniority += .1;
+			break;
+		case "sop":
+			seniority += .2;
+			break;
+		case "jun":
+			seniority += .3;
+			break;
+		case "sen":
+			seniority += .4;
+			break;
+	}
+	console.log(thisFuncName + 'seniority=' + seniority);
+	
 	console.log({memberId, name, subteam, className, years});
 	
-	collection.update({"_id": memberId}, {$set: {"name": name, "subteam": subteam, "className": className, "years": years}});
+	collection.update({"_id": memberId}, {$set: {"name": name, "subteam": subteam, "className": className, "years": years, "seniority": seniority}});
 	
 	res.redirect("./");
 });

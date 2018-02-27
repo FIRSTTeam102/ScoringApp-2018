@@ -91,25 +91,27 @@ router.post("/addmember", function(req, res){
 	var years = req.body.years;
 
 	// calculate seniority
-	var seniority = parseInt(years);
-	// sanity-check!
-	if (isNaN(seniority)) seniority = 0;
+	var seniority = years;
+	// sanity-check! use '0' if it's not already a parseable int
+	if (isNaN(parseInt(seniority))) seniority = "0";
 	
 	// Get the first 3 characters, all lower case
 	var classPre = className.toLowerCase().substring(0, 3);
 	switch(classPre) {
 		case "fre":
-			seniority += .1;
+			seniority += ".1";
 			break;
 		case "sop":
-			seniority += .2;
+			seniority += ".2";
 			break;
 		case "jun":
-			seniority += .3;
+			seniority += ".3";
 			break;
 		case "sen":
-			seniority += .4;
+			seniority += ".4";
 			break;
+		default:
+			seniority += ".0";
 	}
 	console.log(thisFuncName + 'seniority=' + seniority);
 	
@@ -140,25 +142,27 @@ router.post("/updatemember", function(req, res){
 	var years = req.body.years;
 	
 	// recalculate seniority
-	var seniority = parseInt(years);
-	// sanity-check!
-	if (isNaN(seniority)) seniority = 0;
+	var seniority = years;
+	// sanity-check! use '0' if it's not already a parseable int
+	if (isNaN(parseInt(seniority))) seniority = "0";
 	
 	// Get the first 3 characters, all lower case
 	var classPre = className.toLowerCase().substring(0, 3);
 	switch(classPre) {
 		case "fre":
-			seniority += .1;
+			seniority += ".1";
 			break;
 		case "sop":
-			seniority += .2;
+			seniority += ".2";
 			break;
 		case "jun":
-			seniority += .3;
+			seniority += ".3";
 			break;
 		case "sen":
-			seniority += .4;
+			seniority += ".4";
 			break;
+		default:
+			seniority += ".0";
 	}
 	console.log(thisFuncName + 'seniority=' + seniority);
 	

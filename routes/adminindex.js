@@ -6,15 +6,38 @@ var router = express.Router();
 
 /* GET index page. */
 router.get('/', function(req, res) {
+	var thisFuncName = "adminindex.{root}[get]: ";
+	console.log(thisFuncName + 'ENTER');
+	
+    // Set our internal DB variable & the 'current' collection
+    var db = req.db;
+	var currentCol = db.get("current");
 	
 	if( !require('./checkauthentication')(req, res, 'admin') ){
+		console.log(thisFuncName + 'returning null');
 		return null;
 	}
 	
-	res.render('./adminindex', { 
-		title: 'Admin pages' 
+	// get the 'current' event from DB
+	currentCol.find({}, {}, function(e, docs) {
+		var currentEvent = 'No event defined';
+		if (docs)
+		{
+			console.log(thisFuncName + 'docs=' + JSON.stringify(docs));
+			if (docs.length > 0)
+			{
+				console.log(thisFuncName + 'docs[0]=' + JSON.stringify(docs[0]));
+				currentEvent = docs[0].event;
+			}
+		}
+		console.log(thisFuncName + 'currentEvent=' + currentEvent);
+		
+		console.log(thisFuncName + 'rendering ./adminindex');
+		res.render('./adminindex', { 
+			title: 'Admin pages',
+			current: currentEvent
+		});
 	});
-
 });
 
 router.post('/setcurrent', function(req, res) {

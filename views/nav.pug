@@ -7,7 +7,7 @@ if user
 					a(href="/logout" class="w3-bar-item w3-button") Log out
 			else
 				div(class="w3-bar-item")=user.name
-		a(href="#" class="w3-bar-item w3-button gear-clear") Scoring App
+		a(href="/scoring" class="w3-bar-item w3-button gear-clear") Scoring App
 		if user.subteam == "support" || user.subteam == "exec"
 			a(href="/admin" class="w3-bar-item w3-button gear-clear") Admin Index
 			a(href="/tests" class="w3-bar-item w3-button gear-clear") Test pages

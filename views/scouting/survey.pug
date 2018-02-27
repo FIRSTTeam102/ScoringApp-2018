@@ -1,0 +1,110 @@
+extends ../layout
+block content
+	- 
+		var testSurveyList = [
+		{
+			_id: 1,
+			type: "category",
+			category: "Category One"
+		},
+		{
+			_id: 2,
+			type: "txtNumber",
+			question: "How many points can you earn per match?"
+		},
+		{
+			_id: 3,
+			type: "chkTextNumber",
+			question: "Can you climb? How consistent is your climber? (%)"
+		},
+		{
+			_id: 4,
+			type: "category",
+			category: "I am too lazy to think of realistic quesitons."
+		},
+		{
+			_id: 69,
+			type: "dropdown",
+			question: "How much wood can a woodchuck chuck?",
+			options: [
+				"Sixteen",
+				"twelve",
+				"lol memes",
+				"(lenny face)"
+			]
+		},
+		{
+			_id: 3.14,
+			type: "chkText",
+			question: "Can u lel?"
+		},
+		{
+			_id: 666,
+			type: "chkText",
+			question: "Is Jordan the best? (trick question: The answer is yes."
+		}
+		];
+	
+	h3(class="gear-text-white")=title
+	h4 Team #{team}
+	
+	br 
+	
+	form( method="POST" )
+		
+		h3(style="border-bottom: 2px solid #a5a5a5a5")
+		br 
+		input(class="gear-btn gear-orange gear-hover-white w3-btn w3-margin-right" type="submit" value="Back")
+		input(class="gear-btn gear-orange gear-hover-white w3-btn w3-margin-left" type="submit" value="Submit")
+		
+		
+		each section, i in testSurveyList
+			- var type = section.type;
+			//h3=section.type
+			//p=section.category
+			if type == "category"
+				include templates/categoryHeader
+			if type == "txtNumber"
+				include templates/txtNumber
+			if type == "chkText"
+				include templates/chkText
+			if type == "chkTextNumber"
+				include templates/chkTextNumber
+			if type == "dropdown"
+				include templates/dropdown
+				
+		h3(style="border-bottom: 2px solid #a5a5a5a5")
+		br 
+		input(class="gear-btn gear-orange gear-hover-white w3-btn w3-margin-right" type="submit" value="Back")
+		input(class="gear-btn gear-orange gear-hover-white w3-btn w3-margin-left" type="submit" value="Submit")
+	
+	br 
+	br 
+	
+	script.
+		var chkToggleText = function(){
+			var txtInput = this.nextElementSibling.firstElementChild;
+			if(this.checked){
+				txtInput.disabled = false;
+				txtInput.classList.remove("gear-disabled-click");
+			}else{
+				txtInput.disabled = true;
+				txtInput.classList.add("gear-disabled-click");
+			}
+		}
+		var chkToggleFromTxt = function(){
+			var chk = this.previousElementSibling;
+			chk.checked = true;
+			var txtInput = this.firstElementChild;
+			txtInput.disabled = false;
+			txtInput.classList.remove("gear-disabled-click");
+		}
+		$(function(){
+			$(".chkText").on('click', chkToggleText);
+			$(".chkTextLabel").on('click', chkToggleFromTxt);
+		});
+		
+	style.
+		.w3-check{
+			top: 7.7px!important;
+		}

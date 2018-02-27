@@ -13,12 +13,6 @@ router.get('/', function(req, res) {
   res.render('./tests', { title: 'Tests page' });
 });
 
-router.get('/scoutinginput', function(req, res){
-	
-	res.render('./tests/checkbox-txt');
-	
-});
-
 router.get('/buttons', function(req, res) {
   res.render('./tests/buttons', { title: 'Buttons' });
 });

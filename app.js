@@ -62,6 +62,7 @@ var scoutingpairs = require('./routes/scoutingpairs');
 var teammembers = require("./routes/teammembers");
 var externaldata = require("./routes/externaldata");
 var scoring = require("./routes/scoring");
+var scouting = require("./routes/scouting");
 var current = require("./routes/current");
 
 //CONNECT URLS TO ROUTES
@@ -75,6 +76,7 @@ app.use("/admin/teammembers", teammembers);
 app.use('/admin/data', externaldata);
 app.use('/admin/current', current);
 app.use("/scoring", scoring);
+app.use("/scouting", scouting);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

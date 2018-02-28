@@ -187,35 +187,33 @@ router.post("/deletescoutingpair", function(req, res) {
 	
 	var data = req.body.data;
 	
-	var collection = db.get("scoutingpairs");
+	var scoutCol = db.get("scoutingpairs");
 	
-	collection.find({"_id": data}, {}, function(e, docs){
+	scoutCol.find({"_id": data}, {}, function(e, docs){
 		
 		if(e){ //if error, log to console
 			console.log(thisFuncName + e);
 		}
-		thisPair = docs;
-		console.log("thisPair=" + thisPair);
+		thisPair = docs[0];
+		console.log("thisPair=" + JSON.stringify(thisPair));
 
-		var collection2 = db.get('teammembers');
+		var teamCol = db.get('teammembers');
+
+		var nameList = [];
+		if (thisPair.member1)
+			nameList.push(thisPair.member1);
+		if (thisPair.member2)
+			nameList.push(thisPair.member2);
+		if (thisPair.member3)
+			nameList.push(thisPair.member3);
+		console.log("nameList=" + JSON.stringify(nameList));
+
+		teamCol.bulkWrite([{updateMany:{filter:{ "name": {$in: nameList }}, update:{ $set: { "assigned" : "false" } }}}], function(e, docs){
+			scoutCol.remove({"_id": data});
 		
-		for (var member in thisPair[0])
-		{
-//			console.log('member=' + member);
-			
-			if (member != "_id")
-			{
-				collection2.update(
-					{ "name" : member },
-					{ $set: { "assigned" : "false" } }
-				)
-			}
-		}
-		
-		collection.remove({"_id": data});
-	
-		console.log(thisFuncName + "REDIRECT");
-		res.redirect("./");		
+			console.log(thisFuncName + "REDIRECT");
+			res.redirect("./");	
+		});
 	});
 	
 	console.log(thisFuncName + "DONE");

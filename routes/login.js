@@ -23,7 +23,7 @@ router.get('/scouter', function(req, res) {
 	var teammembers = req.db.get("teammembers");
 	
 	//gets all users and spits them on dropdown
-	teammembers.find( {}, { password: -1, name: 1}, function(e, users){
+	teammembers.find( {}, {sort:{ "password": -1, "name": 1}}, function(e, users){
 		
 		if(e){
 			console.log(e);
@@ -47,7 +47,7 @@ router.get('/admin', function(req, res) {
 	//Get a list of all admin/exec members
 	var teammembers = req.db.get("teammembers");
 	
-	teammembers.find( {subteam: {$in: ["exec", "support"]} }, { password: -1, name: 1}, function(e, users){
+	teammembers.find( {subteam: {$in: ["exec", "support"]} }, {sort: { password: -1, name: 1}}, function(e, users){
 		
 		if(e){
 			console.log(e);

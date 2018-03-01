@@ -219,4 +219,50 @@ router.post("/deletescoutingpair", function(req, res) {
 	console.log(thisFuncName + "DONE");
 });
 
+router.post("/updateteamallocations", function(req, res) {
+	var thisFuncName = "scoutingpairs.updateteamallocations[post]: ";
+	
+	// Log message so we can see on the server side when we enter this
+	console.log(thisFuncName + "ENTER");
+	
+	var db = req.db;
+	var scoutPairCol = db.get("scoutingpairs");
+	
+	if(db._state == 'closed'){ //If database does not exist, send error
+		res.render('./error',{
+			message: "Database error: Offline",
+			error: {status: "If the database is running, try restarting the Node server."}
+		});
+	}
+
+	//Gets the current set of already-assigned pairs
+	scoutPairCol.find({}, {}, function (e, docs) {;
+		if(e){ //if error, log to console
+			console.log(thisFuncName + e);
+		}
+		var scoutingpairs = docs;
+
+		// Iterate through scoutingpairs; create {1st: 2nd: 3rd:} and add to 'dict' keying off 1st <1, or 1/2 2/1, or 1/2/3 2/3/1 3/1/2>
+		
+		// Read all members, ordered by 'seniority' ~ have an array ordered by seniority
+		
+		// Get all the teams for the 'current' event
+		
+		// Cycle through teams, adding 1st 2nd 3rd to each based on array of 1st2nd3rds
+		
+		// Delete old team allocations, write new ones
+		
+		// Match assignments: structured same as TBA data?
+		// {
+		//  "alliances": {
+		//   "blue": { "team_keys": [ "frc78", "frc5813", "frc5459" ] },
+		//   "red": { "team_keys": [ "frc238", "frc5687", "frc3323" ] }
+		//  },
+		//  "comp_level": "f", "event_key": "2018week0", "key": "2018week0_f1m2", "match_number": 2 
+		// }
+		
+		res.redirect("./");	
+	});
+});	
+
 module.exports = router;

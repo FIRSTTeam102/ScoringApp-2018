@@ -40,7 +40,10 @@ block content
 				|    #{thisButtonLabel}
 	form(method="post" action="/admin/scoutingpairs/deletescoutingpair" id="deletememberpair")
 		input(id="deletememberpairinput" name="data" type="hidden")
-	
+	hr
+	form(method="post" action="/admin/scoutingpairs/updateteamallocations")
+		button(class="w3-btn w3-block w3-cyan" type="submit") (Re)Allocate teams/matches to members/pairs
+		
 	script.
 		var selectedDict = {};
 		var selectedArray = [];

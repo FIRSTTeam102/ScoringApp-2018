@@ -7,32 +7,35 @@ block content
 	if locals.matches
 		table(class="w3-table")
 			tr
-				th Level
-				th Num
-				th Time
+				th Lvl
+				th #
+				th Schedule
+				th Actual
 				th Blue
-				th 
-				th
-				th
+				th Score
 				th Red
-				th
-				th
-				th
-				th Winner
+				th Score
+				th Won?
 				th Update
 			each match in matches
 				tr
 					td= match.comp_level
 					td= match.match_number
-					td= match.time
-					td= match.alliances.blue.team_keys[0]
-					td= match.alliances.blue.team_keys[1]
-					td= match.alliances.blue.team_keys[2]
-					td Score: #{match.alliances.blue.score}
-					td= match.alliances.red.team_keys[0]
-					td= match.alliances.red.team_keys[1]
-					td= match.alliances.red.team_keys[2]
-					td Score: #{match.alliances.red.score}
+					td= new Date(1000*match.time - 1000*60*60*5).toISOString().substring(5,16).replace("T"," ").replace("-","/")
+					if match.actual_time
+						td= new Date(1000*match.actual_time - 1000*60*60*5).toISOString().substring(5,16).replace("T"," ").replace("-","/")
+					else
+						td
+					td= match.alliances.blue.team_keys[0].substring(3)+', '+match.alliances.blue.team_keys[1].substring(3)+', '+match.alliances.blue.team_keys[2].substring(3)
+					if (match.alliances.blue.score > -1)
+						td= match.alliances.blue.score
+					else
+						td
+					td= match.alliances.red.team_keys[0].substring(3)+', '+match.alliances.red.team_keys[1].substring(3)+', '+match.alliances.red.team_keys[2].substring(3)
+					if (match.alliances.red.score > -1)
+						td= match.alliances.red.score
+					else
+						td
 					td= match.winning_alliance
 					td
 						button #{match.key}

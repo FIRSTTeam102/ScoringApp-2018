@@ -111,6 +111,7 @@ router.post('/setscoutingpair', function(req, res) {
     // Set collection to 'teammembers'
     var collection = db.get('teammembers');
 
+	// TODO: Redo as... teamCol.bulkWrite([{updateMany:{filter:{ "name": {$in: nameList }}, update:{ $set: { "assigned" : "true" } }}}], function(e, docs){
     // Submit to the DB
 	for (var member in selectedMembers)
 	{
@@ -166,19 +167,22 @@ router.post("/deletescoutingpair", function(req, res) {
 		console.log("nameList=" + JSON.stringify(nameList));
 
 		teamCol.bulkWrite([{updateMany:{filter:{ "name": {$in: nameList }}, update:{ $set: { "assigned" : "false" } }}}], function(e, docs){
-			scoutCol.remove({"_id": data});
-		
-			console.log(thisFuncName + "REDIRECT");
-			res.redirect("./");	
+			scoutCol.remove({"_id": data}, function(e, docs) {
+				console.log(thisFuncName + "REDIRECT");
+				res.redirect("./");	
+			});
 		});
 	});
 	
 	console.log(thisFuncName + "DONE");
 });
 
-router.post("/updateteamallocations", function(req, res) {
-	var thisFuncName = "scoutingpairs.updateteamallocations[post]: ";
-	
+router.post("/generateteamallocations", function(req, res) {
+	var thisFuncName = "scoutingpairs.generateTEAMallocations[post]: ";
+
+	// used when writing data to DB, for later querying by year
+	var year = (new Date()).getFullYear();
+							
 	// Log message so we can see on the server side when we enter this
 	console.log(thisFuncName + "ENTER");
 	
@@ -186,7 +190,8 @@ router.post("/updateteamallocations", function(req, res) {
 	var currentCol = db.get("current");
 	var scoutPairCol = db.get("scoutingpairs");
 	var memberCol = db.get("teammembers");
-	var scoutAssignCol = db.get("scoutingassignments");
+	var scoutDataCol = db.get("scoutingdata");
+	var scoreDataCol = db.get("scoringdata");
 
 	if(db._state == 'closed'){ //If database does not exist, send error
 		res.render('./error',{
@@ -217,6 +222,8 @@ router.post("/updateteamallocations", function(req, res) {
 				current: eventId
 			});
 		}
+		// used when writing data to DB, for later querying by event_key
+		var event_key = eventId;
 		
 		//
 		// Get the current set of already-assigned pairs; make a map of {"id": {"prim", "seco", "tert"}}
@@ -276,8 +283,7 @@ router.post("/updateteamallocations", function(req, res) {
 				client.get(url, args, function (data, response) {
 					var tbaTeamArray = JSON.parse(data);
 					var tbaTeamArrayLen = tbaTeamArray.length;
-					if (tbaTeamArrayLen == null)
-					{
+					if (tbaTeamArrayLen == null) {
 						console.log(thisFuncName + "Whoops, there was an error!")
 						console.log(thisFuncName + "data=" + data);
 						year = (new Date()).getFullYear();
@@ -289,8 +295,11 @@ router.post("/updateteamallocations", function(req, res) {
 						return;
 					}
 
+					//
 					// Cycle through teams, adding 1st 2nd 3rd to each based on array of 1st2nd3rds
+					//
 					var teamassignments = [];
+					var teamassignmentsByTeam = {};
 					var assigneePointer = 0;
 					for (var i = 0; i < tbaTeamArrayLen; i++) {
 						var thisTbaTeam = tbaTeamArray[i];
@@ -303,39 +312,36 @@ router.post("/updateteamallocations", function(req, res) {
 						console.log(thisFuncName + "thisPrimaryAndBackup=" + JSON.stringify(thisPrimaryAndBackup));
 						*/
 						
+						// { year, event_key, team_key, primary, secondary, tertiary, actual, scouting_data: {} }
 						var thisAssignment = {};
-						thisAssignment["team"] = thisTbaTeam.key;
+						// general info
+						thisAssignment["year"] = year;
+						thisAssignment["event_key"] = event_key;
+						// unique per team
+						thisAssignment["team_key"] = thisTbaTeam.key;
 						thisAssignment["primary"] = thisPrimaryAndBackup.primary;
 						if (thisPrimaryAndBackup.secondary)
 							thisAssignment["secondary"] = thisPrimaryAndBackup.secondary;
 						if (thisPrimaryAndBackup.tertiary)
 							thisAssignment["tertiary"] = thisPrimaryAndBackup.tertiary;
 						
+						// Array for mass insert
 						teamassignments.push(thisAssignment);
+						// Map of assignments by team so we can lookup by team later during match assigning
+						teamassignmentsByTeam[thisTbaTeam.key] = thisAssignment;
 						
 						assigneePointer += 1;
 						if (assigneePointer >= teammembersLen)
 							assigneePointer = 0;
 					}
-					console.log(thisFuncName + "****** New teamassignments:");
+					console.log(thisFuncName + "****** New/updated teamassignments:");
 					for (var i = 0; i < tbaTeamArrayLen; i++)
 						console.log(thisFuncName + "teamassignment["+i+"]=" + JSON.stringify(teamassignments[i]));
 					
-					//
-					// Delete old team allocations, write new ones
-					//
-					scoutAssignCol.remove({}, function(e, docs) {
+					// Delete ALL the old elements first for the 'current' event
+					scoutDataCol.remove({"event_key": event_key}, function(e, docs) {
 						// Insert the new data
-						scoutAssignCol.insert(teamassignments, function(e, docs) {
-							//
-							// Match assignments: 
-							// { year, event_key, match_key, match_number, alliance, 'match_team_key', assigned_scorer, actual_scorer, scoring_data: {} }
-							//
-							var year = (new Date()).getFullYear();
-							var event_key = eventId;
-							
-
-							
+						scoutDataCol.insert(teamassignments, function(e, docs) {
 							res.redirect("./");	
 						});
 					});
@@ -345,31 +351,143 @@ router.post("/updateteamallocations", function(req, res) {
 	});
 });	
 
-/*			
-		// nodeclient
-		var Client = require('node-rest-client').Client;
-		var client = new Client();
+router.post("/generatematchallocations", function(req, res) {
+	var thisFuncName = "scoutingpairs.generateMATCHallocations[post]: ";
+
+	// used when writing data to DB, for later querying by year
+	var year = (new Date()).getFullYear();
+							
+	// Log message so we can see on the server side when we enter this
+	console.log(thisFuncName + "ENTER");
+	
+	var db = req.db;
+	var currentCol = db.get("current");
+	var scoutPairCol = db.get("scoutingpairs");
+	var memberCol = db.get("teammembers");
+	var scoutDataCol = db.get("scoutingdata");
+	var scoreDataCol = db.get("scoringdata");
+
+	if(db._state == 'closed'){ //If database does not exist, send error
+		res.render('./error',{
+			message: "Database error: Offline",
+			error: {status: "If the database is running, try restarting the Node server."}
+		});
+	}
+
+	// nodeclient
+	var Client = require('node-rest-client').Client;
+	var client = new Client();
+	var args = {
+		headers: { "accept": "application/json", "X-TBA-Auth-Key": "iSpbq2JH2g27Jx2CI5yujDsoKYeC8pGuMw94YeK3gXFU6lili7S2ByYZYZOYI3ew" }
+	}
 		
-		var args = {
-			headers: { "accept": "application/json", "X-TBA-Auth-Key": "iSpbq2JH2g27Jx2CI5yujDsoKYeC8pGuMw94YeK3gXFU6lili7S2ByYZYZOYI3ew" }
+	//
+	// Get the 'current' event from DB
+	//
+	currentCol.find({}, {}, function(e, docs) {
+		var noEventFound = 'No event defined';
+		var eventId = noEventFound;
+		if (docs)
+			if (docs.length > 0)
+				eventId = docs[0].event;
+		if (eventId === noEventFound) {
+			res.render('./adminindex', { 
+				title: 'Admin pages',
+				current: eventId
+			});
 		}
-		var url = "https://www.thebluealliance.com/api/v3/event/" + eventId + "/matches";
-		console.log(thisFuncName + "url=" + url);
-		client.get(url, args, function (data, response) {
-			var array = JSON.parse(data);
-			var arrayLength = array.length;
-			if (arrayLength == null)
-			{
-				console.log(thisFuncName + "Whoops, there was an error!")
-				console.log(thisFuncName + "data=" + data);
-				
-				res.render('./adminindex', { 
-					title: 'Admin pages',
-					current: eventId
-				});
+		// used when writing data to DB, for later querying by event_key
+		var event_key = eventId;
+
+		// { year, event_key, match_key, match_number, alliance, 'match_team_key', assigned_scorer, actual_scorer, scoring_data: {} }
+
+		// Need: Map, teamID->primary/secondar/tertiary
+		// Read all matches
+		// For each match:
+		// Go through the teams, build data elements without assignees
+		// Try to allocate primaries (track assigned members in a map - can't assign someone twice!)
+		// Repeat again if blanks left over with secondaries
+		// Repeat again if blanks left over with tertiaries
+		// Add batch to collecting array for eventual DB mass insert
+
+		// Need map of team IDs to scouts (scoutingdata)
+		scoutDataCol.find({"event_key": event_key}, function(e, docs) {
+			if(e){ //if error, log to console
+				console.log(thisFuncName + e);
 			}
-			else
-			{
-*/		
+			var scoutDataArray = docs;
+			
+			// Build teamID->primary/secondar/tertiary lookup
+			var scoutDataByTeam = {};
+			var scoutDataLen = scoutDataArray.length;
+			for (var i = 0; i < scoutDataLen; i++)
+				scoutDataByTeam[scoutDataArray[i].team_key] = scoutDataArray[i];
+			
+			// Read all matches
+			var url = "https://www.thebluealliance.com/api/v3/event/" + eventId + "/matches/simple";
+			console.log(thisFuncName + "url=" + url);
+			client.get(url, args, function (data, response) {
+				var matchArray = JSON.parse(data);
+				var matchLen = matchArray.length;
+				if (matchLen == null)
+				{
+					console.log(thisFuncName + "Whoops, there was an error!");
+					console.log(thisFuncName + "matchArray=" + matchArray);
+					
+					res.render('./adminindex', { 
+						title: 'Admin pages',
+						current: eventId
+					});
+					return;
+				}
+				console.log(thisFuncName + 'Found ' + matchLen + ' matches for event ' + eventId);
+
+				// Build up the scoringdata array
+				var scoringDataArray = [];
+				// Loop through each match
+				for (var matchIdx = 0; matchIdx < matchLen; matchIdx++) {
+					var thisMatch = matchArray[matchIdx];
+					//console.log(thisFuncName + "*** thisMatch=" + thisMatch.key);
+					
+					// Build unassigned match-team data elements
+					var thisMatchDataArray = [];
+					
+					// { year, event_key, match_key, match_number, alliance, team_key, 'match_team_key', assigned_scorer, actual_scorer, scoring_data: {} }
+					var allianceArray = [ "red", "blue" ];
+					for (var allianceIdx = 0; allianceIdx < allianceArray.length; allianceIdx++) {
+						// teams are indexed 0, 1, 2
+						for (var teamIdx = 0; teamIdx < 3; teamIdx++)
+						{
+							var thisScoreData = {};
+							
+							thisScoreData["year"] = year;
+							thisScoreData["event_key"] = event_key;
+							thisScoreData["match_key"] = thisMatch.key;
+							thisScoreData["match_number"] = thisMatch.match_number;
+							
+							thisScoreData["alliance"] = allianceArray[allianceIdx];
+							thisScoreData["team_key"] = thisMatch.alliances[allianceArray[allianceIdx]].team_keys[teamIdx];
+							thisScoreData["match_team_key"] = thisMatch.key + "_" + thisScoreData["team_key"];
+
+							//console.log(thisFuncName + "thisScoreData=" + JSON.stringify(thisScoreData));
+							
+							thisMatchDataArray.push(thisScoreData);
+						}
+					}
+					
+					// Go through assigning primaries first, then secondaries, then tertiaries
+					var roleArray = [ "primary", "secondary", "tertiary" ];
+					// Keep track of who we've assigned
+					var assignedMembers = {};
+					for (var roleIdx = 0; roleIdx < roleArray.length; roleIdx++) {
+						////////////// TODO
+					}
+				}
+				
+				res.redirect("./");	
+			});
+		});
+	});
+});
 
 module.exports = router;

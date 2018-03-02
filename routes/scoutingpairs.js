@@ -477,10 +477,11 @@ router.post("/generatematchallocations", function(req, res) {
 					
 					// Go through assigning primaries first, then secondaries, then tertiaries
 					var roleArray = [ "primary", "secondary", "tertiary" ];
-					// Keep track of who we've assigned
+					// Keep track of who we've assigned - can't assign someone twice!
 					var assignedMembers = {};
 					for (var roleIdx = 0; roleIdx < roleArray.length; roleIdx++) {
-						////////////// TODO
+						var thisRole = roleArray[roleIdx];
+						
 					}
 				}
 				

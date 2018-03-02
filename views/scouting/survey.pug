@@ -44,7 +44,7 @@ block content
 			question: "Is Jordan the best? (trick question: The answer is yes."
 		}
 		];
-	
+			
 	h3(class="gear-text-white")=title
 	h4 Team #{team}
 	
@@ -57,9 +57,12 @@ block content
 		input(class="gear-btn gear-orange gear-hover-white w3-btn w3-margin-right" type="submit" value="Back")
 		input(class="gear-btn gear-orange gear-hover-white w3-btn w3-margin-left" type="submit" value="Submit")
 		
+		input(type="number" style="visibility:hidden;width:0;height:0;" name="team_number", value=team)
 		
-		each section, i in testSurveyList
+		each section, i in surveyList
 			- var type = section.type;
+			- var id = section.id;
+			- var answer = answers[id];
 			//h3=section.type
 			//p=section.category
 			if type == "category"

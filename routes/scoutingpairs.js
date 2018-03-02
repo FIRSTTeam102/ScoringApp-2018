@@ -336,7 +336,7 @@ router.post("/generateteamallocations", function(req, res) {
 					}
 					console.log(thisFuncName + "****** New/updated teamassignments:");
 					for (var i = 0; i < tbaTeamArrayLen; i++)
-						console.log(thisFuncName + "teamassignment["+i+"]=" + JSON.stringify(teamassignments[i]));
+						console.log(thisFuncName + "team,primary,secondary,tertiary=" + teamassignments[i].team_key + " ~> " + teamassignments[i].primary + "," + teamassignments[i].secondary + ","  + teamassignments[i].tertiary);
 					
 					// Delete ALL the old elements first for the 'current' event
 					scoutDataCol.remove({"event_key": event_key}, function(e, docs) {
@@ -464,6 +464,8 @@ router.post("/generatematchallocations", function(req, res) {
 							thisScoreData["event_key"] = event_key;
 							thisScoreData["match_key"] = thisMatch.key;
 							thisScoreData["match_number"] = thisMatch.match_number;
+							// time is the best 'chronological order' sort field
+							thisScoreData["time"] = thisMatch.time;
 							
 							thisScoreData["alliance"] = allianceArray[allianceIdx];
 							thisScoreData["team_key"] = thisMatch.alliances[allianceArray[allianceIdx]].team_keys[teamIdx];
@@ -474,18 +476,56 @@ router.post("/generatematchallocations", function(req, res) {
 							thisMatchDataArray.push(thisScoreData);
 						}
 					}
+					var thisMatchLen = thisMatchDataArray.length;
+					//console.log(thisFuncName + "thisMatchDataArray=" + JSON.stringify(thisMatchDataArray));
 					
-					// Go through assigning primaries first, then secondaries, then tertiaries
-					var roleArray = [ "primary", "secondary", "tertiary" ];
 					// Keep track of who we've assigned - can't assign someone twice!
 					var assignedMembers = {};
+					// Go through assigning primaries first, then secondaries, then tertiaries
+					var roleArray = [ "primary", "secondary", "tertiary" ];
 					for (var roleIdx = 0; roleIdx < roleArray.length; roleIdx++) {
+						// Which role (primary? secondary? tertiary?) are we checking
 						var thisRole = roleArray[roleIdx];
-						
+						// Cycle through the scoring data, looking for blank assignees
+						for (var thisMatchIdx = 0; thisMatchIdx < thisMatchLen; thisMatchIdx++) {
+							var thisScoreData = thisMatchDataArray[thisMatchIdx];
+							//console.log(thisFuncName + "thisScoreData=" + thisScoreData);
+							// Not yet assigned?
+							if (!(thisScoreData.assigned_scorer)) {
+								// Which team is this?
+								var thisTeamKey = thisScoreData.team_key;
+								// Who is assigned to this team?
+								var thisScoutData = scoutDataByTeam[thisTeamKey];
+								var thisPossibleAssignee = thisScoutData[thisRole];
+								// Only check if this role is defined for this team
+								if (thisPossibleAssignee) {
+									// Only proceed if this person is not yet assigned elsewhere
+									if (!assignedMembers[thisPossibleAssignee]) {
+										// Good to assign!
+										thisMatchDataArray[thisMatchIdx].assigned_scorer = thisPossibleAssignee;
+										// Mark them as assigned to a team
+										assignedMembers[thisPossibleAssignee] = thisPossibleAssignee;
+									}
+								}
+							}
+						}
+					}
+					
+					console.log(thisFuncName + "*** thisMatch=" + thisMatch.key);
+					for (var thisMatchDataIdx = 0; thisMatchDataIdx < thisMatchLen; thisMatchDataIdx++) {
+						console.log(thisFuncName + "team,assigned=" + thisMatchDataArray[thisMatchDataIdx].team_key + " ~> " + thisMatchDataArray[thisMatchDataIdx].assigned_scorer);
+						// add to the overall array of match assignments
+						scoringDataArray.push(thisMatchDataArray[thisMatchDataIdx]);
 					}
 				}
-				
-				res.redirect("./");	
+
+				// Delete ALL the old elements first for the 'current' event
+				scoreDataCol.remove({"event_key": event_key}, function(e, docs) {
+					// Insert the new data - w00t!
+					scoreDataCol.insert(scoringDataArray, function(e, docs) {
+						res.redirect("./");	
+					});
+				});
 			});
 		});
 	});

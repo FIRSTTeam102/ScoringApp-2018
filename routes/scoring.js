@@ -11,6 +11,13 @@ router.get('/', function(req, res){
 	});
 });
 
+router.get('/dashboard', function(req, res) {
+	var db = req.db;
+	var user = req.user.name;
+	
+	
+});
+
 router.post('/submit', function(req, res){
 	console.log(req.body);
 	res.redirect("/");

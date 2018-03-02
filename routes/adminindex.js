@@ -55,7 +55,8 @@ router.post('/setcurrent', function(req, res) {
 		// Now, insert the new data
 		currentCol.insert({"event": eventId}, function(e, docs) {
 			res.render('./adminindex', { 
-				title: 'Admin pages' 
+				title: 'Admin pages',
+				current: eventId
 			});
 		});
 	});

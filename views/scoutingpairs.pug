@@ -41,8 +41,13 @@ block content
 	form(method="post" action="/admin/scoutingpairs/deletescoutingpair" id="deletememberpair")
 		input(id="deletememberpairinput" name="data" type="hidden")
 	hr
-	form(method="post" action="/admin/scoutingpairs/updateteamallocations")
-		button(class="w3-btn w3-block w3-cyan" type="submit") (Re)Allocate teams/matches to members/pairs
+	h1 WARNING: ERASES EXISTING SCOUTING DATA FOR THE CURRENT EVENT
+	form(method="post" action="/admin/scoutingpairs/generateteamallocations")
+		button(class="w3-btn w3-block w3-cyan" type="submit") (Re)Allocate teams to scouting members
+	p
+	h1 WARNING: ERASES EXISTING SCORING DATA FOR THE CURRENT EVENT
+	form(method="post" action="/admin/scoutingpairs/generatematchallocations")
+		button(class="w3-btn w3-block w3-cyan" type="submit") (Re)Allocate teams@matches to scoring members
 		
 	script.
 		var selectedDict = {};

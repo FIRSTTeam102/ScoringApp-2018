@@ -1,3 +1,24 @@
 extends ../layout
 
 block content
+	if matches.length > 0
+		h2(class="gear-text-white") Match Scouting
+		table
+			tr
+				th Num
+				th Alliance
+				th Assigned
+				th Team
+			each match in matches
+				tr
+					td= match.match_number
+					td= match.alliance
+					td= match.assigned_scorer
+					td
+						if match.data
+							div(class="gear-btn gear-blue w3-btn w3-section gear-margin-sides")
+								span= match.team_key.substring(3)
+						else
+							a(href=`/scouting/match?key=${match.match_team_key}`) 
+								div(class="gear-btn gear-orange gear-hover-white w3-btn w3-section gear-margin-sides")
+									span= match.team_key.substring(3)

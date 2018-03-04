@@ -82,7 +82,6 @@ router.get('/', function(req, res) {
 							for (var matchesIdx = 0; matchesIdx < scoringMatches.length; matchesIdx++)
 								console.log(thisFuncName + "scoringMatch[" + matchesIdx + "]: num,team=" + scoringMatches[matchesIdx].match_number + "," + scoringMatches[matchesIdx].team_key);
 							
-							// TODO
 							res.render('./dashboard/dashboard-index',{
 								"thisPair": thisPairLabel,
 								"assignedTeams": assignedTeams,
@@ -143,6 +142,47 @@ router.get('/pits', function(req, res) {
 });
 
 router.get('/matches', function(req, res) {
+	var thisFuncName = "dashboard.matches[get]: ";
+	console.log(thisFuncName + 'ENTER');
+
+	var db = req.db;
+	var currentCol = db.get("current");
+	var scoreDataCol = db.get("scoringdata");
+	var matchCol = db.get("matches");
+
+	//
+	// Get the 'current' event from DB
+	//
+	currentCol.find({}, {}, function(e, docs) {
+		var noEventFound = 'No event defined';
+		var eventId = noEventFound;
+		if (docs)
+			if (docs.length > 0)
+				eventId = docs[0].event;
+		if (eventId === noEventFound) {
+			res.render('/adminindex', { 
+				title: 'Admin pages',
+				current: eventId
+			});
+		}
+		// for later querying by event_key
+		var event_key = eventId;
+
+		// Get the *min* time of the as-yet-unresolved matches [where alliance scores are still -1]
+		matchCol.find({ event_key: eventId, "alliances.red.score": -1 },{sort: {"time": 1}}, function(e, docs){
+			var earliestMatch = docs[0];
+			var earliestTimestamp = earliestMatch.time;
+	
+			// Get all the UNRESOLVED matches
+			scoreDataCol.find({"event_key": eventId, "time": { $gte: earliestTimestamp }}, { sort: {"time": 1, "alliance": 1, "team_key": 1} }, function (e, docs) {
+				var matches = docs;
+				
+				res.render('./dashboard/matches',{
+					"matches": matches
+				});
+			});
+		});
+	});
 });
 
 module.exports = router;

@@ -7,6 +7,7 @@ if user
 					a(href="/logout" class="w3-bar-item w3-button") Log out
 			else
 				div(class="w3-bar-item")=user.name
+		a(href="/dashboard" class="w3-bar-item w3-button gear-clear") Dashboard
 		a(href="/scoring" class="w3-bar-item w3-button gear-clear") Scoring App
 		a(href="/scouting" class="w3-bar-item w3-button gear-clear") Scouting Survey
 		if user.subteam == "support" || user.subteam == "exec"

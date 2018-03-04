@@ -1,0 +1,46 @@
+extends ..\layout
+
+block content
+	if user
+		h1(class="gear-text-white") Dashboard for #{user.name}
+		div(style="text-align:left")
+			h4(class="gear-text-white")
+				i Scouting group: #{thisPair}
+			hr
+			if assignedTeams.length > 0
+				h2(class="gear-text-white") Scouting assignments
+				each team in assignedTeams
+					if team.data
+						div(class="gear-btn gear-blue w3-btn w3-section gear-margin-sides")
+							span= team.team_key.substring(3)
+					else
+						a(href=`/scouting/survey?team=${team.team_key}`) 
+							div(class="gear-btn gear-orange gear-hover-white w3-btn w3-section gear-margin-sides")
+								span= team.team_key.substring(3)
+				hr
+			if backupTeams.length > 0
+				h2(class="gear-text-white") Partner(s) scouting assignments
+				each team in backupTeams
+					if team.data
+						div(class="gear-btn gear-blue w3-btn w3-section gear-margin-sides")
+							span= team.team_key.substring(3)
+					else
+						a(href=`/scouting/survey?team=${team.team_key}`) 
+							div(class="gear-btn gear-red gear-hover-white w3-btn w3-section gear-margin-sides")
+								span= team.team_key.substring(3)
+				hr
+			if scoringMatches.length > 0
+				h2(class="gear-text-white") Upcoming matches to be scored
+				each match in scoringMatches
+					h4(class="gear-text-white") Match #{match.match_number} - #{match.alliance} alliance -
+						if match.data
+							div(class="gear-btn gear-blue w3-btn w3-section gear-margin-sides")
+								span= match.team_key.substring(3)
+						else
+							a(href=`/scoring/survey?team=${match.team_key}`) 
+								div(class="gear-btn gear-orange gear-hover-white w3-btn w3-section gear-margin-sides")
+									span= match.team_key.substring(3)
+
+						
+					
+			

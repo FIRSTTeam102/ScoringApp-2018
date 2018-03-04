@@ -61,6 +61,7 @@ var ajax = require('./routes/ajax'); 			//Ajax example (was used for test origin
 var scoutingpairs = require('./routes/scoutingpairs');
 var teammembers = require("./routes/teammembers");
 var externaldata = require("./routes/externaldata");
+var dashboard = require("./routes/dashboard");
 var scoring = require("./routes/scoring");
 var scouting = require("./routes/scouting");
 var current = require("./routes/current");
@@ -75,6 +76,7 @@ app.use('/admin/scoutingpairs', scoutingpairs);
 app.use("/admin/teammembers", teammembers);
 app.use('/admin/data', externaldata);
 app.use('/admin/current', current);
+app.use("/dashboard", dashboard);
 app.use("/scoring", scoring);
 app.use("/scouting", scouting);
 

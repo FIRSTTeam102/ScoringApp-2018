@@ -72,7 +72,7 @@ router.get('/', function(req, res) {
 						console.log(thisFuncName + "backupTeam[" + backupIdx + "]=" + backupTeams[backupIdx].team_key);
 				
 					// Get the *min* time of the as-yet-unresolved matches [where alliance scores are still -1]
-					matchCol.find({ event_key: "2018ohmv", "alliances.red.score": -1 },{sort: {"time": 1}}, function(e, docs){
+					matchCol.find({ event_key: eventId, "alliances.red.score": -1 },{sort: {"time": 1}}, function(e, docs){
 						var earliestMatch = docs[0];
 						var earliestTimestamp = earliestMatch.time;
 				

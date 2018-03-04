@@ -55,7 +55,7 @@ router.get('/', function(req, res) {
 				console.log(thisFuncName + "assignedTeam[" + assignedIdx + "]=" + assignedTeams[assignedIdx].team_key + "; data=" + assignedTeams[assignedIdx].data);
 
 			// Get their scouting team
-			pairsDataCol.find({$or: [{"member1": thisUserName}, {"member1": thisUserName}, {"member1": thisUserName}]}, {}, function (e, docs) {
+			pairsDataCol.find({$or: [{"member1": thisUserName}, {"member2": thisUserName}, {"member3": thisUserName}]}, {}, function (e, docs) {
 				// we assume they're in a pair!
 				var thisPair = docs[0];
 				var thisPairLabel = thisPair.member1;
@@ -104,6 +104,45 @@ router.get('/unassigned', function(req, res) {
 	res.render('./dashboard/unassigned',{
 		title: 'Ad-Hoc Scouting/Scoring'
 	});	
+});
+
+router.get('/pits', function(req, res) {
+	var thisFuncName = "dashboard.puts[get]: ";
+	console.log(thisFuncName + 'ENTER');
+
+	var db = req.db;
+	var currentCol = db.get("current");
+	var scoutDataCol = db.get("scoutingdata");
+
+	//
+	// Get the 'current' event from DB
+	//
+	currentCol.find({}, {}, function(e, docs) {
+		var noEventFound = 'No event defined';
+		var eventId = noEventFound;
+		if (docs)
+			if (docs.length > 0)
+				eventId = docs[0].event;
+		if (eventId === noEventFound) {
+			res.render('/adminindex', { 
+				title: 'Admin pages',
+				current: eventId
+			});
+		}
+		// for later querying by event_key
+		var event_key = eventId;
+		
+		scoutDataCol.find({"event_key": eventId}, { sort: {"team_key": 1} }, function (e, docs) {
+			var teams = docs;
+			
+			res.render('./dashboard/pits', {
+				"teams": teams
+			});	
+		});
+	});
+});
+
+router.get('/matches', function(req, res) {
 });
 
 module.exports = router;

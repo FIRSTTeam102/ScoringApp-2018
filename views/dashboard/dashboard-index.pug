@@ -14,7 +14,7 @@ block content
 						div(class="gear-btn gear-blue w3-btn w3-section gear-margin-sides")
 							span= team.team_key.substring(3)
 					else
-						a(href=`/scouting/survey?team=${team.team_key}`) 
+						a(href=`/scouting/pit?team=${team.team_key}`) 
 							div(class="gear-btn gear-orange gear-hover-white w3-btn w3-section gear-margin-sides")
 								span= team.team_key.substring(3)
 				hr
@@ -25,7 +25,7 @@ block content
 						div(class="gear-btn gear-blue w3-btn w3-section gear-margin-sides")
 							span= team.team_key.substring(3)
 					else
-						a(href=`/scouting/survey?team=${team.team_key}`) 
+						a(href=`/scouting/pit?team=${team.team_key}`) 
 							div(class="gear-btn gear-red gear-hover-white w3-btn w3-section gear-margin-sides")
 								span= team.team_key.substring(3)
 				hr
@@ -37,7 +37,7 @@ block content
 							div(class="gear-btn gear-blue w3-btn w3-section gear-margin-sides")
 								span= match.team_key.substring(3)
 						else
-							a(href=`/scoring/survey?team=${match.match_team_key}`) 
+							a(href=`/scoring/match?team=${match.match_team_key}`) 
 								div(class="gear-btn gear-orange gear-hover-white w3-btn w3-section gear-margin-sides")
 									span= match.team_key.substring(3)
 

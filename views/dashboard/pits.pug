@@ -1,0 +1,14 @@
+extends ../layout
+
+block content
+	if teams.length > 0
+		h2(class="gear-text-white") Pit Scouting
+		each team in teams
+			h4(class="gear-text-white") #{team.primary} -
+				if team.data
+					div(class="gear-btn gear-blue w3-btn w3-section gear-margin-sides")
+						span= team.team_key.substring(3)
+				else
+					a(href=`/scouting/pit?team=${team.team_key}`) 
+						div(class="gear-btn gear-orange gear-hover-white w3-btn w3-section gear-margin-sides")
+							span= team.team_key.substring(3)

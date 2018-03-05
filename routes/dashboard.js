@@ -174,7 +174,7 @@ router.get('/matches', function(req, res) {
 			var earliestTimestamp = earliestMatch.time;
 	
 			// Get all the UNRESOLVED matches
-			scoreDataCol.find({"event_key": eventId, "time": { $gte: earliestTimestamp }}, { sort: {"time": 1, "alliance": 1, "team_key": 1} }, function (e, docs) {
+			scoreDataCol.find({"event_key": eventId, "time": { $gte: earliestTimestamp }}, { limit: 60, sort: {"time": 1, "alliance": 1, "team_key": 1} }, function (e, docs) {
 				var matches = docs;
 				
 				res.render('./dashboard/matches',{

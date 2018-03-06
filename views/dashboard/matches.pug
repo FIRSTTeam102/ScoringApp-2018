@@ -3,14 +3,14 @@ extends ../layout
 block content
 	if matches.length > 0
 		h2(class="gear-text-white") Match Scouting
-		table
+		table#matchTable
 			tr
-				th Num
+				th(onclick="w3.sortHTML('#matchTable','.item', 'td:nth-child(1)')" style="cursor:pointer") Num
 				th Alliance
-				th Assigned
+				th(onclick="w3.sortHTML('#matchTable','.item', 'td:nth-child(3)')" style="cursor:pointer") Assigned
 				th Team
 			each match in matches
-				tr
+				tr(class="item")
 					td= match.match_number
 					td= match.alliance
 					td= match.assigned_scorer

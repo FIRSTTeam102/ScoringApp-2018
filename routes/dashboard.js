@@ -77,7 +77,7 @@ router.get('/', function(req, res) {
 						var earliestTimestamp = earliestMatch.time;
 				
 						// Get all the UNRESOLVED matches where they're set to score
-						scoreDataCol.find({"event_key": eventId, "assigned_scorer": thisUserName, "time": { $gte: earliestTimestamp }}, { sort: {"time": 1} }, function (e, docs) {
+						scoreDataCol.find({"event_key": eventId, "assigned_scorer": thisUserName, "time": { $gte: earliestTimestamp }}, { limit: 10, sort: {"time": 1} }, function (e, docs) {
 							var scoringMatches = docs;
 							for (var matchesIdx = 0; matchesIdx < scoringMatches.length; matchesIdx++)
 								console.log(thisFuncName + "scoringMatch[" + matchesIdx + "]: num,team=" + scoringMatches[matchesIdx].match_number + "," + scoringMatches[matchesIdx].team_key);

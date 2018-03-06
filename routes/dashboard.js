@@ -6,12 +6,12 @@ router.get('/', function(req, res) {
 	var thisFuncName = "dashboard.{root}[get]: ";
 	console.log(thisFuncName + 'ENTER');
 	
-	var thisUser = req.user;
-	if (!req.user) {
-		console.log(thisFuncName + "No user defined!");
-		res.render('/index', {});
-		return;
+	
+	if( !require('./checkauthentication')(req, res, 'scouting') ){
+		return console.log(thisFuncName + 'returning null');
 	}
+	
+	var thisUser = req.user;
 	var thisUserName = thisUser.name;
 
 	var db = req.db;

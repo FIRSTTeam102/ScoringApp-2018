@@ -45,8 +45,10 @@ app.use(function(req,res,next) {
 	
 	if(req.user)
 		res.locals.user = req.user;
-	else if(req.app.locals.isDev == true)
+	else if(req.app.locals.isDev == true){
 		res.locals.user = {name: '[Dev]', subteam: 'support'};
+		req.user = "Dev";
+	}
 	
 	
 	next();

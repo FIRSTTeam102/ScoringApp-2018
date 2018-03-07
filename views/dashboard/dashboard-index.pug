@@ -2,14 +2,16 @@ extends ../layout
 
 block content
 	if user
-		h2(class="gear-text-white") Dashboard for #{user.name}
-		h4(style="font-style:italic") Scouting group: #{thisPair}
+		h2(class="gear-text-white") Dashboard for
+		h2(class="gear-text-white")= user.name
+		h4(style="font-style:italic") Scouting group:
+		h4(style="font-style:italic")= thisPair
 		hr
 		if assignedTeams.length > 0
 			h3(class="gear-text-white") Scouting assignments
 			each team in assignedTeams
 				if team.data
-					div(class="gear-btn gear-blue w3-btn w3-section gear-margin-sides")
+					div(class="gear-btn w3-dark-grey w3-btn w3-section gear-margin-sides")
 						span= team.team_key.substring(3)
 				else
 					a(href=`/scouting/pit?team=${team.team_key}`) 
@@ -32,9 +34,9 @@ block content
 			each match in scoringMatches
 				- match.alliance = (match.alliance == "red") ? "Red" : "Blue";
 				- var btnColor = (match.alliance == "Red") ? "gear-red" : "gear-blue"
-				h4 Match #{match.match_number} - #{match.alliance} alliance -
+				h4 Match #{match.match_number} -
 					if match.data
-						div(class="gear-btn gear-blue w3-btn w3-section gear-margin-sides")
+						div(class="gear-btn w3-dark-grey w3-btn w3-section gear-margin-sides")
 							span= match.team_key.substring(3)
 					else
 						a(href=`/scouting/match?key=${match.match_team_key}`) 

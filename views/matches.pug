@@ -3,9 +3,9 @@ extends layout
 block content
 	form#updateForEvent(name="updateForEvent" method="post" action="/admin/data/matches")
 		input#seteventid(type="text", name="eventId")
-		button#btnSubmit(type="submit") Update DB for specified event ID
+		button#btnSubmit(type="submit" class="w3-button w3-green") Update DB for specified event ID
 	if locals.matches
-		table(class="w3-table")
+		table(class="w3-table w3-striped")
 			tr
 				th Lvl
 				th #
@@ -38,5 +38,5 @@ block content
 						td
 					td= match.winning_alliance
 					td
-						button #{match.key}
+						button(class="w3-button w3-green") #{match.key}
 	

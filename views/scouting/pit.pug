@@ -33,3 +33,7 @@ block content
 			when "badcounter"
 				include templates/scriptCounter
 	| </script>
+	script.
+		window.onbeforeunload = function() {
+			return "Leaving this page will lose pit scouting data.";
+		};

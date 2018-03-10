@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 
+// LEGACY CODE - Current "match scouting" code is in 'scouting.js'
+
 router.get('/', function(req, res){
 	var db = req.db;
 	var collection = db.get("scoringlayout");

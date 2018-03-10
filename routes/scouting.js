@@ -70,6 +70,9 @@ router.get('/pit*', function(req, res) {
 	
 	collection.find({}, {sort: {"order": 1}}, function(e, docs){
 		var layout = docs;
+		
+		// build a unique list of teams
+		
 		console.log(layout);
 		res.render("./scouting/pit", {
 			layout: layout,
@@ -123,7 +126,7 @@ router.post('/submitpit', function(req, res) {
 	});
 });
 
-///////// Previous code
+///////// PREVIOUS LEGACY CODE
 
 router.get('/', function(req, res){
 	

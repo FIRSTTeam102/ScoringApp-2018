@@ -12,13 +12,13 @@
 {"order":"2010","type":"counter","label":"Vault","id":"teleVault"}
 {"order":"2015","type":"spacer"}
 {"order":"2020","type":"counter","label":"Switch","id":"teleSwitch"}
-{"order":"2025","type":"counter","label":"Switch tipped","id":"teleSwitchTipped"}
+{"order":"2025","type":"counter","label":"Position changed","id":"teleSwitchTipped"}
 {"order":"2027","type":"spacer"}
 {"order":"2030","type":"counter","label":"Scale","id":"teleScale"}
-{"order":"2032","type":"counter","label":"Scale tipped","id":"teleScaleTipped"}
+{"order":"2032","type":"counter","label":"Position changed","id":"teleScaleTipped"}
 {"order":"2033","type":"spacer"}
 {"order":"2035","type":"counter","label":"Opposing switch","id":"teleOppSwitch"}
-{"order":"2037","type":"counter","label":"Opp. switch tipped","id":"teleOppSwitchTipped"}
+{"order":"2037","type":"counter","label":"Position changed","id":"teleOppSwitchTipped"}
 {"order":"2038","type":"spacer"}
 {"order":"2040","type":"badcounter","label":"Fouls","id":"teleFouls"}
 {"order":"2050","type":"spacer"}

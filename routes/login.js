@@ -8,8 +8,65 @@ router.get('/adduser', function(req, res){
 		return null;
 	}
 	
-	res.render('./adduser', { 
+	res.render('./login/adduser', { 
 		title: "Create Admin User"
+	});
+	
+});
+
+router.get('/changepassword', function(req, res){
+	
+	if( !require('./checkauthentication')(req, res) ){
+		return console.log('authentication failed for /login/changepassword');
+	}
+	
+	res.render('./login/changepassword', {
+		title: "Change Password"
+	});
+});
+
+router.get('/resetpassword', function(req, res){
+	
+	if( !require('./checkauthentication')(req, res, 'admin') ){
+		return console.log('authentication failed for /login/changepassword');
+	}
+	
+	var teammembers = req.db.get("teammembers");
+	
+	//gets all users and spits them on dropdown
+	teammembers.find( {}, {sort:{ "name": 1 }}, function(e, users){
+		
+		if(e){
+			console.log(e);
+			return res.send(500);
+		}
+		return res.render('./login/resetpassword', { 
+			members: users,
+			title: "Reset Password for Any User"
+		});
+	});
+});
+
+router.post('/resetpassword', function(req, res){
+	
+	var userToReset = req.body.username;
+	
+	if(!userToReset || userToReset == ""){
+		return res.redirect('./resetpassword');
+	}
+	
+	var teammembers = req.db.get("teammembers");
+	
+	teammembers.update( { name: userToReset }, { 
+		$set: { password: 'default' } 
+	}, {}, function(e, result){
+		if(e)
+			return console.error(e);
+		
+		res.redirect('/?alert=Password successfully changed for user ' + userToReset);
+		
+		if(result)
+			return console.log(result);
 	});
 	
 });
@@ -23,15 +80,15 @@ router.get('/scouter', function(req, res) {
 	var teammembers = req.db.get("teammembers");
 	
 	//gets all users and spits them on dropdown
-	teammembers.find( {}, {sort:{ "password": -1, "name": 1}}, function(e, users){
+	teammembers.find( {}, {sort:{ "name": 1 }}, function(e, users){
 		
 		if(e){
 			console.log(e);
 			return res.send(500);
 		}
-		return res.render('./login', { 
-			title: "Scouter Login",
+		return res.render('./login/login', { 
 			members: users,
+			title: "Scouter Login",
 			alert: alert
 		});
 	});
@@ -54,12 +111,78 @@ router.get('/admin', function(req, res) {
 			return res.send(500);
 		}
 		
-		return res.render('./login', { 
+		return res.render('./login/login', { 
 			title: "Admin Login",
 			members: users,
 			alert: alert
 		});
 	});  
+});
+
+router.post('/changepassword', function(req, res){
+	console.log('hi');
+	console.log(req.body);
+	
+	var p1 = req.body.passwordOne;
+	var p2 = req.body.passwordTwo;
+	
+	
+	if( !p1 || !p2 ){
+		return res.render('./login/changepassword', {
+			title: "Change Password",
+			alert: "Both password forms must be entered."
+		});
+	}
+	if( p1 != p2 ){
+		return res.render('./login/changepassword', {
+			title: "Change Password",
+			alert: "Both password forms must be equal."
+		});
+	}
+	if(!req.user){
+		return console.error("User doesn't exist in /login/changepassword");
+	}
+	
+	var teammembers = req.db.get("teammembers");
+	
+	teammembers.find({ name: req.user.name },{}, function(e, result){
+		var member = result[0];
+		if(!member){
+			return res.send(500, "user don't exist");
+		}
+		else{
+			console.log(member);
+			console.log(member.password);
+			
+					const saltRounds = 10;
+		
+			bcrypt.hash(p1, saltRounds, function(err, hash) {
+				
+				//if error, err out
+				if(err){
+					console.log(err);
+					return res.send(500);
+				}
+				
+				teammembers.update({
+					name: req.user.name
+				},{
+					$set: {
+						password: hash
+					}
+				},{}, function(e, data){
+					
+					res.redirect('/?alert=Password changed successfully.');
+					
+					if(e)
+						return console.error(e);
+					if(data)
+						return console.log(data);
+				});
+			});
+
+		}
+	});
 });
 
 router.post('/scouter', function(req, res) {
@@ -93,7 +216,7 @@ router.post('/scouter', function(req, res) {
 					return err;
 				
 				//if logged in, redirect to scoring app (CURRENTLY INDEX)
-				return res.redirect('/');
+				return res.redirect('/dashboard');
 				
             });
         })(req, res);
@@ -165,7 +288,7 @@ router.post('/adduser', function(req, res){
 	//if not all the forms are full, reload page
 	if(name == null || className == null || years == null || txtPassword == null){
 		
-		return res.render('./adduser', { 
+		return res.render('./login/adduser', { 
 			title: "Create Admin User",
 			alert: "You must fill all parameters"
 		});
@@ -177,7 +300,7 @@ router.post('/adduser', function(req, res){
 		
 		//if user already exists, reload w/ warning thingy
 		if( user != null ){
-			return res.render('./adduser', { 
+			return res.render('./login/adduser', { 
 				title: "Create Admin User",
 				alert: "Error: User already exists."
 			});
@@ -201,7 +324,7 @@ router.post('/adduser', function(req, res){
 				"password": hash
 			});
 			
-			return res.render('./adduser', { 
+			return res.render('./login/adduser', { 
 				title: "Create Admin User",
 				alert: "User" + name + " created successfully."
 			});

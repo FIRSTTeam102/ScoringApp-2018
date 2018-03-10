@@ -4,7 +4,8 @@ if user
 			if user.name != "[Dev]"
 				div(class="w3-button")=user.name
 				div(class="w3-dropdown-content w3-bar-block")
-					a(href="/logout" class="w3-bar-item w3-button") Log out
+					a(href="/logout" class="w3-bar-item w3-button w3-padding-24") Log out
+					a(href="/login/changepassword" class="w3-bar-item w3-button") Change Password
 			else
 				div(class="w3-bar-item")=user.name
 		a(href="/dashboard" class="w3-bar-item w3-button gear-clear") Dashboard

@@ -18,13 +18,9 @@ module.exports = function(req, res, type){
 				return res.redirect('/?alert=You do not have access to this page.');
 			
 		}
-		else if( type == 'scouting' ){
+		else{
 			//if user is logged in, allow no matter what type user is
 			return true;
-		}
-		else{
-			console.log("checkauthentication.js: Type not specified or incorrect");
-			return res.redirect('/?alert=An error occurred.');;
 		}		
 	}
 	else{

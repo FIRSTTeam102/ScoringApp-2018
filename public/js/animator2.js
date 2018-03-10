@@ -26,6 +26,10 @@ if($){
 		
 		animator = new Animator();
 		
+		if(window.innerWidth <= 600){
+			localStorage.setItem("animation", "false");
+		}
+		
 		if(localStorage.getItem("animation") != "false"){
 			
 			animator.init();
@@ -53,8 +57,10 @@ if($){
 				
 				//fix sizes of everything
 				//animator.toggle.style.top = window.innerHeight - 25 + "px"; i don't like this when keyboard pops up on mobile
-				animator.stopAnimating();
-				animator.init();
+				if(localStorage.getItem("animation") != "false"){					
+					animator.stopAnimating();
+					animator.init();
+				}
 					
 			}, 250);
 		});

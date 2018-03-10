@@ -1,7 +1,7 @@
-h5=element.label
-select(class="w3-half w3-border-light-grey" style="float: none" type="text" name=element.id)
+h5=section.question
+select(class="w3-half w3-border-light-grey" style="float: none" type="text" name=section.id)
 	option
-	each option, i in element.options
+	each option, i in section.options
 		if( answer == option )
 			option(value=option class="w3-bar-item" selected) #{option}
 		else

@@ -128,6 +128,13 @@ router.post('/submitpit', function(req, res) {
 
 router.get('/', function(req, res){
 	
+	//redirect to pits dashboard
+	res.redirect('/dashboard/pits');
+});
+
+/*
+router.get('/', function(req, res){
+	
 	var teams = req.db.get('teams');
 	var scoutingresults = req.db.get('scoutingresults');
 	
@@ -174,71 +181,5 @@ router.get('/', function(req, res){
 	
 	
 });
-
-router.get('/survey', function(req, res){
-	
-	if(!req.query.team)
-		return res.redirect('/scouting');
-	else
-		var team = req.query.team;
-	
-	var questions = req.db.get('scoutingquestions');
-	var scoutingresults = req.db.get('scoutingresults');
-	
-	
-	questions.find({},{ sort: {id: 1}},function(e,surveyList){
-
-		scoutingresults.find({ team_number: team },{},function(e,teamResults){
-			
-			if( !teamResults[0] )
-				var answers = {};
-			else
-				var answers = teamResults[0].answers;
-			
-			res.render('./scouting/survey',{
-				title: "Scouting Survey",
-				surveyList: surveyList,
-				team: team,
-				answers: answers
-			});
-		});
-	});
-});
-
-router.post('/survey', function(req, res){
-	
-	var toUpdate = req.body;
-	var teamNum = toUpdate.team_number;
-	delete toUpdate.team_number;
-	/*
-	console.log(req.body);
-	for( result in req.body ){
-		console.log(result);
-		console.log(req.body[result]);
-		toUpdate
-	}*/
-	console.log(toUpdate);
-	
-	var scoutingresults = req.db.get('scoutingresults');
-	
-	scoutingresults.find( { team_number: teamNum }, {}, function(e, teamResults){
-		
-		if(!teamResults[0]){
-			
-			scoutingresults.insert( { team_number: teamNum, complete: true, answers: toUpdate }, {}, function(e, result){
-				console.log(result);
-			});
-		}
-		
-	});
-	
-	scoutingresults.update({ team_number: teamNum }, { answer: toUpdate }, {}, function(e, result){
-		console.log(result);
-	});
-	
-	
-	res.redirect('/scouting/survey');
-	
-});
-
+*/
 module.exports = router;

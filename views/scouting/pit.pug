@@ -7,23 +7,24 @@ block content
 		input#teamkey(type="hidden", name="teamkey", value=`${key}`)
 		div(style="text-align:center")
 			each element in layout
+				- var answer = ""
 				case element.type
 					when "checkbox"
 						include templates/formCheckbox
 					when "counter"
-						include templates/formCounter
+						include templates/formCounterNew
 					when "badcounter"
 						include templates/formBadcounter
 					when "multiselect"
-						include templates/formMultiselect
+						include templates/dropdown
 					when "textblock"
 						include templates/formTextblock
 					when "h2"
-						include templates/formH2
+						include templates/categoryHeader
 					when "spacer"
 						include templates/formSpacer
 			center
-				button(class="w3-button w3-cyan" type="submit") submit
+				button( onclick="window.onbeforeunload = null;" class="w3-button w3-cyan" type="submit") submit
 	| <script>
 	each element in layout
 		case element.type
@@ -36,4 +37,30 @@ block content
 	script.
 		window.onbeforeunload = function() {
 			return "Leaving this page will lose pit scouting data.";
-		};
+		};		
+		var chkToggleText = function(){
+			var txtInput = this.nextElementSibling.firstElementChild;
+			if(this.checked){
+				txtInput.disabled = false;
+				txtInput.classList.remove("gear-disabled-click");
+			}else{
+				txtInput.disabled = true;
+				txtInput.classList.add("gear-disabled-click");
+			}
+		}
+		var chkToggleFromTxt = function(){
+			var chk = this.previousElementSibling;
+			chk.checked = true;
+			var txtInput = this.firstElementChild;
+			txtInput.disabled = false;
+			txtInput.classList.remove("gear-disabled-click");
+		}
+		$(function(){
+			$(".chkText").on('click', chkToggleText);
+			$(".chkTextLabel").on('click', chkToggleFromTxt);
+		});
+		
+	style.
+		.w3-check{
+			top: 7.7px!important;
+		}

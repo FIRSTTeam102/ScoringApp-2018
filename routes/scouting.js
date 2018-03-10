@@ -123,7 +123,7 @@ router.post('/submitpit', function(req, res) {
 	});
 });
 
-///////// Previous code
+///////// PREVIOUS LEGACY CODE
 
 router.get('/', function(req, res){
 	

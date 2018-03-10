@@ -17,8 +17,8 @@
 {"order":"2030","type":"counter","label":"Scale","id":"teleScale"}
 {"order":"2032","type":"counter","label":"Scale tipped","id":"teleScaleTipped"}
 {"order":"2033","type":"spacer"}
-{"order":"2035","type":"counter","label":"Opp switch","id":"teleOppSwitch"}
-{"order":"2037","type":"counter","label":"Opp switch tipped","id":"teleOppSwitchTipped"}
+{"order":"2035","type":"counter","label":"Opposing switch","id":"teleOppSwitch"}
+{"order":"2037","type":"counter","label":"Opp. switch tipped","id":"teleOppSwitchTipped"}
 {"order":"2038","type":"spacer"}
 {"order":"2040","type":"badcounter","label":"Fouls","id":"teleFouls"}
 {"order":"2050","type":"spacer"}

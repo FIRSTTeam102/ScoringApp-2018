@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var bcrypt = require('bcrypt');
 
 router.get("/", function(req, res) {
 	var thisFuncName = "scoutingpairs root: ";
@@ -178,6 +179,36 @@ router.post("/deletescoutingpair", function(req, res) {
 });
 
 router.post("/generateteamallocations", function(req, res) {
+	
+	var passCheckSuccess;
+	
+	if( !req.body.password || req.body.password == ""){
+		return res.send({status: 401, alert: "No password entered."});
+	}
+	if( !require('./checkauthentication')(req, res, 'admin') )
+		return console.log('admin not logged in on generateteamallocations');
+	
+	var teammembers = req.db.get('teammembers');
+	
+	teammembers.find( { name: req.user.name }, {}, function( e, user ){
+		if(e)
+			return console.error(e);
+		if(!user[0]){
+			res.send({status: 500, alert:"Passport error: no user found in db?"});
+			return console.error("no user found? generateteamallocations");
+		}
+		
+		bcrypt.compare( req.body.password, user[0].password, function(e, out){
+			if(e)
+				return console.error(e);
+			if(out == true)
+				passCheckSuccess = true;
+			else
+				return res.send({status: 401, alert: "Password incorrect."});
+			
+			if(passCheckSuccess){
+/* Begin regular code ----------------------------------------------------------- */				
+		
 	var thisFuncName = "scoutingpairs.generateTEAMallocations[post]: ";
 
 	// used when writing data to DB, for later querying by year
@@ -342,16 +373,53 @@ router.post("/generateteamallocations", function(req, res) {
 					scoutDataCol.remove({"event_key": event_key}, function(e, docs) {
 						// Insert the new data
 						scoutDataCol.insert(teamassignments, function(e, docs) {
-							res.redirect("./");	
+							//res.redirect("./");	
+							return res.send({status: 200, alert: "Generated team allocations successfully."});
 						});
 					});
 				});
 			});
 		});
 	});
+
+/* End regular code ----------------------------------------------------------- */
+			}
+		});
+	});
+
 });	
 
 router.post("/generatematchallocations", function(req, res) {
+	
+	var passCheckSuccess;
+	
+	if( !req.body.password || req.body.password == ""){
+		return res.send({status: 401, alert: "No password entered."});
+	}
+	if( !require('./checkauthentication')(req, res, 'admin') )
+		return console.log('admin not logged in on generateteamallocations');
+	
+	var teammembers = req.db.get('teammembers');
+	
+	teammembers.find( { name: req.user.name }, {}, function( e, user ){
+		if(e)
+			return console.error(e);
+		if(!user[0]){
+			res.send({status: 500, alert:"Passport error: no user found in db?"});
+			return console.error("no user found? generateteamallocations");
+		}
+		
+		bcrypt.compare( req.body.password, user[0].password, function(e, out){
+			if(e)
+				return console.error(e);
+			if(out == true)
+				passCheckSuccess = true;
+			else
+				return res.send({status: 401, alert: "Password incorrect."});
+			
+			if(passCheckSuccess){
+/* Begin regular code ----------------------------------------------------------- */
+	
 	var thisFuncName = "scoutingpairs.generateMATCHallocations[post]: ";
 
 	// used when writing data to DB, for later querying by year
@@ -368,7 +436,7 @@ router.post("/generatematchallocations", function(req, res) {
 	var scoreDataCol = db.get("scoringdata");
 
 	if(db._state == 'closed'){ //If database does not exist, send error
-		res.render('./error',{
+		return res.render('./error',{
 			message: "Database error: Offline",
 			error: {status: "If the database is running, try restarting the Node server."}
 		});
@@ -391,7 +459,7 @@ router.post("/generatematchallocations", function(req, res) {
 			if (docs.length > 0)
 				eventId = docs[0].event;
 		if (eventId === noEventFound) {
-			res.render('./adminindex', { 
+			return res.render('./adminindex', { 
 				title: 'Admin pages',
 				current: eventId
 			});
@@ -523,12 +591,18 @@ router.post("/generatematchallocations", function(req, res) {
 				scoreDataCol.remove({"event_key": event_key}, function(e, docs) {
 					// Insert the new data - w00t!
 					scoreDataCol.insert(scoringDataArray, function(e, docs) {
-						res.redirect("./");	
+						//res.redirect("./");	
+						return res.send({status: 200, alert: "Generated team allocations successfully."});
 					});
 				});
 			});
 		});
 	});
+/* End regular code ----------------------------------------------------------- */
+			}
+		});
+	});
+
 });
 
 module.exports = router;

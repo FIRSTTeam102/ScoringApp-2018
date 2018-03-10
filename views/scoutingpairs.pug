@@ -41,15 +41,29 @@ block content
 	form(method="post" action="/admin/scoutingpairs/deletescoutingpair" id="deletememberpair")
 		input(id="deletememberpairinput" name="data" type="hidden")
 	hr
-	h1 WARNING: ERASES EXISTING SCOUTING DATA FOR THE CURRENT EVENT
-	form(method="post" action="/admin/scoutingpairs/generateteamallocations")
-		button(class="w3-btn w3-block w3-cyan" type="submit") (Re)Allocate teams to scouting members
-	p
-	h1 WARNING: ERASES EXISTING SCORING DATA FOR THE CURRENT EVENT
-	form(method="post" action="/admin/scoutingpairs/generatematchallocations")
-		button(class="w3-btn w3-block w3-cyan" type="submit") (Re)Allocate teams@matches to scoring members
-		
+	div( onclick="promptPass('WARNING: Erases existing SCOUTING data for current event.', '/admin/scoutingpairs/generateteamallocations');")
+		button(class="w3-btn w3-cyan" type="submit") (Re)Allocate teams to PIT SCOUTING members
+	br
+	div( onclick="promptPass('WARNING: Erases existing SCORING data for current event.', '/admin/scoutingpairs/generatematchallocations');")
+		button(class="w3-btn w3-cyan" type="submit") (Re)Allocate teams@matches to MATCH SCORING members
+	br 
 	script.
+		
+		function promptPass(message, url){
+			
+			var pass = prompt(message + "\nTo continue, enter password.");
+			
+			$.post(url, {
+				password: pass
+			}, 
+			function( data, status ){
+				console.log(data);
+				if(data && data.alert)
+					alert(data.alert);
+			});
+		}
+		
+		
 		var selectedDict = {};
 		var selectedArray = [];
 		var selected = 0;

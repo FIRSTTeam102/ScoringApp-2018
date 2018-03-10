@@ -112,6 +112,7 @@ router.get('/pits', function(req, res) {
 	var db = req.db;
 	var currentCol = db.get("current");
 	var scoutDataCol = db.get("scoutingdata");
+	var teamsCol = req.db.get('teams');
 
 	//
 	// Get the 'current' event from DB
@@ -134,9 +135,29 @@ router.get('/pits', function(req, res) {
 		scoutDataCol.find({"event_key": eventId}, { sort: {"team_key": 1} }, function (e, docs) {
 			var teams = docs;
 			
-			res.render('./dashboard/pits', {
-				"teams": teams
-			});	
+			// read in team list for data
+			teamsCol.find({},{ sort: {team_number: 1} }, function(e, docs) {
+				var teamArray = docs;
+				
+				// Build map of team_key -> team data
+				var teamKeyMap = {};
+				for (var teamIdx = 0; teamIdx < teamArray.length; teamIdx++)
+				{
+					console.log(thisFuncName + 'teamIdx=' + teamIdx + ', teamArray[]=' + JSON.stringify(teamArray[teamIdx]));
+					teamKeyMap[teamArray[teamIdx].key] = teamArray[teamIdx];
+				}
+
+				// Add data to 'teams' data
+				for (var teamIdx = 0; teamIdx < teams.length; teamIdx++)
+				{
+					console.log(thisFuncName + 'teams[teamIdx]=' + JSON.stringify(teams[teamIdx]) + ', teamKeyMap[teams[teamIdx].team_key]=' + JSON.stringify(teamKeyMap[teams[teamIdx].team_key]));
+					teams[teamIdx].nickname = teamKeyMap[teams[teamIdx].team_key].nickname;
+				}
+				
+				res.render('./dashboard/pits', {
+					"teams": teams
+				});	
+			});
 		});
 	});
 });

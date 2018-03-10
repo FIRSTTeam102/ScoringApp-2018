@@ -66,14 +66,12 @@ router.get('/pit*', function(req, res) {
 	console.log(thisFuncName + 'teamKey=' + teamKey + ' ~ thisUserName=' + thisUserName);
 	
 	var db = req.db;
-	var collection = db.get("scoutinglayout");
+	var scoutCol = db.get("scoutinglayout");
 	
-	collection.find({}, {sort: {"order": 1}}, function(e, docs){
+	scoutCol.find({}, {sort: {"order": 1}}, function(e, docs){
 		var layout = docs;
 		
-		// build a unique list of teams
-		
-		console.log(layout);
+		//console.log(layout);
 		res.render("./scouting/pit", {
 			layout: layout,
 			key: teamKey

@@ -3,13 +3,17 @@ extends ../layout
 block content
 	if teams.length > 0
 		h2(class="gear-text-white") Pit Scouting
-		table(class="w3-content w3-center")
+		p
+		table(class="w3-content w3-center w3-bordered")
+			th Assignee
+			th Team #
+			th Nickname
 			each team in teams
 				if( user.name == team.primary )
 					- color = "gear-text-orange";
 				else
 					- color = "gear-text-white";
-				tr(class=`w3-margin gear-black gear-hover-white ${color}`)
+				tr(class=`w3-margin gear-black ${color}`)
 					td
 						h4(class=`${color}`) #{team.primary}
 					td
@@ -20,5 +24,5 @@ block content
 							a(href=`/scouting/pit?team=${team.team_key}`) 
 								div(class="gear-btn gear-orange gear-hover-white w3-btn w3-section gear-margin-sides")
 									span= team.team_key.substring(3)
-					td
+					td(class='w3-left-align')
 						h4(class=`${color}`) #{team.nickname}

@@ -1,0 +1,13 @@
+{"order":"1000","type":"h2","label":"Robot","id":"robotlabel"}
+{"order":"1010","type":"multiselect","label":"Drivetrain?","options":["Meccanum","Tank","Killough","West Coast","Swerve"],"id":"robotDrivetrain"}
+{"order":"1020","type":"multiselect","label":"Type of block grabber?","options":["None","Rollers","Claw","Forklift","Other (note)"],"id":"robotGrabber"}
+{"order":"1030","type":"multiselect","label":"Method of scoring scale?","options":["None","Lift","Launch"],"id":"robotScaleMethod"}
+{"order":"1040","type":"multiselect","label":"Type of climb?","options":["None","Self only","Self + assist others","Only assist others"],"id":"robotClimbType"}
+{"order":"1050","type":"multiselect","label":"If can climb, do you need the whole bar?","options":["N/A","No","Yes"],"id":"robotClimbWholeBar"}
+{"order":"1060","type":"counter","label":"Number of CIM motors?","id":"robotCimMotors"}
+{"order":"2000","type":"h2","label":"Autonomous","id":"robotlabel"}
+{"order":"2010","type":"multiselect","label":"Type of autonomous?","options":["None","Cross line only","Score switch near side","Score switch either side"],"id":"autoOptions"}
+{"order":"3000","type":"h2","label":"Strategy","id":"strategylabel"}
+{"order":"3010","type":"multiselect","label":"Generally preferred power-up?","options":["Force","Levitate","Boost"],"id":"stratPowerUp"}
+{"order":"5000","type":"h2","label":"Other","id":"otherlabel"}
+{"order":"5010","type":"textblock","label":"Other comments and notes:","id":"otherNotes"}

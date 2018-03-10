@@ -1,0 +1,28 @@
+{"order":"1000","type":"h2","label":"Autonomous","id":"autolabel"}
+{"order":"1010","type":"checkbox","label":"Attempted to move?","id":"autoTriedMove"}
+{"order":"1020","type":"checkbox","label":"Crossed line?","id":"autoCrossedLine"}
+{"order":"1025","type":"spacer"}
+{"order":"1030","type":"checkbox","label":"Tried to score switch?","id":"autoTriedSwitch"}
+{"order":"1040","type":"checkbox","label":"Successfull scored switch?","id":"autoScoredSwitch"}
+{"order":"1045","type":"spacer"}
+{"order":"1050","type":"checkbox","label":"Tried to score scale?","id":"autoTriedScale"}
+{"order":"1060","type":"checkbox","label":"Successfull scored scale?","id":"autoScoredScale"}
+{"order":"1065","type":"spacer"}
+{"order":"2000","type":"h2","label":"Teleop","id":"telelabel"}
+{"order":"2010","type":"counter","label":"Vault","id":"teleVault"}
+{"order":"2015","type":"spacer"}
+{"order":"2020","type":"counter","label":"Switch","id":"teleSwitch"}
+{"order":"2025","type":"counter","label":"Switch tipped","id":"teleSwitchTipped"}
+{"order":"2027","type":"spacer"}
+{"order":"2030","type":"counter","label":"Scale","id":"teleScale"}
+{"order":"2032","type":"counter","label":"Scale tipped","id":"teleScaleTipped"}
+{"order":"2033","type":"spacer"}
+{"order":"2035","type":"counter","label":"Opp switch","id":"teleOppSwitch"}
+{"order":"2037","type":"counter","label":"Opp switch tipped","id":"teleOppSwitchTipped"}
+{"order":"2038","type":"spacer"}
+{"order":"2040","type":"badcounter","label":"Fouls","id":"teleFouls"}
+{"order":"2050","type":"spacer"}
+{"order":"3000","type":"h2","label":"Endgame","id":"endlabel"}
+{"order":"3010","type":"checkbox","label":"Parked?","id":"endParked"}
+{"order":"3020","type":"checkbox","label":"Climbed?","id":"endClimbed"}
+{"order":"3030","type":"checkbox","label":"Assisted?","id":"endAssisted"}

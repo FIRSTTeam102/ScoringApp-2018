@@ -1,0 +1,5 @@
+span  #{element.label} 
+select(name=`${element.id}`)
+	each seloption in element.options
+		option(value=seloption)= seloption
+p

@@ -1,0 +1,35 @@
+extends ../layout
+
+block content
+	h3= key.replace('frc','Team #')
+	p
+	form(action="/scouting/submitpit" method="post" name="scoutform")
+		input#teamkey(type="hidden", name="teamkey", value=`${key}`)
+		div(style="text-align:center")
+			each element in layout
+				case element.type
+					when "checkbox"
+						include templates/formCheckbox
+					when "counter"
+						include templates/formCounter
+					when "badcounter"
+						include templates/formBadcounter
+					when "multiselect"
+						include templates/formMultiselect
+					when "textblock"
+						include templates/formTextblock
+					when "h2"
+						include templates/formH2
+					when "spacer"
+						include templates/formSpacer
+			center
+				button(class="w3-button w3-cyan" type="submit") submit
+	| <script>
+	each element in layout
+		case element.type
+			when "checkbox"
+				include templates/scriptCheckbox
+			when "counter"
+			when "badcounter"
+				include templates/scriptCounter
+	| </script>

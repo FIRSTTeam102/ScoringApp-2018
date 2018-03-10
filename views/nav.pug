@@ -8,8 +8,8 @@ if user
 			else
 				div(class="w3-bar-item")=user.name
 		a(href="/dashboard" class="w3-bar-item w3-button gear-clear") Dashboard
-		a(href="/scoring" class="w3-bar-item w3-button gear-clear") Scoring App
-		a(href="/scouting" class="w3-bar-item w3-button gear-clear") Scouting Survey
+		a(href="/dashboard/pits" class="w3-bar-item w3-button gear-clear") Pit scouting
+		a(href="/dashboard/matches" class="w3-bar-item w3-button gear-clear") Match scouting
 		if user.subteam == "support" || user.subteam == "exec"
 			a(href="/admin" class="w3-bar-item w3-button gear-clear") Admin Index
 			a(href="/tests" class="w3-bar-item w3-button gear-clear") Test pages

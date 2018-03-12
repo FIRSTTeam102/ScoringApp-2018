@@ -64,6 +64,7 @@ var externaldata = require("./routes/externaldata");
 var dashboard = require("./routes/dashboard");
 var scouting = require("./routes/scouting");
 var current = require("./routes/current");
+var reports = require('./routes/reports');
 
 //CONNECT URLS TO ROUTES
 app.use('/', index);
@@ -75,6 +76,7 @@ app.use('/admin/data', externaldata);
 app.use('/admin/current', current);
 app.use('/scouting', scouting);
 app.use("/dashboard", dashboard);
+app.use('/reports', reports);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

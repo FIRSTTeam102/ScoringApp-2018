@@ -12,7 +12,7 @@ block content
 					when "checkbox"
 						include templates/formCheckbox
 					when "counter"
-						include templates/formCounterNew
+						include templates/formCounterInput
 					when "badcounter"
 						include templates/formBadcounter
 					when "multiselect"
@@ -32,7 +32,7 @@ block content
 				include templates/scriptCheckbox
 			when "counter"
 			when "badcounter"
-				include templates/scriptCounter
+				include templates/scriptCounterInput
 	| </script>
 	script.
 		window.onbeforeunload = function() {

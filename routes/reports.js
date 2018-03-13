@@ -99,6 +99,16 @@ router.get("/teamintel*", function(req, res){
 		
 		// Team details
 		teamsCol.find({ "key" : teamKey }, {}, function(e, docs){
+			if(e)
+				return console.error(e);
+			if(!docs[0]){
+				return res.render('./error', {
+					title: "Intel: Team " + teamKey.substring(3),
+					error: {
+						status: "FRC Team "+teamKey.substring(3)+" does not exist or did not participate in this event."
+					}
+				});
+			}
 			var team = docs[0];
 			console.log(thisFuncName + 'team=' + JSON.stringify(team));
 
@@ -119,7 +129,8 @@ router.get("/teamintel*", function(req, res){
 						var matches = docs;
 						console.log(thisFuncName + 'matches=' + JSON.stringify(matches));
 				
-						res.render("./reports2/teamintel", {
+						res.render("./reports/teamintel", {
+							title: "Intel: Team " + teamKey.substring(3),
 							team: team,
 							data: pitData,
 							layout: layout,

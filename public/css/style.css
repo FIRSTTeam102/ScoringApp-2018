@@ -18,7 +18,7 @@ select{
 	border-image: initial;
 }
 
-canvas{
+canvas, .canvas{
     z-index: -1;
     position: fixed;
     left: 0;
@@ -76,6 +76,8 @@ a{
 		text-align: right;
 		padding-right: 8px;
 	}
+	.w3-show-small{display:none!important}
+	#navBar{ display: inline!important; }
 }
 
 @media (max-width: 600px){

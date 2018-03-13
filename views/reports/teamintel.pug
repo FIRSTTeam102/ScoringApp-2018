@@ -23,26 +23,58 @@ block content
 				when "spacer"
 					p
 	hr
-	table(class="w3-table")
-		tr
-			th #
-			th Blue
-			th Score
-			th Red
-			th Score
-			th Won?
+	h2(class="gear-text-white") Previous matches
+	table(class="w3-table w3-bordered")
 		each match in matches
 			tr
-				td= match.match_number
-				td= match.alliances.blue.team_keys[0].substring(3)+', '+match.alliances.blue.team_keys[1].substring(3)+', '+match.alliances.blue.team_keys[2].substring(3)
+				td
+					ul(class="w3-ul")
+						li(class="gear-no-border")
+							p
+						li(class="gear-no-border")
+							div(class="gear-btn w3-purple gear-hover-white w3-btn w3-block")
+								span Match #{match.match_number}
+				td
+					- var ulClassBlue = 'w3-ul';
+					- if (match.winning_alliance == 'blue') ulClassBlue = 'w3-ul w3-border';
+					ul(class=`${ulClassBlue}`)
+						each teamkey in match.alliances.blue.team_keys
+							li(class="gear-no-border")
+								- var teamStyleBlue = "";
+								- if (teamkey == team.key) teamStyleBlue = "font-weight:bold";
+								div(class="gear-btn gear-blue gear-hover-white w3-btn w3-block" style=`${teamStyleBlue}`)
+									span= teamkey.substring(3)
 				if (match.alliances.blue.score > -1)
-					td= match.alliances.blue.score
+					td
+						- var divClassBlue = 'w3-grey w3-btn w3-block';
+						- if (match.winning_alliance == 'blue') divClassBlue = 'w3-white w3-btn w3-block';
+						ul(class="w3-ul")
+							li(class="gear-no-border")
+								p
+							li(class="gear-no-border")
+								div(class=`${divClassBlue}`)
+									span= match.alliances.blue.score
 				else
 					td
-				td= match.alliances.red.team_keys[0].substring(3)+', '+match.alliances.red.team_keys[1].substring(3)+', '+match.alliances.red.team_keys[2].substring(3)
+				td
+					- var ulClassRed = 'w3-ul';
+					- if (match.winning_alliance == 'red') ulClassRed = 'w3-ul w3-border';
+					ul(class=`${ulClassRed}`)
+						each teamkey in match.alliances.red.team_keys
+							li(class="gear-no-border")
+								- var teamStyleRed = "";
+								- if (teamkey == team.key) teamStyleRed = "font-weight:bold";
+								div(class="gear-btn gear-red gear-hover-white w3-btn w3-block" style=`${teamStyleRed}`)
+									span= teamkey.substring(3)
 				if (match.alliances.red.score > -1)
-					td= match.alliances.red.score
+					td
+						- var divClassRed = 'w3-grey w3-btn w3-block';
+						- if (match.winning_alliance == 'red') divClassRed = 'w3-white w3-btn w3-block';
+						ul(class="w3-ul")
+							li(class="gear-no-border")
+								p
+							li(class="gear-no-border")
+								div(class=`${divClassRed}`)
+									span= match.alliances.red.score
 				else
 					td
-				td= match.winning_alliance
-		

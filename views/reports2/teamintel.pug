@@ -30,6 +30,7 @@ block content
 			th Score
 			th Red
 			th Score
+			th Won?
 		each match in matches
 			tr
 				td= match.match_number
@@ -43,4 +44,5 @@ block content
 					td= match.alliances.red.score
 				else
 					td
+				td= match.winning_alliance
 		

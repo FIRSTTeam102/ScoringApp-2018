@@ -73,8 +73,14 @@ router.get('/', function(req, res) {
 				
 					// Get the *min* time of the as-yet-unresolved matches [where alliance scores are still -1]
 					matchCol.find({ event_key: eventId, "alliances.red.score": -1 },{sort: {"time": 1}}, function(e, docs){
-						var earliestMatch = docs[0];
-						var earliestTimestamp = earliestMatch.time;
+
+						// 2018-03-13, M.O'C - Fixing the bug where dashboard crashes the server if all matches at an event are done
+						var earliestTimestamp = 9999999999;
+						if (docs && docs[0])
+						{
+							var earliestMatch = docs[0];
+							earliestTimestamp = earliestMatch.time;
+						}
 				
 						// Get all the UNRESOLVED matches where they're set to score
 						scoreDataCol.find({"event_key": eventId, "assigned_scorer": thisUserName, "time": { $gte: earliestTimestamp }}, { limit: 10, sort: {"time": 1} }, function (e, docs) {
@@ -191,8 +197,14 @@ router.get('/matches', function(req, res) {
 
 		// Get the *min* time of the as-yet-unresolved matches [where alliance scores are still -1]
 		matchCol.find({ event_key: eventId, "alliances.red.score": -1 },{sort: {"time": 1}}, function(e, docs){
-			var earliestMatch = docs[0];
-			var earliestTimestamp = earliestMatch.time;
+			
+			// 2018-03-13, M.O'C - Fixing the bug where dashboard crashes the server if all matches at an event are done
+			var earliestTimestamp = 9999999999;
+			if (docs && docs[0])
+			{
+				var earliestMatch = docs[0];
+				earliestTimestamp = earliestMatch.time;
+			}
 	
 			// Get all the UNRESOLVED matches
 			scoreDataCol.find({"event_key": eventId, "time": { $gte: earliestTimestamp }}, { limit: 60, sort: {"time": 1, "alliance": 1, "team_key": 1} }, function (e, docs) {

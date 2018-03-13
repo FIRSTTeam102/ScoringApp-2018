@@ -1,0 +1,37 @@
+extends ../layout
+block content
+	each match, i in matches
+		- match.teams = [];
+		each team, i in match.alliances.blue.team_keys
+			- match.teams[i] = team.substring(3);
+		each team, i in match.alliances.red.team_keys
+			- match.teams[i + 3] = team.substring(3);
+				
+		div(class="w3-container w3-padding w3-margin")
+			span(class="w3-margin") Blue:
+			span(class="w3-content gear-btn gear-blue" style="padding: 12px 5px 12px 5px") #{match.teams[0]}, #{match.teams[1]}, #{match.teams[2]} 
+			span(class="w3-margin") Red:
+			span(class="w3-content gear-btn gear-red" style="padding: 12px 5px 12px 5px")  #{match.teams[3]}, #{match.teams[4]}, #{match.teams[5]} 
+				
+	
+	each match, i in matches
+		- match.teams = [];
+		each team, i in match.alliances.blue.team_keys
+			- match.teams[i] = team.substring(3);
+		each team, i in match.alliances.red.team_keys
+			- match.teams[i + 3] = team.substring(3);
+		p
+			span #{match.match_number} : 
+			span blue: 
+			span=match.teams[0]
+			span  
+			span=match.teams[1]
+			span  
+			span=match.teams[2]
+			span  red: 
+			span=match.teams[3]
+			span  
+			span=match.teams[4]
+			span  
+			span=match.teams[5]
+			span  key: #{match.event_key}

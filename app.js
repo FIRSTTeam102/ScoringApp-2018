@@ -36,6 +36,10 @@ app.use(passport.session());
 app.use(function(req,res,next) {
 	req.db = db;
 	req.passport = passport;
+	req.event = {
+		key: "undefined",
+		name: "undefined"
+	};
 	/*
 	req.tournament = {
 		id: "Sample Tournament Title!"
@@ -50,8 +54,41 @@ app.use(function(req,res,next) {
 		req.user = "Dev";
 	}
 	
+	var current = db.get('current');
+	var events = db.get('events');
 	
-	next();
+	//finds current event
+	current.find({}, {}, function(e, current) {
+		//sets locals to no event defined just in case we don't find thing and we can just do next();
+		var eventId = 'No event defined';
+		res.locals.tournament = eventId;
+		
+		//if exist
+		if (current && current[0]){
+			eventId = current[0].event;
+			//set event key
+			req.event.key = eventId;
+			
+			//find data for current event
+			events.find({ key: eventId }, {}, function(e, event){
+				
+				if(e){
+					console.error(e);
+					return next();
+				}
+				//set tournament thing to event name
+				if(event && event[0]){
+					res.locals.tournament = event[0].name;
+					req.event.name = event[0].name;
+					next();
+				}else{
+					next();
+				}
+			});
+		}else{
+			next();
+		}
+	});
 });
 
 //ADD ROUTES HERE

@@ -2,20 +2,41 @@ extends layout
 
 block content
 	div(class="w3-container w3-padding-16")
-		h4(class="gear-text-white") Scouters
+		h4(class="gear-text-white") Reports
+		
+		label()
+			input(class="w3-padding gear-orange w3-border-white w3-border w3-margin-right" style="border: none; width: 6.2em" type="number" placeholder="Team #" id="teamNo")
+		a()
+			div(class="gear-btn gear-orange gear-hover-white w3-btn" onclick="redUpcoming()")
+				span Upcoming Matches
+		a()
+			div(class="gear-btn gear-orange gear-hover-white w3-btn w3-margin-left" onclick="redIntel()")
+				span Stats
+	
+	div(class="w3-container w3-padding-16")
+		h4(class="gear-text-white") Log In
 		a(href="/login/scouter") 
 			div(class="gear-btn gear-orange gear-hover-white w3-btn")
 				span Scouter Login
-	div(class="w3-container w3-padding-16")
-		h4(class="gear-text-white") Standings
-		a(href="/")
-			div(class="gear-btn gear-orange gear-hover-white w3-btn")
-				span Standings
-		a(href="/")
-			div(class="gear-btn gear-orange gear-hover-white w3-btn w3-margin-left")
-				span Match Predictions
-	div(class="w3-container w3-padding-16")
-		h4(class="gear-text-white") Admin
+	div(class="w3-container")
 		a(href="/login/admin")
 			div(class="gear-btn gear-orange gear-hover-white w3-btn")
 				span Admin Login
+	script.
+		function redIntel(){
+			if( !$("#teamNo").val() ){
+				alert("You must specify a team.")
+			}else{
+				var key = "frc".concat($("#teamNo").val());
+				console.log("/reports/teamintel?team="+key);
+				window.location.replace("/reports/teamintel?team="+key);
+			}
+		}
+		function redUpcoming(){
+			if( !$("#teamNo").val() ){
+				window.location.href = "/reports/upcoming";
+			}else{
+				var key = "frc".concat($("#teamNo").val());
+				window.location.href = "/reports/upcoming?team="+key;
+			}
+		}

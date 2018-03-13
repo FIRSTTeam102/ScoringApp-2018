@@ -29,6 +29,10 @@ pre{
 	color: #d2d2d2;
 }
 
+a{
+	color: inherit;
+}
+
 .gear-margin-sides{
 	margin-left: 8px!important;
 	margin-right: 8px!important;
@@ -47,6 +51,7 @@ pre{
 .gear-light-gray,.gear-hover-light-gray:hover{color:#1e1e23!important;background-color:#ddd!important}
 .gear-opacity,.gear-hover-opacity:hover{background-color:rgba(255,255,255,0.2)!important}
 .gear-clear,.gear-clear-hover:hover{background-color:rgba(0,0,0,0)!important}
+.gear-dark-gray, .gear-hover-dark-gray:hover{color:#fff!important;background-color:#4b4b4f!important}
 
 .gear-text-red,.gear-text-hover-red:hover{color:#EC0D00!important}
 .gear-text-blue,.gear-text-hover-blue:hover{color:#2623B8!important}

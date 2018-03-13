@@ -7,7 +7,7 @@ router.get("/teamintel*", function(req, res){
 	
 	var teamKey = req.query.team;
 	if (!teamKey) {
-		res.redirect("/reports");
+		res.redirect("/?alert=No team specified in Team Intel page.");
 		return;
 	}
 	console.log(thisFuncName + 'teamKey=' + teamKey);

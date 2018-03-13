@@ -1,37 +1,108 @@
 extends ../layout
 block content
-	each match, i in matches
-		- match.teams = [];
-		each team, i in match.alliances.blue.team_keys
-			- match.teams[i] = team.substring(3);
-		each team, i in match.alliances.red.team_keys
-			- match.teams[i + 3] = team.substring(3);
+	style.
+		.teamNo{ 
+			display: inline-block;
+			width: 33.3%;
+			padding: 12px 5px 12px 5px;
+			text-align: center;
+		}
+	- team = !!team ? team.substring(3) : null;
+	if !matches[0] && !team
+		h3 No upcoming matches for this tournament.
+	else if !matches[0]
+		h3 No upcoming matches for team number #{team}.
+	else
+		if team
+			h3(class="gear-text-white") Upcoming matches for team #{team}
+		else
+			h3(class="gear-text-white") Upcoming matches
+		label(class="gear-text-white")  
+			input(class="w3-padding gear-dark-gray w3-margin-right" style="border: none; width: 6.2em; position:relative;top:1px;" type="number" placeholder="Team #" id="teamNo")
+		a
+			div(class="gear-btn gear-dark-gray gear-hover-white w3-btn" onclick="redUpcoming()")
+				span View for another team
+		each match, i in matches
+			- match.teams = [];
+			each team, i in match.alliances.blue.team_keys
+				- match.teams[i] = team.substring(3);
+			each team, i in match.alliances.red.team_keys
+				- match.teams[i + 3] = team.substring(3);
 				
-		div(class="w3-container w3-padding w3-margin")
-			span(class="w3-margin") Blue:
-			span(class="w3-content gear-btn gear-blue" style="padding: 12px 5px 12px 5px") #{match.teams[0]}, #{match.teams[1]}, #{match.teams[2]} 
-			span(class="w3-margin") Red:
-			span(class="w3-content gear-btn gear-red" style="padding: 12px 5px 12px 5px")  #{match.teams[3]}, #{match.teams[4]}, #{match.teams[5]} 
-				
-	
-	each match, i in matches
-		- match.teams = [];
-		each team, i in match.alliances.blue.team_keys
-			- match.teams[i] = team.substring(3);
-		each team, i in match.alliances.red.team_keys
-			- match.teams[i + 3] = team.substring(3);
-		p
-			span #{match.match_number} : 
-			span blue: 
-			span=match.teams[0]
-			span  
-			span=match.teams[1]
-			span  
-			span=match.teams[2]
-			span  red: 
-			span=match.teams[3]
-			span  
-			span=match.teams[4]
-			span  
-			span=match.teams[5]
-			span  key: #{match.event_key}
+			//gets date crap
+			- var date = new Date( match.time * 1000 );
+			- var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+			- var day = days[date.getDay()];
+			- var hour = date.getHours();
+			- var minute = date.getMinutes();
+			//makes minute crap 2 digits
+			- minute = (minute.toString().length==1) ? "0".concat(minute.toString()) : minute;
+			
+			div(class="w3-container w3-padding" style="align-content: center!important")
+				div(class="w3-mobile w3-left")
+					div(class="w3-right gear-dark-gray w3-mobile" style="height:60px" onmouseenter="hover(this, 1)" onmouseleave="unhover(this, 1)")
+						div(class="w3-margin-right" style="position: relative; display: inline-block; top: 18px; left: 12px;")
+							span #{day} @ #{hour}:#{minute} 
+							span(style="display: inline-block; min-width: 85px") - Match #{match.match_number}: 
+				div(class="w3-mobile")
+					div(class="w3-left gear-dark-gray w3-padding w3-mobile" style="display: inline-block" onmouseenter="hover(this, 2)" onmouseleave="unhover(this, 2)")
+						span(class="w3-content w3-left w3-mobile gear-blue w3-margin-right w3-text-white" style="width: 180px;")
+							each teamNo, j in match.teams
+								- if (j <= 2)
+									- if (team == match.teams[j])
+										a(href=`/reports/teamintel?team=frc${teamNo}` style="font-weight: bold" class="gear-hover-white teamNo")=teamNo
+									- else
+										a(href=`/reports/teamintel?team=frc${teamNo}` class="gear-hover-white teamNo")=teamNo
+						span(class="w3-content w3-right w3-mobile gear-red w3-margin-left w3-text-white" style="width: 180px;")
+							each teamNo, j in match.teams
+								- if (j >= 3)
+									- if (team == match.teams[j])
+										a(href=`/reports/teamintel?team=frc${teamNo}` style="font-weight: bold" class="gear-hover-white teamNo")=teamNo
+									- else
+										a(href=`/reports/teamintel?team=frc${teamNo}` class="gear-hover-white teamNo")=teamNo
+				div(class="w3-rest")
+					//can be used for results later for anothah pug fiel
+	script.
+		//just making it like this so i don't have to modify the html, just in case we wanna do hover links or whatever again.
+		//For example: if we have a stats page for each match, or something.
+		function hover(){}function unhover(){}
+		function redUpcoming(){
+			if( !$("#teamNo").val() ){
+				window.location.href = "/reports/upcoming";
+			}else{
+				var key = "frc".concat($("#teamNo").val());
+				window.location.href = "/reports/upcoming?team="+key;
+			}
+		}
+		$("#teamNo").keydown(function(e){
+			if(e.keyCode == 13){
+				redUpcoming();
+			}
+		});
+		/*
+		function hover(elem, id){
+			elem.classList.add("w3-gray");
+			elem.classList.remove("gear-dark-gray");
+			x = elem;
+			if(id == 2){
+				elem.parentElement.previousElementSibling.firstElementChild.classList.add("w3-gray");
+				elem.parentElement.previousElementSibling.firstElementChild.classList.remove("gear-dark-gray");
+			}
+			if(id == 1){
+				elem.parentElement.nextElementSibling.firstElementChild.classList.add("w3-gray");
+				elem.parentElement.nextElementSibling.firstElementChild.classList.remove("gear-dark-gray");
+			}
+		}
+		function unhover(elem, id){
+			elem.classList.remove("w3-gray");
+			elem.classList.add("gear-dark-gray");
+			if(id == 2){
+				elem.parentElement.previousElementSibling.firstElementChild.classList.remove("w3-gray");
+				elem.parentElement.previousElementSibling.firstElementChild.classList.add("gear-dark-gray");
+			}
+			if(id == 1){
+				elem.parentElement.nextElementSibling.firstElementChild.classList.remove("w3-gray");
+				elem.parentElement.nextElementSibling.firstElementChild.classList.add("gear-dark-gray");
+			}
+		}
+		*/

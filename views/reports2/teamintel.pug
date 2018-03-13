@@ -1,0 +1,46 @@
+extends ../layout
+
+block content
+	h2(class="gear-text-white")= team.key.replace('frc','Team #')
+	p
+	h2 #{team.nickname}
+	- var country = '';
+	- if (team.country != 'USA') country = team.country;
+	h4(class="gear-text-white" style="font-style:italic") From: #{team.city}, #{team.state_prov} #{country}
+	h4(class="gear-text-white" style="font-style:italic") #{team.name}
+	if (data)
+		hr
+		each element in layout
+			case element.type
+				when "checkbox"
+				when "counter"
+				when "badcounter"
+				when "multiselect"
+				when "textblock"
+					h4(class="gear-text-white") #{element.label} <strong>#{data[element.id]}</strong>
+				when "h2"
+					h2 #{element.label}
+				when "spacer"
+					p
+	hr
+	table(class="w3-table")
+		tr
+			th #
+			th Blue
+			th Score
+			th Red
+			th Score
+		each match in matches
+			tr
+				td= match.match_number
+				td= match.alliances.blue.team_keys[0].substring(3)+', '+match.alliances.blue.team_keys[1].substring(3)+', '+match.alliances.blue.team_keys[2].substring(3)
+				if (match.alliances.blue.score > -1)
+					td= match.alliances.blue.score
+				else
+					td
+				td= match.alliances.red.team_keys[0].substring(3)+', '+match.alliances.red.team_keys[1].substring(3)+', '+match.alliances.red.team_keys[2].substring(3)
+				if (match.alliances.red.score > -1)
+					td= match.alliances.red.score
+				else
+					td
+		

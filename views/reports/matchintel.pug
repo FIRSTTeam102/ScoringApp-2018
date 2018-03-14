@@ -1,0 +1,24 @@
+extends ../layout
+
+block content
+	h2(class="gear-text-white") Match #{match.match_number} - Winner: #{match.winning_alliance}
+	- var thisObj = {};
+
+	table(class="w3-table")
+		tr
+			th(class="gear-text-white") Attribute
+			th(class="gear-text-blue") Blue
+			th(class="gear-text-red") Red
+		- blueObj = match.score_breakdown.blue;
+		- redObj = match.score_breakdown.red;
+		- for (var property in blueObj) { if (blueObj.hasOwnProperty(property)) {
+		tr
+			td #{property}:
+			td <b>#{blueObj[property]}</b>
+			td <b>#{redObj[property]}</b>
+		- } }
+
+	h2(class="gear-text-red") Score Breakdown for Red
+	- thisObj = match.score_breakdown.red; for (var property in thisObj) { if (thisObj.hasOwnProperty(property)) {
+	h4 #{property}: <b>#{thisObj[property]}</b>
+	- } }

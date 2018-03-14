@@ -73,4 +73,34 @@ router.get("/teamintel*", function(req, res){
 	});
 });
 
+router.get("/matchintel*", function(req, res){
+	var thisFuncName = "reports.matchintel*[get]: ";
+	console.log(thisFuncName + 'ENTER');
+	
+	var matchKey = req.query.key;
+	if (!matchKey) {
+		res.redirect("/?alert=No match key specified in Match Intel page.");
+		return;
+	}
+	console.log(thisFuncName + 'matchKey=' + matchKey);
+	
+	var db = req.db;
+	var matchCol = req.db.get('matches');
+	//var teamsCol = req.db.get('teams');
+	//var pitCol = req.db.get('scoutingdata');
+	//var currentCol = db.get("current");
+	//var scoutCol = db.get("scoutinglayout");
+	
+	matchCol.find({"key": matchKey}, {}, function (e, docs) {
+		var match = {};
+		if (docs && docs[0])
+			match = docs[0];
+		
+		console.log(thisFuncName + 'match=' + JSON.stringify(match));
+		res.render("./reports/matchintel", {
+			match: match
+		});
+	});
+});
+
 module.exports = router;

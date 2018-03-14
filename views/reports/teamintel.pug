@@ -33,7 +33,8 @@ block content
 					- var outcome = "Tie!";
 					- if (match.winning_alliance == 'red') outcome = "Red won";
 					- if (match.winning_alliance == 'blue') outcome = "Blue won";
-					span Match #{match.match_number}: #{outcome}
+					a(href=`/reports2/matchintel?key=${match.key}`) 
+						span Match #{match.match_number}: #{outcome}
 			div(class="w3-col m1") &nbsp;
 			div(class="w3-col s8 m2")
 				div(class="w3-col w3-border")

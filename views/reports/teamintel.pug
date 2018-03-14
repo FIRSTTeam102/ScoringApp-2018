@@ -51,6 +51,11 @@ block content
 						span Score:
 						br
 						span= match.alliances.blue.score
+						br
+						- var blueQuests = ''
+						- if (match.score_breakdown.blue.autoQuestRankingPoint) blueQuests = 'AQ '
+						- if (match.score_breakdown.blue.faceTheBossRankingPoint) blueQuests += 'FB'
+						span= blueQuests
 					else
 						span &nbsp;
 			div(class="w3-col m1") &nbsp;
@@ -69,5 +74,10 @@ block content
 						span Score:
 						br
 						span= match.alliances.red.score
+						br
+						- var redQuests = ''
+						- if (match.score_breakdown.red.autoQuestRankingPoint) redQuests = 'AQ '
+						- if (match.score_breakdown.red.faceTheBossRankingPoint) redQuests += 'FB'
+						span= redQuests
 					else
 						span &nbsp;

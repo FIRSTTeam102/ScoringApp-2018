@@ -176,6 +176,7 @@ router.get('/matches', function(req, res) {
 	var currentCol = db.get("current");
 	var scoreDataCol = db.get("scoringdata");
 	var matchCol = db.get("matches");
+	var teamsCol = db.get("teams");
 
 	//
 	// Get the 'current' event from DB
@@ -196,22 +197,42 @@ router.get('/matches', function(req, res) {
 		var event_key = eventId;
 
 		// Get the *min* time of the as-yet-unresolved matches [where alliance scores are still -1]
-		matchCol.find({ event_key: eventId, "alliances.red.score": -1 },{sort: {"time": 1}}, function(e, docs){
+		matchCol.find({ event_key: eventId, "alliances.red.score": -1 },{sort: {"time": 1}}, function(e, matches){
 			
 			// 2018-03-13, M.O'C - Fixing the bug where dashboard crashes the server if all matches at an event are done
 			var earliestTimestamp = 9999999999;
-			if (docs && docs[0])
+			if (matches && matches[0])
 			{
-				var earliestMatch = docs[0];
+				var earliestMatch = matches[0];
 				earliestTimestamp = earliestMatch.time;
 			}
 	
 			// Get all the UNRESOLVED matches
-			scoreDataCol.find({"event_key": eventId, "time": { $gte: earliestTimestamp }}, { limit: 60, sort: {"time": 1, "alliance": 1, "team_key": 1} }, function (e, docs) {
-				var matches = docs;
+			scoreDataCol.find({"event_key": eventId, "time": { $gte: earliestTimestamp }}, { limit: 60, sort: {"time": 1, "alliance": 1, "team_key": 1} }, function (e, scoreData) {
+				if(!scoreData)
+					return console.error("mongo error at dashboard/matches");
 				
-				res.render('./dashboard/matches',{
-					"matches": matches
+				teamsCol.find({}, {}, function(e, teams){
+					//console.log(scoreData);
+										
+					var start = Date.now();
+					
+					for(var i in scoreData){
+						
+						for(var j in teams){
+							if( teams[j].key == scoreData[i].team_key){
+								scoreData[i].team_nickname = teams[j].nickname;
+								break;
+							}
+						}
+						if( i == scoreData.length-1 ){
+							var end = Date.now();
+							console.log("Compared teams in "+ (end - start) +" ms");
+							res.render('./dashboard/matches',{
+								matches: scoreData
+							});
+						}
+					}
 				});
 			});
 		});

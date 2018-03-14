@@ -30,7 +30,7 @@ block content
 			}else{
 				var key = "frc".concat($("#teamNo").val());
 				console.log("/reports/teamintel?team="+key);
-				window.location.replace("/reports/teamintel?team="+key);
+				window.location.href = "/reports/teamintel?team="+key;
 			}
 		}
 		function redUpcoming(){

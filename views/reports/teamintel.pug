@@ -30,7 +30,10 @@ block content
 		div(class="w3-row")
 			div(class="w3-col s12 m2")
 				div(class="gear-btn w3-purple gear-hover-white w3-btn w3-block w3-border")
-					span Match #{match.match_number}
+					- var outcome = "Tie!";
+					- if (match.winning_alliance == 'red') outcome = "Red won";
+					- if (match.winning_alliance == 'blue') outcome = "Blue won";
+					span Match #{match.match_number}: #{outcome}
 			div(class="w3-col m1") &nbsp;
 			div(class="w3-col s8 m2")
 				div(class="w3-col w3-border")

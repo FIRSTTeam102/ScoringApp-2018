@@ -15,7 +15,7 @@ block content
 				- redObj = match.score_breakdown.red;
 				- for (var property in blueObj) { if (blueObj.hasOwnProperty(property)) {
 				tr
-					td #{property}:
+					td(class="w3-small") #{property}:
 					td <b>#{blueObj[property]}</b>
 					td <b>#{redObj[property]}</b>
 				- } }

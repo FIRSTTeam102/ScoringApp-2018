@@ -149,14 +149,14 @@ router.get('/pits', function(req, res) {
 				var teamKeyMap = {};
 				for (var teamIdx = 0; teamIdx < teamArray.length; teamIdx++)
 				{
-					console.log(thisFuncName + 'teamIdx=' + teamIdx + ', teamArray[]=' + JSON.stringify(teamArray[teamIdx]));
+					//console.log(thisFuncName + 'teamIdx=' + teamIdx + ', teamArray[]=' + JSON.stringify(teamArray[teamIdx]));
 					teamKeyMap[teamArray[teamIdx].key] = teamArray[teamIdx];
 				}
 
 				// Add data to 'teams' data
 				for (var teamIdx = 0; teamIdx < teams.length; teamIdx++)
 				{
-					console.log(thisFuncName + 'teams[teamIdx]=' + JSON.stringify(teams[teamIdx]) + ', teamKeyMap[teams[teamIdx].team_key]=' + JSON.stringify(teamKeyMap[teams[teamIdx].team_key]));
+					//console.log(thisFuncName + 'teams[teamIdx]=' + JSON.stringify(teams[teamIdx]) + ', teamKeyMap[teams[teamIdx].team_key]=' + JSON.stringify(teamKeyMap[teams[teamIdx].team_key]));
 					teams[teamIdx].nickname = teamKeyMap[teams[teamIdx].team_key].nickname;
 				}
 				

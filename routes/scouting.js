@@ -27,7 +27,35 @@ router.get('/match*', function(req, res) {
 	});
 });
 
+router.post('/match/submit', function(req, res){
+
+	var thisFuncName = "scouting.submitmatch[post]: ";
+	console.log(thisFuncName + 'ENTER');
+	
+	var thisUser = req.user;
+	var thisUserName = thisUser.name;
+		
+	var matchData = req.body;
+	if(!matchData)
+		return res.send({status: 500, message: "No data was sent to /scouting/match/submit."});
+	
+	var matchKey = matchData.matchkey;
+	delete matchData.matchkey;
+	//console.log(thisFuncName + 'matchKey=' + matchKey + ' ~ thisUserName=' + thisUserName);
+	//console.log(thisFuncName + 'matchData=' + JSON.stringify(matchData));
+	
+    var matchCol = req.db.get('scoringdata');
+
+	matchCol.update( { "match_team_key" : matchKey }, { $set: { "data" : matchData, "actual_scorer": thisUserName } }, function(e, docs){
+		if(e)
+			return res.send({status: 500, message: e});
+		return res.send({message: "Submitted data successfully.", status: 200});
+	});
+});
+
 router.post('/submitmatch', function(req, res) {
+	//LEGACY CODE
+	
 	var thisFuncName = "scouting.submitmatch[post]: ";
 	console.log(thisFuncName + 'ENTER');
 	

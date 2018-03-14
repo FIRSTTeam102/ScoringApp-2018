@@ -37,7 +37,7 @@ function createNotificationCard( text, type ){
 	card.classList.add("w3-border");
 	card.classList.add("w3-center");
 	card.classList.add( color );
-	card.style = "position:absolute; top:50px; transition:opacity 2.5s; opacity:1; z-index:2;";
+	card.style = "position:fixed; top:50px; transition:opacity 2.5s; opacity:1; z-index:2;";
 	card.id = "notification-card";
 	
 	if(window.innerWidth >= 601){

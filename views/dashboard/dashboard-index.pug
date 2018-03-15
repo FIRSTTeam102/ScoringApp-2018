@@ -42,7 +42,11 @@ block content
 						a(href=`/scouting/match?key=${match.match_team_key}`) 
 							div(class=`gear-btn ${btnColor} gear-hover-white w3-btn w3-section gear-margin-sides`)
 								span= match.team_key.substring(3)
-
-						
-					
-			
+			hr
+		div(class="w3-container w3-padding-16")
+			a(href="/dashboard/pits") 
+				div(class="gear-btn gear-orange gear-hover-white w3-btn w3-section gear-margin-sides")
+					span One-off Pit Scouting
+			a(href="/dashboard/matches") 
+				div(class="gear-btn gear-orange gear-hover-white w3-btn w3-section gear-margin-sides")
+					span One-off Match Scouting

@@ -30,24 +30,26 @@ function submitData(url, dataKey, callback, indexOfLS){
 		console.log(res);
 		
 		createNotificationCard( res.message, cardType );
-		
+		/*
 		//if(indexOfLS){
 			//console.log("indexofls exists");
 			if(!indexOfLS)
 				indexOfLS = 0;
 			
-			var toSubmit = getToSubmit();
+			var toSubmit = get
+			();
 			//console.log(toSubmit);
 			toSubmit.splice(indexOfLS,1);
 			localStorage.setItem('toSubmit', JSON.stringify(toSubmit));
 		//}
-		callback();
+		*/
+		callback(null);
 	}).fail(function(){
 		console.warn("failed");
 		createNotificationCard("Failed to send data. Attempting to re-submit...", "warn");
 		setTimeout(function(){
 			submitData(url, dataKey, callback, indexOfLS);
-		}, 5000);
+		}, 2000);
 	});
 	
 }
@@ -59,7 +61,7 @@ function getToSubmit(){
 function setToSubmit( array ){
 	localStorage.setItem("toSubmit", JSON.stringify(array) );
 }
-
+/*
 function checkNeedSubmit(){
 	
 	var toSubmit = JSON.parse(localStorage.getItem('toSubmit'));
@@ -76,7 +78,4 @@ function checkNeedSubmit(){
 	}
 }
 setTimeout( checkNeedSubmit, 300);
-
-
-
-
+*/

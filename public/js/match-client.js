@@ -14,8 +14,10 @@ $(function(){
 			dataKey: "matchFormData",
 			callback: function(){
 				console.log("Callback called from match-client.js");
+				window.location.href="/dashboard"
 			}
 		};
+		/*
 		//gets existing thingy from local storage
 		var toSubmitAlready = getToSubmit();
 		
@@ -26,11 +28,11 @@ $(function(){
 			console.log("not tsa");
 			toSubmitAlready = [toSubmit];
 		}
+		
 		//sends to local storage
 		setToSubmit(toSubmitAlready);
-		
+		*/
 		submitData(toSubmit.url, toSubmit.dataKey, toSubmit.callback);
-		
 	});
 
 });

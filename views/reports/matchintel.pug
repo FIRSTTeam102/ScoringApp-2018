@@ -12,9 +12,10 @@ block content
 	- var redTeams = match.alliances.red.team_keys[0].substring(3)+', '+match.alliances.red.team_keys[1].substring(3)+', '+match.alliances.red.team_keys[2].substring(3);
 	h4(class="gear-text-white") <i>#{redTeams}</i>
 	if (match.videos)
-		if (match.videos[0].type == "youtube")
-			hr
-			a(href=`https://www.youtube.com/watch?v=${match.videos[0].key}`) Watch match on YouTube
+		if (match.videos[0])
+			if (match.videos[0].type == "youtube")
+				hr
+				a(href=`https://www.youtube.com/watch?v=${match.videos[0].key}`) Watch match on YouTube
 	hr
 	div(class="w3-container")
 		div(class="w3-responsive")

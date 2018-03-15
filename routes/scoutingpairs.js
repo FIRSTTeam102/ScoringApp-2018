@@ -573,9 +573,10 @@ router.post("/generatematchallocations", function(req, res) {
 							if (!(thisScoreData.assigned_scorer)) {
 								// Which team is this?
 								var thisTeamKey = thisScoreData.team_key;
+								//console.log(thisFuncName + 'thisTeamKey=' + thisTeamKey);
 								
 								// 2018-03-15, M.O'C: Skip assigning if this teams is the "active" team (currently hardcoding to 'frc102')
-								if (activeTeamKey != thisTeamkey)
+								if (activeTeamKey != thisTeamKey)
 								{					
 									// Who is assigned to this team?
 									var thisScoutData = scoutDataByTeam[thisTeamKey];

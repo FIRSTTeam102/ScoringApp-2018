@@ -5,7 +5,7 @@ block content
 		h4(class="gear-text-white") Reports
 		
 		a(href="/reports/finishedmatches")
-			div(class="gear-btn gear-orange gear-hover-white w3-btn w3-margin-left")
+			div(class="gear-btn gear-orange gear-hover-white w3-btn")
 				span Finished Matches
 		p
 		label()
@@ -14,18 +14,28 @@ block content
 			button(class="gear-btn gear-orange w3-btn w3-disabled" onclick="redIntel()" id="stats" disabled)
 				span Stats
 		a()
-			div(class="gear-btn gear-orange gear-hover-white w3-btn w3-margin-left" onclick="redUpcoming()")
+			div(class="gear-btn gear-orange gear-hover-white w3-btn" onclick="redUpcoming()")
 				span Upcoming Matches
-	
-	div(class="w3-container w3-section")
-		h4(class="gear-text-white") Log In
-		a(href="/login/scouter") 
-			div(class="gear-btn gear-orange gear-hover-white w3-btn")
-				span Scouter Login
-	div(class="w3-container w3-section")
-		a(href="/login/admin")
-			div(class="gear-btn gear-orange gear-hover-white w3-btn")
-				span Admin Login
+	if( !user || (user && user.name == "[Dev]"))
+		div(class="w3-container w3-section")
+			h4(class="gear-text-white") Log In
+			a(href="/login/scouter") 
+				div(class="gear-btn gear-orange gear-hover-white w3-btn")
+					span Scouter Login
+		div(class="w3-container w3-section")
+			a(href="/login/admin")
+				div(class="gear-btn gear-orange gear-hover-white w3-btn")
+					span Admin Login
+	if user
+		div(class="w3-container w3-section")
+			h4(class="gear-text-white")=user.name
+			a(href="/dashboard")
+				div(class="gear-btn gear-orange gear-hover-white w3-btn") Dashboard
+		div(class="w3-container")
+			a(href="/scouting/pit")
+				div(class="gear-btn gear-orange gear-hover-white w3-btn") Pit Scouting
+			a(href="/scouting/match")
+				div(class="gear-btn gear-orange gear-hover-white w3-btn") Match Scouting
 	script.
 		function redIntel(){
 			if( !$("#teamNo").val() ){
@@ -46,7 +56,10 @@ block content
 			}
 		}
 		$("#teamNo").keyup(function(e){
-			setTimeout( isTeamFilled(this), 1)
+			setTimeout( isTeamFilled(this), 1);
+			if(e.keyCode == 13){
+				redIntel();
+			}
 		});
 		$("#teamNo").click(function(e){
 			setTimeout( isTeamFilled(this), 1)

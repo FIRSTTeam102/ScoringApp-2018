@@ -213,4 +213,44 @@ router.get("/matchintel*", function(req, res){
 	});
 });
 
+router.get("/teammatchintel*", function(req, res){
+	var thisFuncName = "reports.teammatchintel*[get]: ";
+	console.log(thisFuncName + 'ENTER');
+	
+	var teamMatchKey = req.query.key;
+	if (!teamMatchKey) {
+		res.redirect("/?alert=No team-match key specified in Team Match Intel page.");
+		return;
+	}
+	console.log(thisFuncName + 'teamMatchKey=' + teamMatchKey);
+	
+	var db = req.db;
+	var scoreCol = req.db.get('scoringdata');
+	//var teamsCol = req.db.get('teams');
+	//var pitCol = req.db.get('scoutingdata');
+	//var currentCol = db.get("current");
+	var scoutCol = db.get("scoringlayout");
+	
+	// Match data layout
+	scoutCol.find({}, {sort: {"order": 1}}, function(e, docs){
+		var layout = docs;
+		
+		scoreCol.find({"match_team_key": teamMatchKey}, {}, function (e, docs) {
+			var data = null;
+			var teammatch = null;
+			if (docs && docs[0]) {
+				teammatch = docs[0];
+				data = teammatch.data;
+			}
+			
+			console.log(thisFuncName + 'teammatch=' + JSON.stringify(teammatch));
+			res.render("./reports/teammatchintel", {
+				layout: layout,
+				data: data,
+				teammatch: teammatch
+			});
+		});
+	});
+});
+
 module.exports = router;

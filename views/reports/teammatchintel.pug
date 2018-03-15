@@ -1,0 +1,24 @@
+extends ../layout
+
+block content
+	h2(class="gear-text-white")= teammatch.team_key.replace('frc','Team #')
+	p
+	h3 Match ##{teammatch.match_number} - #{teammatch.alliance} alliance 
+	
+	hr
+	each element in layout
+		case element.type
+			when "checkbox"
+				- var boolVal = 'Yes';
+				- if (data[element.id] == 0) boolVal = 'No';
+				h4(class="gear-text-white") #{element.label} <strong>#{boolVal}</strong>
+			when "counter"
+			when "badcounter"
+			when "multiselect"
+			when "textblock"
+				h4(class="gear-text-white") #{element.label}: <strong>#{data[element.id]}</strong>
+			when "h2"
+				h2 #{element.label}
+			when "spacer"
+				p
+

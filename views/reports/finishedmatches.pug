@@ -1,29 +1,7 @@
 extends ../layout
 
 block content
-	h2(class="gear-text-white")= team.key.replace('frc','Team #')
-	p
-	h2 #{team.nickname}
-	- var country = '';
-	- if (team.country != 'USA') country = team.country;
-	h4(class="gear-text-white" style="font-style:italic") From: #{team.city}, #{team.state_prov} #{country}
-	h4(class="gear-text-white" style="font-style:italic") #{team.name}
-	if (data)
-		hr
-		each element in layout
-			case element.type
-				when "checkbox"
-				when "counter"
-				when "badcounter"
-				when "multiselect"
-				when "textblock"
-					h4(class="gear-text-white") #{element.label} <strong>#{data[element.id]}</strong>
-				when "h2"
-					h2 #{element.label}
-				when "spacer"
-					p
-	hr
-	h2(class="gear-text-white") Previous matches
+	h2(class="gear-text-white") Finished Matches
 	
 	each match in matches
 		hr
@@ -40,7 +18,6 @@ block content
 				div(class="w3-col w3-border")
 					each teamkey in match.alliances.blue.team_keys
 						- var teamStyleBlue = "";
-						- if (teamkey == team.key) teamStyleBlue = "font-weight:bold";
 						div(class="gear-btn gear-blue gear-hover-white w3-btn w3-block" style=`${teamStyleBlue}`)
 							span= teamkey.substring(3)
 			div(class="w3-col s4 m2")
@@ -63,7 +40,6 @@ block content
 				div(class="w3-col w3-border")
 					each teamkey in match.alliances.red.team_keys
 						- var teamStyleRed = "";
-						- if (teamkey == team.key) teamStyleRed = "font-weight:bold";
 						div(class="gear-btn gear-red gear-hover-white w3-btn w3-block" style=`${teamStyleRed}`)
 							span= teamkey.substring(3)
 			div(class="w3-col s4 m2")
@@ -80,4 +56,4 @@ block content
 						- if (match.score_breakdown.red.faceTheBossRankingPoint) redQuests += 'FB'
 						span= redQuests
 					else
-						span &nbsp;
+						span &nbsp;	

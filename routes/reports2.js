@@ -1,7 +1,9 @@
 var express = require("express");
 var router = express.Router();
 
-router.get("/teamintel*", function(req, res){
+// LEGACY CODE - prefixed URLs with 'x' to prevent usage
+
+router.get("/xteamintel*", function(req, res){
 	var thisFuncName = "reports.teamintel*[get]: ";
 	console.log(thisFuncName + 'ENTER');
 	
@@ -73,7 +75,7 @@ router.get("/teamintel*", function(req, res){
 	});
 });
 
-router.get("/matchintel*", function(req, res){
+router.get("/xmatchintel*", function(req, res){
 	var thisFuncName = "reports.matchintel*[get]: ";
 	console.log(thisFuncName + 'ENTER');
 	

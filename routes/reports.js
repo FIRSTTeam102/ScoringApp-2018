@@ -2,9 +2,48 @@ var express = require("express");
 var router = express.Router();
 
 router.get("/", function(req, res){
-	
+
+	// TODO - we should probaby make an index for reports?
 	res.redirect('/?alert=No index page for /reports/');
 	
+});
+
+router.get("/finishedmatches", function(req, res){
+	var thisFuncName = "reports.finishedmatches[get]: ";
+	console.log(thisFuncName + 'ENTER');
+	
+	var db = req.db;
+	var currentCol = db.get("current");
+	var matchCol = req.db.get('matches');
+	
+	//
+	// Get the 'current' event from DB
+	//
+	currentCol.find({}, {}, function(e, docs) {
+		var noEventFound = 'No event defined';
+		var eventId = noEventFound;
+		if (docs)
+			if (docs.length > 0)
+				eventId = docs[0].event;
+		if (eventId === noEventFound) {
+			res.render('/adminindex', { 
+				title: 'Admin pages',
+				current: eventId
+			});
+		}
+		// for later querying by event_key
+		var event_key = eventId;
+		console.log(thisFuncName + 'event_key=' + event_key);
+
+		// Match history info
+		matchCol.find({"alliances.red.score": { $ne: -1}, "event_key" : event_key}, {sort: {time: 1}}, function (e, docs) {
+			var matches = docs;
+			//console.log(thisFuncName + 'matches=' + JSON.stringify(matches));
+			res.render("./reports/finishedmatches", {
+				matches: matches
+			});
+		});			
+	});
 });
 
 router.get("/upcoming", function(req, res){
@@ -21,6 +60,7 @@ router.get("/upcoming", function(req, res){
 				$and: 
 				[
 					{event_key: req.event.key},
+					{"alliances.blue.score": -1},
 					{$or: 
 						[
 							{ "alliances.blue.team_keys": teamKey },
@@ -46,7 +86,7 @@ router.get("/upcoming", function(req, res){
 	}
 	//if teamKey is 'all'
 	else{
-		matches.find({event_key: req.event.key}, {sort: {time: 1}}, function(e, matches){
+		matches.find({event_key: req.event.key, "alliances.blue.score": -1}, {sort: {time: 1}}, function(e, matches){
 			if(e)
 				return console.log(e);
 			//if no results, send empty array for pug to deal with
@@ -122,12 +162,12 @@ router.get("/teamintel*", function(req, res){
 				// Pit data layout
 				scoutCol.find({}, {sort: {"order": 1}}, function(e, docs){
 					var layout = docs;
-					console.log(thisFuncName + 'layout=' + JSON.stringify(layout));
+					//console.log(thisFuncName + 'layout=' + JSON.stringify(layout));
 					
 					// Match history info
 					matchCol.find({"alliances.red.score": { $ne: -1}, "event_key" : event_key, $or: [{"alliances.blue.team_keys": teamKey}, {"alliances.red.team_keys": teamKey}]}, {sort: {time: 1}}, function (e, docs) {
 						var matches = docs;
-						console.log(thisFuncName + 'matches=' + JSON.stringify(matches));
+						//console.log(thisFuncName + 'matches=' + JSON.stringify(matches));
 				
 						res.render("./reports/teamintel", {
 							title: "Intel: Team " + teamKey.substring(3),
@@ -139,6 +179,36 @@ router.get("/teamintel*", function(req, res){
 					});
 				});
 			});
+		});
+	});
+});
+
+router.get("/matchintel*", function(req, res){
+	var thisFuncName = "reports.matchintel*[get]: ";
+	console.log(thisFuncName + 'ENTER');
+	
+	var matchKey = req.query.key;
+	if (!matchKey) {
+		res.redirect("/?alert=No match key specified in Match Intel page.");
+		return;
+	}
+	console.log(thisFuncName + 'matchKey=' + matchKey);
+	
+	var db = req.db;
+	var matchCol = req.db.get('matches');
+	//var teamsCol = req.db.get('teams');
+	//var pitCol = req.db.get('scoutingdata');
+	//var currentCol = db.get("current");
+	//var scoutCol = db.get("scoutinglayout");
+	
+	matchCol.find({"key": matchKey}, {}, function (e, docs) {
+		var match = {};
+		if (docs && docs[0])
+			match = docs[0];
+		
+		console.log(thisFuncName + 'match=' + JSON.stringify(match));
+		res.render("./reports/matchintel", {
+			match: match
 		});
 	});
 });

@@ -1,5 +1,5 @@
 {"order":"1000","type":"h2","label":"Robot","id":"robotlabel"}
-{"order":"1010","type":"multiselect","label":"Drivetrain?","options":["Meccanum","Tank","Killough","West Coast","Swerve"],"id":"robotDrivetrain"}
+{"order":"1010","type":"multiselect","label":"Drivetrain?","options":["Mecanum","Tank","Killough","West Coast","Swerve"],"id":"robotDrivetrain"}
 {"order":"1020","type":"multiselect","label":"Type of block grabber?","options":["None","Rollers","Claw","Forklift","Other (note)"],"id":"robotGrabber"}
 {"order":"1030","type":"multiselect","label":"Method of scoring scale?","options":["None","Lift","Launch"],"id":"robotScaleMethod"}
 {"order":"1040","type":"multiselect","label":"Type of climb?","options":["None","Self only","Self + assist others","Only assist others"],"id":"robotClimbType"}

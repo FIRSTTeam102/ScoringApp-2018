@@ -4,7 +4,7 @@
 {"order":"1030","type":"multiselect","label":"Method of scoring scale?","options":["None","Lift","Launch","Other (note)"],"id":"robotScaleMethod"}
 {"order":"1040","type":"multiselect","label":"Type of climb?","options":["None","Self only","Self + assist others","Only assist others","Other (note)"],"id":"robotClimbType"}
 {"order":"1050","type":"multiselect","label":"If can climb, do you need the whole bar?","options":["N/A","No","Yes"],"id":"robotClimbWholeBar"}
-{"order":"1060","type":"counter","label":"Number of CIM motors?","id":"robotCimMotors"}
+{"order":"1060","type":"counter","label":"Number of drive motors?","id":"robotCimMotors"}
 {"order":"2000","type":"h2","label":"Autonomous","id":"robotlabel"}
 {"order":"2010","type":"multiselect","label":"Type of autonomous?","options":["None","Cross line only","Score switch near side","Score switch either side","Other (note)"],"id":"autoOptions"}
 {"order":"3000","type":"h2","label":"Strategy","id":"strategylabel"}

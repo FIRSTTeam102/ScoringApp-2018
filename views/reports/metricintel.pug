@@ -1,7 +1,9 @@
 extends ../layout
 
 block content
-	h2(class="gear-text-white") Aggregate match metrics for #{key}
+	h2(class="gear-text-white") Aggregate match metrics of <b>#{key}</b>
+	h6 <i>Click on column headers to sort</i>
+	h6 <i>Click on team numbers to jump to team intel</i>
 	
 	if (aggdata)
 		div(class="w3-container")
@@ -14,7 +16,8 @@ block content
 						th(onclick="w3.sortHTML('#metricTable','.item', 'td:nth-child(4)')")  Max
 					each agg in aggdata
 						tr
-							td(class="w3-text-light-gray")= agg._id
+							td(class="w3-text-light-gray")
+								a(href=`/reports/teamintel?team=${agg._id}`)= agg._id
 							- var minCol = 'w3-text-white'
 							- if (agg[key+"MIN"] == 0) minCol = 'w3-text-gray'
 							td(class=`${minCol}`)= agg[key+"MIN"]

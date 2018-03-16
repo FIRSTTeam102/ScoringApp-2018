@@ -25,6 +25,7 @@ block content
 	if (aggdata)
 		hr
 		h2(class="gear-text-white") Aggregate match metrics
+		h6 <i>Click on a metric to compare teams</i>
 		div(class="w3-container")
 			div(class="w3-responsive")
 				table(class="w3-table")
@@ -35,7 +36,8 @@ block content
 						th Max
 					each agg in aggdata
 						tr
-							td(class="w3-text-light-gray")= agg.key
+							td(class="w3-text-light-gray")
+								a(href=`/reports/metricintel?key=${agg.key}`)= agg.key
 							- var minCol = 'w3-text-white'
 							- if (agg.min == 0) minCol = 'w3-text-gray'
 							td(class=`${minCol}`)= agg.min

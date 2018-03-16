@@ -4,10 +4,15 @@ block content
 	div(class="w3-container w3-section")
 		h4(class="gear-text-white") Reports
 		
+		a(href="/reports/metrics")
+			div(class="gear-btn gear-orange gear-hover-white w3-btn")
+				span Tournament Match Scouting Metrics
+		p
 		a(href="/reports/finishedmatches")
 			div(class="gear-btn gear-orange gear-hover-white w3-btn")
 				span Finished Matches
 		p
+		h4(class="gear-text-white") Team Data
 		label()
 			input(class="w3-padding gear-orange w3-border-white w3-border w3-margin-right" style="border: none; width: 6.2em" type="number" placeholder="Team #" id="teamNo")
 		a()
@@ -16,10 +21,6 @@ block content
 		a()
 			div(class="gear-btn gear-orange gear-hover-white w3-btn" onclick="redUpcoming()")
 				span Upcoming Matches
-		p
-		a(href="/reports/metrics")
-			div(class="gear-btn gear-orange gear-hover-white w3-btn")
-				span Tournament Match Scouting Metrics
 	if( !user || (user && user.name == "[Dev]"))
 		div(class="w3-container w3-section")
 			h4(class="gear-text-white") Log In

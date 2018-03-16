@@ -1,7 +1,8 @@
 extends ../layout
 
 block content
-	h2(class="gear-text-white")= teammatch.team_key.replace('frc','Team #')
+	h2(class="gear-text-white")
+		a(href=`/reports/teamintel?team=${teammatch.team_key}`)= teammatch.team_key.replace('frc','Team #')
 	p
 	h3 Match ##{teammatch.match_number} - #{teammatch.alliance} alliance 
 	

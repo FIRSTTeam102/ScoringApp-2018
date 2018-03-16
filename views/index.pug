@@ -16,6 +16,10 @@ block content
 		a()
 			div(class="gear-btn gear-orange gear-hover-white w3-btn" onclick="redUpcoming()")
 				span Upcoming Matches
+		p
+		a(href="/reports/metrics")
+			div(class="gear-btn gear-orange gear-hover-white w3-btn")
+				span Tournament Match Scouting Metrics
 	if( !user || (user && user.name == "[Dev]"))
 		div(class="w3-container w3-section")
 			h4(class="gear-text-white") Log In

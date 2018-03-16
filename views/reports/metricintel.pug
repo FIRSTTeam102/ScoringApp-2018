@@ -1,0 +1,42 @@
+extends ../layout
+
+block content
+	h2(class="gear-text-white") Aggregate match metrics for #{key}
+	
+	if (aggdata)
+		div(class="w3-container")
+			div(class="w3-responsive")
+				table(class="w3-table" id="metricTable")
+					tr
+						th(onclick="w3.sortHTML('#metricTable','.item', 'td:nth-child(1)')") Team
+						th(onclick="w3.sortHTML('#metricTable','.item', 'td:nth-child(2)')")  Min
+						th(onclick="w3.sortHTML('#metricTable','.item', 'td:nth-child(3)')")  Avg
+						th(onclick="w3.sortHTML('#metricTable','.item', 'td:nth-child(4)')")  Max
+					each agg in aggdata
+						tr
+							td(class="w3-text-light-gray")= agg._id
+							- var minCol = 'w3-text-white'
+							- if (agg[key+"MIN"] == 0) minCol = 'w3-text-gray'
+							td(class=`${minCol}`)= agg[key+"MIN"]
+							- var avgCol = 'w3-text-white'
+							- if (agg[key+"AVG"] == 0) avgCol = 'w3-text-gray'
+							td(class=`${avgCol}`)= agg[key+"AVG"]
+							- var maxCol = 'w3-text-white'
+							- if (agg[key+"MAX"] == 0) maxCol = 'w3-text-gray'
+							td(class=`${maxCol}`)= agg[key+"MAX"]
+	
+	script.
+		$('th').click(function(){
+			var table = $(this).parents('table').eq(0)
+			var rows = table.find('tr:gt(0)').toArray().sort(comparer($(this).index()))
+			this.asc = !this.asc
+			if (!this.asc){rows = rows.reverse()}
+			for (var i = 0; i < rows.length; i++){table.append(rows[i])}
+		})
+		function comparer(index) {
+			return function(a, b) {
+				var valA = getCellValue(a, index), valB = getCellValue(b, index)
+				return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB)
+			}
+		}
+		function getCellValue(row, index){ return $(row).children('td').eq(index).text() }

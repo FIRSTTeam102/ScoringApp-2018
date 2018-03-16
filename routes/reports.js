@@ -158,14 +158,14 @@ router.get("/teamintel*", function(req, res){
 				});
 			}
 			var team = docs[0];
-			console.log(thisFuncName + 'team=' + JSON.stringify(team));
+			//console.log(thisFuncName + 'team=' + JSON.stringify(team));
 
 			// Pit scouting info
 			pitCol.find({ "event_key" : event_key, "team_key" : teamKey }, {}, function(e, docs){
 				var pitData = null;
 				if (docs && docs[0])
 					pitData = docs[0].data;
-				console.log(thisFuncName + 'pitData=' + JSON.stringify(pitData));
+				//console.log(thisFuncName + 'pitData=' + JSON.stringify(pitData));
 			
 				// Pit data layout
 				scoutCol.find({}, {sort: {"order": 1}}, function(e, docs){
@@ -189,27 +189,27 @@ router.get("/teamintel*", function(req, res){
 						scoreCol.find({}, {sort: {"order": 1}}, function(e, docs){
 							var scorelayout = docs;
 							var aggQuery = [];
-							aggQuery.push({ $match : { "data":{$exists:true}, "event_key": "2018njfla", "team_key": teamKey } });
+							aggQuery.push({ $match : { "data":{$exists:true}, "event_key": event_key, "team_key": teamKey } });
 							var groupClause = {};
 							groupClause["_id"] = "$team_key";
 
 							for (var scoreIdx = 0; scoreIdx < scorelayout.length; scoreIdx++) {
 								var thisLayout = scorelayout[scoreIdx];
 								if (thisLayout.type == 'checkbox' || thisLayout.type == 'counter' || thisLayout.type == 'badcounter') {
-									console.log(thisFuncName + 'thisLayout.type=' + thisLayout.type + ', thisLayout.id=' + thisLayout.id);
+									//console.log(thisFuncName + 'thisLayout.type=' + thisLayout.type + ', thisLayout.id=' + thisLayout.id);
 									groupClause[thisLayout.id + "MIN"] = {$min: "$data." + thisLayout.id};
 									groupClause[thisLayout.id + "AVG"] = {$avg: "$data." + thisLayout.id};
 									groupClause[thisLayout.id + "MAX"] = {$max: "$data." + thisLayout.id};
 								}
 							}
 							aggQuery.push({ $group: groupClause });
-							console.log(thisFuncName + 'aggQuery=' + JSON.stringify(aggQuery));
+							//console.log(thisFuncName + 'aggQuery=' + JSON.stringify(aggQuery));
 							
 							aggCol.aggregate(aggQuery, function(e, docs){
 								var aggresult = {};
 								if (docs && docs[0])
 									aggresult = docs[0];
-								console.log(thisFuncName + 'aggresult=' + JSON.stringify(aggresult));
+								//console.log(thisFuncName + 'aggresult=' + JSON.stringify(aggresult));
 
 								// Unspool single row of aggregate results into tabular form
 								var aggTable = [];
@@ -224,7 +224,7 @@ router.get("/teamintel*", function(req, res){
 										aggTable.push(aggRow);
 									}
 								}
-								console.log(thisFuncName + 'aggTable=' + JSON.stringify(aggTable));
+								//console.log(thisFuncName + 'aggTable=' + JSON.stringify(aggTable));
 								
 								res.render("./reports/teamintel", {
 									title: "Intel: Team " + teamKey.substring(3),
@@ -266,7 +266,7 @@ router.get("/matchintel*", function(req, res){
 		if (docs && docs[0])
 			match = docs[0];
 		
-		console.log(thisFuncName + 'match=' + JSON.stringify(match));
+		//console.log(thisFuncName + 'match=' + JSON.stringify(match));
 		res.render("./reports/matchintel", {
 			title: "Intel: Match "+matchKey.substring(matchKey.indexOf('qm')+2),
 			match: match
@@ -304,7 +304,7 @@ router.get("/teammatchintel*", function(req, res){
 				data = teammatch.data;
 			}
 			
-			console.log(thisFuncName + 'teammatch=' + JSON.stringify(teammatch));
+			//console.log(thisFuncName + 'teammatch=' + JSON.stringify(teammatch));
 			res.render("./reports/teammatchintel", {
 				layout: layout,
 				data: data,
@@ -312,6 +312,172 @@ router.get("/teammatchintel*", function(req, res){
 			});
 		});
 	});
+});
+
+router.get("/metrics", function(req, res){
+	var thisFuncName = "reports.metrics[get]: ";
+	console.log(thisFuncName + 'ENTER');
+	
+	var db = req.db;
+	var aggCol = req.db.get('scoringdata');
+	var scoreCol = db.get("scoringlayout");
+	var currentCol = db.get("current");
+	
+	//
+	// Get the 'current' event from DB
+	//
+	currentCol.find({}, {}, function(e, docs) {
+		var noEventFound = 'No event defined';
+		var eventId = noEventFound;
+		if (docs)
+			if (docs.length > 0)
+				eventId = docs[0].event;
+		if (eventId === noEventFound) {
+			res.render('/adminindex', { 
+				title: 'Admin pages',
+				current: eventId
+			});
+		}
+		// for later querying by event_key
+		var event_key = eventId;
+		console.log(thisFuncName + 'event_key=' + event_key);
+	
+		// Match data layout - use to build dynamic Mongo aggregation query  --- No team key specified! Will combo ALL teams
+		// db.scoringdata.aggregate( [ 
+		// { $match : { "data":{$exists:true}, "event_key": "2018njfla" } }, 
+		// { $group : { _id: "$team_key",
+		// "teleScaleMIN": {$min: "$data.teleScale"},
+		// "teleScaleAVG": {$avg: "$data.teleScale"},
+		// "teleScaleMAX": {$max: "$data.teleScale"}
+		//  } }
+		// ] );						
+		scoreCol.find({}, {sort: {"order": 1}}, function(e, docs){
+			var scorelayout = docs;
+			var aggQuery = [];
+			aggQuery.push({ $match : { "data":{$exists:true}, "event_key": event_key } });
+			var groupClause = {};
+			// group on event for single row
+			groupClause["_id"] = "$event_key";
+
+			for (var scoreIdx = 0; scoreIdx < scorelayout.length; scoreIdx++) {
+				var thisLayout = scorelayout[scoreIdx];
+				if (thisLayout.type == 'checkbox' || thisLayout.type == 'counter' || thisLayout.type == 'badcounter') {
+					//console.log(thisFuncName + 'thisLayout.type=' + thisLayout.type + ', thisLayout.id=' + thisLayout.id);
+					groupClause[thisLayout.id + "MIN"] = {$min: "$data." + thisLayout.id};
+					groupClause[thisLayout.id + "AVG"] = {$avg: "$data." + thisLayout.id};
+					groupClause[thisLayout.id + "MAX"] = {$max: "$data." + thisLayout.id};
+				}
+			}
+			aggQuery.push({ $group: groupClause });
+			//console.log(thisFuncName + 'aggQuery=' + JSON.stringify(aggQuery));
+			
+			aggCol.aggregate(aggQuery, function(e, docs){
+				var aggresult = {};
+				if (docs && docs[0])
+					aggresult = docs[0];
+				//console.log(thisFuncName + 'aggresult=' + JSON.stringify(aggresult));
+
+				// Unspool single row of aggregate results into tabular form
+				var aggTable = [];
+				for (var scoreIdx = 0; scoreIdx < scorelayout.length; scoreIdx++) {
+					var thisLayout = scorelayout[scoreIdx];
+					if (thisLayout.type == 'checkbox' || thisLayout.type == 'counter' || thisLayout.type == 'badcounter') {
+						var aggRow = {};
+						aggRow['key'] = thisLayout.id;
+						aggRow['min'] = (Math.round(aggresult[thisLayout.id + "MIN"] * 100)/100).toFixed(2);
+						aggRow['avg'] = (Math.round(aggresult[thisLayout.id + "AVG"] * 100)/100).toFixed(2);
+						aggRow['max'] = (Math.round(aggresult[thisLayout.id + "MAX"] * 100)/100).toFixed(2);
+						aggTable.push(aggRow);
+					}
+				}
+				//console.log(thisFuncName + 'aggTable=' + JSON.stringify(aggTable));
+				
+				res.render("./reports/metrics", {
+					title: "Metrics For All Teams",
+					aggdata: aggTable
+				});
+			});
+		});
+	});	
+});
+
+router.get("/metricintel*", function(req, res){
+	var thisFuncName = "reports.metric*[get]: ";
+	console.log(thisFuncName + 'ENTER');
+	
+	var metricKey = req.query.key;
+	if (!metricKey) {
+		res.redirect("/?alert=No metric key specified in Metric Intel page.");
+		return;
+	}
+	console.log(thisFuncName + 'metricKey=' + metricKey);
+	
+	var db = req.db;
+	var aggCol = req.db.get('scoringdata');
+	var currentCol = db.get("current");
+	
+	//
+	// Get the 'current' event from DB
+	//
+	currentCol.find({}, {}, function(e, docs) {
+		var noEventFound = 'No event defined';
+		var eventId = noEventFound;
+		if (docs)
+			if (docs.length > 0)
+				eventId = docs[0].event;
+		if (eventId === noEventFound) {
+			res.render('/adminindex', { 
+				title: 'Admin pages',
+				current: eventId
+			});
+		}
+		// for later querying by event_key
+		var event_key = eventId;
+		console.log(thisFuncName + 'event_key=' + event_key);
+	
+		// Match data layout - use to build dynamic Mongo aggregation query  --- No team key specified! Will output ALL teams
+		// db.scoringdata.aggregate( [ 
+		// { $match : { "data":{$exists:true}, "event_key": "2018njfla" } }, 
+		// { $group : { _id: "$team_key",
+		// "teleScaleMIN": {$min: "$data.teleScale"},
+		// "teleScaleAVG": {$avg: "$data.teleScale"},
+		// "teleScaleMAX": {$max: "$data.teleScale"}
+		//  } }
+		// ] );						
+		var aggQuery = [];
+		aggQuery.push({ $match : { "data":{$exists:true}, "event_key": event_key } });
+		var groupClause = {};
+		// group on team for multiple rows
+		groupClause["_id"] = "$team_key";
+
+		groupClause[metricKey + "MIN"] = {$min: "$data." + metricKey};
+		groupClause[metricKey + "AVG"] = {$avg: "$data." + metricKey};
+		groupClause[metricKey + "MAX"] = {$max: "$data." + metricKey};
+	
+		aggQuery.push({ $group: groupClause });
+		//console.log(thisFuncName + 'aggQuery=' + JSON.stringify(aggQuery));
+		
+		aggCol.aggregate(aggQuery, function(e, docs){
+			aggdata = docs;
+
+			if (aggdata) {
+				for (var aggIdx in aggdata) {
+					var thisAgg = aggdata[aggIdx];
+					thisAgg[metricKey + "MIN"] = (Math.round(thisAgg[metricKey + "MIN"] * 100)/100).toFixed(2);
+					thisAgg[metricKey + "AVG"] = (Math.round(thisAgg[metricKey + "AVG"] * 100)/100).toFixed(2);
+					thisAgg[metricKey + "MAX"] = (Math.round(thisAgg[metricKey + "MAX"] * 100)/100).toFixed(2);
+				}
+			}
+			
+			console.log(thisFuncName + 'aggdata=' + JSON.stringify(aggdata));
+			
+			res.render("./reports/metricintel", {
+				title: "Intel: " + metricKey,
+				aggdata: aggdata,
+				key: metricKey
+			});
+		});
+	});	
 });
 
 module.exports = router;

@@ -146,7 +146,52 @@ router.get('/pit*', function(req, res) {
 	});
 });
 
+router.post('/pit/submit', function(req, res){
+var thisFuncName = "scouting.submitpit[post]: ";
+	console.log(thisFuncName + 'ENTER');
+	
+	var thisUser = req.user;
+	var thisUserName = thisUser.name;
+	
+	//console.log(thisFuncName + 'req.body=' + JSON.stringify(req.body));
+	
+	var pitData = req.body;
+	console.log(req.body);
+	var teamKey = pitData.teamkey;
+	delete pitData.teamkey;
+	console.log(thisFuncName + 'teamKey=' + teamKey + ' ~ thisUserName=' + thisUserName);
+	console.log(thisFuncName + 'pitData=' + JSON.stringify(pitData));
+
+	var db = req.db;
+    var pitCol = db.get('scoutingdata');
+	var currentCol = db.get("current");
+
+	//
+	// Get the 'current' event from DB
+	//
+	currentCol.find({}, {}, function(e, docs) {
+		var noEventFound = 'No event defined';
+		var eventId = noEventFound;
+		if (docs)
+			if (docs.length > 0)
+				eventId = docs[0].event;
+		if (eventId === noEventFound) {
+			res.redirect('/adminindex');
+		}
+		var event_key = eventId;
+
+		//res.redirect("/dashboard");
+		
+		pitCol.update( { "event_key" : event_key, "team_key" : teamKey }, { $set: { "data" : pitData, "actual_scouter": thisUserName } }, function(e, docs){
+			if(e)
+				return res.send({status: 500, message: e});
+			return res.send({message: "Submitted data successfully.", status: 200});
+		});
+	});
+});
+
 router.post('/submitpit', function(req, res) {
+	//LEGACY CODE
 	var thisFuncName = "scouting.submitpit[post]: ";
 	console.log(thisFuncName + 'ENTER');
 	

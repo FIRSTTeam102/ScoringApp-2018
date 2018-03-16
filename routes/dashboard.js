@@ -209,33 +209,32 @@ router.get('/matches', function(req, res) {
 				earliestTimestamp = earliestMatch.time;
 			}
 	
+			console.log(thisFuncName + 'earliestTimestamp=' + earliestTimestamp);
+	
 			// Get all the UNRESOLVED matches
 			scoreDataCol.find({"event_key": eventId, "time": { $gte: earliestTimestamp }}, { limit: 60, sort: {"time": 1, "alliance": 1, "team_key": 1} }, function (e, scoreData) {
 				if(!scoreData)
 					return console.error("mongo error at dashboard/matches");
 				
-				teamsCol.find({}, {}, function(e, teams){
-					//console.log(scoreData);
-										
-					var start = Date.now();
+				console.log(thisFuncName + 'DEBUG getting nicknames next?');
+				// read in team list for data
+				teamsCol.find({},{ sort: {team_number: 1} }, function(e, docs) {
+					var teamArray = docs;
 					
-					for(var i in scoreData){
-						
-						for(var j in teams){
-							if( teams[j].key == scoreData[i].team_key){
-								scoreData[i].team_nickname = teams[j].nickname;
-								break;
-							}
-						}
-						if( i == scoreData.length-1 ){
-							var end = Date.now();
-							console.log("Compared teams in "+ (end - start) +" ms");
-							res.render('./dashboard/matches',{
-								title: "Match Scouting",
-								matches: scoreData
-							});
-						}
+					// Build map of team_key -> team data
+					var teamKeyMap = {};
+					for (var teamIdx = 0; teamIdx < teamArray.length; teamIdx++)
+					{
+						//console.log(thisFuncName + 'teamIdx=' + teamIdx + ', teamArray[]=' + JSON.stringify(teamArray[teamIdx]));
+						teamKeyMap[teamArray[teamIdx].key] = teamArray[teamIdx];
 					}
+
+					for(var i in scoreData)
+						scoreData[i].team_nickname = teamKeyMap[scoreData[i].team_key].nickname;
+					res.render('./dashboard/matches',{
+						title: "Match Scouting",
+						matches: scoreData
+					});
 				});
 			});
 		});

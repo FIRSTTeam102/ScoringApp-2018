@@ -120,9 +120,11 @@ router.get("/teamintel*", function(req, res){
 	var db = req.db;
 	var teamsCol = req.db.get('teams');
 	var pitCol = req.db.get('scoutingdata');
+	var aggCol = req.db.get('scoringdata');
 	var matchCol = req.db.get('matches');
 	var currentCol = db.get("current");
 	var scoutCol = db.get("scoutinglayout");
+	var scoreCol = db.get("scoringlayout");
 	
 	//
 	// Get the 'current' event from DB
@@ -175,12 +177,64 @@ router.get("/teamintel*", function(req, res){
 						var matches = docs;
 						//console.log(thisFuncName + 'matches=' + JSON.stringify(matches));
 				
-						res.render("./reports/teamintel", {
-							title: "Intel: Team " + teamKey.substring(3),
-							team: team,
-							data: pitData,
-							layout: layout,
-							matches: matches
+						// Match data layout - use to build dynamic Mongo aggregation query
+						// db.scoringdata.aggregate( [ 
+						// { $match : { "data":{$exists:true}, "event_key": "2018njfla", "team_key": "frc303" } }, 
+						// { $group : { _id: "$team_key",
+						// "teleScaleMIN": {$min: "$data.teleScale"},
+						// "teleScaleAVG": {$avg: "$data.teleScale"},
+						// "teleScaleMAX": {$max: "$data.teleScale"}
+						//  } }
+						// ] );						
+						scoreCol.find({}, {sort: {"order": 1}}, function(e, docs){
+							var scorelayout = docs;
+							var aggQuery = [];
+							aggQuery.push({ $match : { "data":{$exists:true}, "event_key": "2018njfla", "team_key": teamKey } });
+							var groupClause = {};
+							groupClause["_id"] = "$team_key";
+
+							for (var scoreIdx = 0; scoreIdx < scorelayout.length; scoreIdx++) {
+								var thisLayout = scorelayout[scoreIdx];
+								if (thisLayout.type == 'checkbox' || thisLayout.type == 'counter' || thisLayout.type == 'badcounter') {
+									console.log(thisFuncName + 'thisLayout.type=' + thisLayout.type + ', thisLayout.id=' + thisLayout.id);
+									groupClause[thisLayout.id + "MIN"] = {$min: "$data." + thisLayout.id};
+									groupClause[thisLayout.id + "AVG"] = {$avg: "$data." + thisLayout.id};
+									groupClause[thisLayout.id + "MAX"] = {$max: "$data." + thisLayout.id};
+								}
+							}
+							aggQuery.push({ $group: groupClause });
+							console.log(thisFuncName + 'aggQuery=' + JSON.stringify(aggQuery));
+							
+							aggCol.aggregate(aggQuery, function(e, docs){
+								var aggresult = {};
+								if (docs && docs[0])
+									aggresult = docs[0];
+								console.log(thisFuncName + 'aggresult=' + JSON.stringify(aggresult));
+
+								// Unspool single row of aggregate results into tabular form
+								var aggTable = [];
+								for (var scoreIdx = 0; scoreIdx < scorelayout.length; scoreIdx++) {
+									var thisLayout = scorelayout[scoreIdx];
+									if (thisLayout.type == 'checkbox' || thisLayout.type == 'counter' || thisLayout.type == 'badcounter') {
+										var aggRow = {};
+										aggRow['key'] = thisLayout.id;
+										aggRow['min'] = (Math.round(aggresult[thisLayout.id + "MIN"] * 100)/100).toFixed(2);
+										aggRow['avg'] = (Math.round(aggresult[thisLayout.id + "AVG"] * 100)/100).toFixed(2);
+										aggRow['max'] = (Math.round(aggresult[thisLayout.id + "MAX"] * 100)/100).toFixed(2);
+										aggTable.push(aggRow);
+									}
+								}
+								console.log(thisFuncName + 'aggTable=' + JSON.stringify(aggTable));
+								
+								res.render("./reports/teamintel", {
+									title: "Intel: Team " + teamKey.substring(3),
+									team: team,
+									data: pitData,
+									layout: layout,
+									aggdata: aggTable,
+									matches: matches
+								});
+							});
 						});
 					});
 				});

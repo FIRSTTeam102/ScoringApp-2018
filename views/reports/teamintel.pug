@@ -22,6 +22,30 @@ block content
 					h2 #{element.label}
 				when "spacer"
 					p
+	if (aggdata)
+		hr
+		h2(class="gear-text-white") Aggregate match metrics
+		div(class="w3-container")
+			div(class="w3-responsive")
+				table(class="w3-table")
+					tr
+						th Metric
+						th Min
+						th Avg
+						th Max
+					each agg in aggdata
+						tr
+							td(class="w3-text-light-gray")= agg.key
+							- var minCol = 'w3-text-white'
+							- if (agg.min == 0) minCol = 'w3-text-gray'
+							td(class=`${minCol}`)= agg.min
+							- var avgCol = 'w3-text-white'
+							- if (agg.avg == 0) avgCol = 'w3-text-gray'
+							td(class=`${avgCol}`)= agg.avg
+							- var maxCol = 'w3-text-white'
+							- if (agg.max == 0) maxCol = 'w3-text-gray'
+							td(class=`${maxCol}`)= agg.max
+
 	hr
 	h2(class="gear-text-white") Previous matches
 	

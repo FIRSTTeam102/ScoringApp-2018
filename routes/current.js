@@ -34,6 +34,7 @@ router.get("/matches", function(req, res) {
 			matches = docs;
 			
 			res.render("./currentmatches", {
+				title: "Matches",
 				"matches": matches
 			});
 		});
@@ -75,6 +76,7 @@ router.post("/resetmatches", function(req, res) {
 				matches = docs;
 				
 				res.render("./currentmatches", {
+					title: "Matches",
 					"matches": matches
 				});
 			});
@@ -134,6 +136,7 @@ router.post("/updatematch", function(req, res) {
 						var matches = docs;
 						
 						res.render("./currentmatches", {
+							title: "Matches",
 							"matches": matches
 						});
 					});

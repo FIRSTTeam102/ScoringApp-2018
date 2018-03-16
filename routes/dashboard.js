@@ -89,6 +89,7 @@ router.get('/', function(req, res) {
 								console.log(thisFuncName + "scoringMatch[" + matchesIdx + "]: num,team=" + scoringMatches[matchesIdx].match_number + "," + scoringMatches[matchesIdx].team_key);
 							
 							res.render('./dashboard/dashboard-index',{
+								title: "Dashboard for "+thisUserName,
 								"thisPair": thisPairLabel,
 								"assignedTeams": assignedTeams,
 								"backupTeams": backupTeams,
@@ -107,7 +108,7 @@ router.get('/unassigned', function(req, res) {
 	console.log(thisFuncName + 'ENTER');
 	
 	res.render('./dashboard/unassigned',{
-		title: 'Ad-Hoc Scouting/Scoring'
+		title: 'Unassigned'
 	});	
 });
 
@@ -161,6 +162,7 @@ router.get('/pits', function(req, res) {
 				}
 				
 				res.render('./dashboard/pits', {
+					title: "Pit Scouting", 
 					"teams": teams
 				});	
 			});
@@ -229,6 +231,7 @@ router.get('/matches', function(req, res) {
 							var end = Date.now();
 							console.log("Compared teams in "+ (end - start) +" ms");
 							res.render('./dashboard/matches',{
+								title: "Match Scouting",
 								matches: scoreData
 							});
 						}

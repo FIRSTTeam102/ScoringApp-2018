@@ -40,6 +40,7 @@ router.get("/finishedmatches", function(req, res){
 			var matches = docs;
 			//console.log(thisFuncName + 'matches=' + JSON.stringify(matches));
 			res.render("./reports/finishedmatches", {
+				title: "Matches",
 				matches: matches
 			});
 		});			
@@ -76,9 +77,10 @@ router.get("/upcoming", function(req, res){
 				return console.log(e);
 			//if no results, send empty array for pug to deal with
 			if(!matches)
-				return res.render('./reports/upcoming', { matches: [] });
+				return res.render('./reports/upcoming', { title:"Upcoming", matches: [] });
 			
 			res.render('./reports/upcoming', {
+				title: "Upcoming",
 				matches: matches,
 				team: teamKey
 			});
@@ -91,9 +93,13 @@ router.get("/upcoming", function(req, res){
 				return console.log(e);
 			//if no results, send empty array for pug to deal with
 			if(!matches)
-				return res.render('./reports/upcoming', { matches: [] });
+				return res.render('./reports/upcoming', { 
+					title: "Events",
+					matches: [] 
+				});
 			
 			res.render('./reports/upcoming', {
+				title: "Upcoming",
 				matches: matches
 			});
 		});
@@ -208,6 +214,7 @@ router.get("/matchintel*", function(req, res){
 		
 		console.log(thisFuncName + 'match=' + JSON.stringify(match));
 		res.render("./reports/matchintel", {
+			title: "Intel: Match "+matchKey.substring(matchKey.indexOf('qm')+2),
 			match: match
 		});
 	});

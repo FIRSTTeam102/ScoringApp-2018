@@ -39,6 +39,7 @@ router.get("/events", function(req, res) {
 			console.log(thisFuncName + "uniqueYears=" + uniqueYears);
 			
 			res.render("./events", {
+				title: "Events",
 				"events": events,
 				"years": uniqueYears,
 				"selectedYear": year
@@ -89,6 +90,7 @@ router.post("/events", function(req, res) {
 				year = (new Date()).getFullYear();
 				
 				res.render("./events", {
+					title: "Events",
 					"years": uniqueYears,
 					"selectedYear": year
 				});
@@ -111,6 +113,7 @@ router.post("/events", function(req, res) {
 								uniqueYears = docs.sort();
 
 								res.render("./events", {
+									title: "Events",
 									"events": eventData,
 									"years": uniqueYears,
 									"selectedYear": year
@@ -156,6 +159,7 @@ router.get("/matches", function(req, res) {
 		matches = docs;
 		
 		res.render("./matches", {
+			title: "Matches",
 			"matches": matches
 		});
 	});
@@ -201,6 +205,7 @@ router.post("/matches", function(req, res) {
 				year = (new Date()).getFullYear();
 				
 				res.render("./events", {
+					title: "Events",
 					"years": uniqueYears,
 					"selectedYear": year
 				});
@@ -219,6 +224,7 @@ router.post("/matches", function(req, res) {
 							var matches = docs;
 							
 							res.render("./matches", {
+								title: "Events",
 								"matches": matches
 							});
 						});
@@ -263,6 +269,7 @@ router.get("/teams", function(req, res) {
 		teams = docs;
 		
 		res.render("./teams", {
+			title: "Teams",
 			"teams": teams
 		});
 	});
@@ -309,6 +316,7 @@ router.post("/teams", function(req, res) {
 				year = (new Date()).getFullYear();
 				
 				res.render("./events", {
+					title: "Events",
 					"years": uniqueYears,
 					"selectedYear": year
 				});
@@ -362,6 +370,7 @@ router.post("/teams", function(req, res) {
 						teamCol.find({},{sort: {"key": 1}}, function(e, docs){
 						
 							res.render("./teams", {
+								title: "Teams",
 								"teams": docs
 							});
 						});

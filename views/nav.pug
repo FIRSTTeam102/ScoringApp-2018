@@ -1,24 +1,27 @@
-if user
-	nav(class="w3-bar gear-opacity w3-container gear-text-white")
-		div(href="#" class="w3-dropdown-mobile gear-clear gear-text-white w3-text-black-hover w3-mobile w3-left" onclick="w3_open( $('#userBar')[0], this );" style="max-width: 33%;")
-			if user.name != "[Dev]"
-				div(class="w3-button")=user.name
-				div(class="w3-dropdown-content w3-bar-block" id="userBar" style="position:relative;z-index:99")
-					a(href="/logout" class="w3-bar-item w3-button w3-padding-24") Log out
-					a(href="/login/changepassword" class="w3-bar-item w3-button") Change Password
+div(style="font-size:1.1em;")
+	if user
+		nav(class="w3-bar gear-opacity w3-container gear-text-white w3-rest" style="position:relative;z-index:2;")
+			if user.name != "[Dev]"	
+				div#userName(href="#" class="w3-dropdown-mobile gear-clear gear-text-white w3-text-black-hover w3-mobile w3-left" onclick="w3_open( $('#userBar')[0], this );" style="max-width: 33%;")
+					div(class="w3-button" style="")=user.name
 			else
 				div(class="w3-bar-item")=user.name
-		button( class="w3-button w3-show-small gear-clear w3-rest w3-right gear-text-white" onclick="w3_open( $('#navBar')[0], this );" id="navBtn") &#9776; 
-		div(id="navBar" style="display: none; z-index: 2; position: relative")
-			a(href="/dashboard" class="w3-bar-item w3-button gear-clear w3-mobile") Dashboard
-			a(href="/dashboard/pits" class="w3-bar-item w3-button gear-clear w3-mobile") Pit scouting
-			a(href="/dashboard/matches" class="w3-bar-item w3-button gear-clear w3-mobile") Match scouting
-			if user.subteam == "support" || user.subteam == "exec"
+			button( class="w3-button w3-show-small gear-clear w3-rest w3-right gear-text-white" style="font-size:1.6em; padding:4px 16px; " onclick="w3_open( $('#navBar')[0], this );" id="navBtn") &#x2261;
+			div(id="navBar" style="display: none; z-index: 2; position: relative")
+				a(href="/dashboard" class="w3-bar-item w3-button gear-clear w3-mobile") Dashboard
+				a(href="/dashboard/pits" class="w3-bar-item w3-button gear-clear w3-mobile") Pit scouting
+				a(href="/dashboard/matches" class="w3-bar-item w3-button gear-clear w3-mobile") Match scouting
+				if user.subteam == "support" || user.subteam == "exec"
 				a(href="/admin" class="w3-bar-item w3-button gear-clear w3-mobile") Admin Index
+		if user.name != "[Dev]"
+			div#userBar(class="w3-dropdown-content w3-bar-block w3-margin-left" style="position:absolute;top:2.1rem; z-index:99; max-width: 10rem;")
+				a(href="/logout" class="w3-bar-item w3-button w3-padding-24") Log out
+				a(href="/login/changepassword" class="w3-bar-item w3-button") Change Password
+
 br 
 header(class="w3-center w3-container w3-content w3-padding-8")
-	a(href="/") 
-		div(style="max-width:300px" class="w3-content")
+	div(style="max-width:300px" class="w3-content")
+		a(href="/") 
 			img(src="/images/powerup-header-glow-400px.png" class="w3-image")
 	h4(class="gear-text-white" style="margin:0px;padding:0px;")=tournament
 	br 
@@ -41,3 +44,14 @@ header(class="w3-center w3-container w3-content w3-padding-8")
 			toggle.onclick = function(){w3_open(elem, toggle)};
 			$("#closeNav").remove();
 		}
+		$("#userName").hover(function(){
+			if(window.innerWidth > 600){
+				w3_open( $('#userBar')[0], $("#userName")[0] );
+			}
+		}, function(){});
+		
+		$("#userBar").hover(function(){}, function(){	
+			if(window.innerWidth > 600){
+				w3_close( $('#userBar')[0], $("#userName")[0] );
+			}
+		});

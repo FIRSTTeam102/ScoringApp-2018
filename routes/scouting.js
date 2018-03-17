@@ -21,6 +21,7 @@ router.get('/match*', function(req, res) {
 		var layout = docs;
 		//console.log(layout);
 		res.render("./scouting/match", {
+			title: "Match Scouting",
 			layout: layout,
 			key: matchKey
 		});
@@ -140,6 +141,7 @@ router.get('/pit*', function(req, res) {
 		
 		//console.log(layout);
 		res.render("./scouting/pit", {
+			title: "Pit Scouting",
 			layout: layout,
 			key: teamKey
 		});

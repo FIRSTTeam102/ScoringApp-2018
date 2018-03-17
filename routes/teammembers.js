@@ -21,20 +21,16 @@ router.get("/", function(req, res) {
 		}
 		teamMembers = docs;
 		
-		res.render("./members", { "members": teamMembers });
+		res.render("./members", { 
+			title: "Team Members",
+			"members": teamMembers 
+		});
 	});
 });
 
 router.get("/present", function(req, res) {
 	var db = req.db;
-	
-	if(db._state == 'closed'){ //If database does not exist, send error
-		res.render('./error',{
-			message: "Database error: Offline",
-			error: {status: "If the database is running, try restarting the Node server."}
-		});
-	}
-	
+		
 	var collection = db.get("teammembers");
 	
 	collection.find({}, {sort: {"name": 1}}, function(e, docs) {
@@ -43,7 +39,10 @@ router.get("/present", function(req, res) {
 		
 		teammembers = docs;
 		
-		res.render("./present", {"members": teammembers});
+		res.render("./present", {
+			title: "Assign Who Is Present",
+			"members": teammembers
+		});
 	});
 });
 

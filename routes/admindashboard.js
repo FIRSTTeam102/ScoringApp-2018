@@ -74,7 +74,10 @@ router.get("/", function(req, res) {
 							thisMemberArr = [];
 						}
 						if (scoreData[scoreIdx].data)
-							thisMemberArr.push("Y");
+							if (scoreData[scoreIdx].assigned_scorer == scoreData[scoreIdx].actual_scorer)
+								thisMemberArr.push("Y");
+							else
+								thisMemberArr.push("C");
 						else
 							thisMemberArr.push("N");
 					}

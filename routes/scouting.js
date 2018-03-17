@@ -19,7 +19,7 @@ router.get('/match*', function(req, res) {
 	var collection = db.get("scoringlayout");
 	collection.find({}, {sort: {"order": 1}}, function(e, docs){
 		var layout = docs;
-		console.log(layout);
+		//console.log(layout);
 		res.render("./scouting/match", {
 			layout: layout,
 			key: matchKey
@@ -29,7 +29,7 @@ router.get('/match*', function(req, res) {
 
 router.post('/match/submit', function(req, res){
 
-	var thisFuncName = "scouting.submitmatch[post]: ";
+	var thisFuncName = "scouting.match[post]: ";
 	console.log(thisFuncName + 'ENTER');
 	
 	var thisUser = req.user;
@@ -40,16 +40,55 @@ router.post('/match/submit', function(req, res){
 		return res.send({status: 500, message: "No data was sent to /scouting/match/submit."});
 	
 	var matchKey = matchData.matchkey;
+	console.log(thisFuncName + "matchKey=" + matchKey + " ~ thisUserName=" + thisUserName);
 	delete matchData.matchkey;
+	console.log(thisFuncName + "matchData(pre-modified)=" + JSON.stringify(matchData));
 	//console.log(thisFuncName + 'matchKey=' + matchKey + ' ~ thisUserName=' + thisUserName);
 	//console.log(thisFuncName + 'matchData=' + JSON.stringify(matchData));
-	
-    var matchCol = req.db.get('scoringdata');
 
-	matchCol.update( { "match_team_key" : matchKey }, { $set: { "data" : matchData, "actual_scorer": thisUserName } }, function(e, docs){
-		if(e)
-			return res.send({status: 500, message: e});
-		return res.send({message: "Submitted data successfully.", status: 200});
+	// Get the 'layout' so we know types of data elements
+	var scoreCol = req.db.get("scoringlayout");
+	scoreCol.find({}, {sort: {"order": 1}}, function(e, docs){
+		var layout = docs;
+		var layoutTypeById = {};
+		//console.log(thisFuncName + "layout=" + JSON.stringify(layout));
+		for (var property in layout) {
+			if (layout.hasOwnProperty(property)) {
+				//console.log(thisFuncName + layout[property].id + " is a " + layout[property].type);
+				layoutTypeById[layout[property].id] = layout[property].type;
+			}
+		}
+	
+		// Process input data, convert to numeric values
+		for (var property in matchData) {
+			var thisType = layoutTypeById[property];
+			//console.log(thisFuncName + property + " :: " + matchData[property] + " ~ is a " + thisType);
+			if ('counter' == thisType || 'badcounter' == thisType) {
+				//console.log(thisFuncName + "...converting " + matchData[property] + " to a number");
+				var newVal = -1;
+				if (matchData[property]) {
+					var parseVal = parseInt(matchData[property]);
+					if (!isNaN(parseVal))
+						newVal = parseVal;
+				}
+				matchData[property] = newVal;
+			}
+			if ('checkbox' == thisType) {
+				//console.log(thisFuncName + "...converting " + matchData[property] + " to a boolean 1/0 number");
+				var newVal = (matchData[property] == "true" || matchData[property] == true) ? 1 : 0;
+				matchData[property] = newVal;
+			}
+		}
+		console.log(thisFuncName + "matchData(UPDATED)=" + JSON.stringify(matchData));
+	
+		// Post modified data to DB
+		var matchCol = req.db.get('scoringdata');
+
+		matchCol.update( { "match_team_key" : matchKey }, { $set: { "data" : matchData, "actual_scorer": thisUserName } }, function(e, docs){
+			if(e)
+				return res.send({status: 500, message: e});
+			return res.send({message: "Submitted data successfully.", status: 200});
+		});
 	});
 });
 
@@ -107,7 +146,52 @@ router.get('/pit*', function(req, res) {
 	});
 });
 
+router.post('/pit/submit', function(req, res){
+var thisFuncName = "scouting.submitpit[post]: ";
+	console.log(thisFuncName + 'ENTER');
+	
+	var thisUser = req.user;
+	var thisUserName = thisUser.name;
+	
+	//console.log(thisFuncName + 'req.body=' + JSON.stringify(req.body));
+	
+	var pitData = req.body;
+	console.log(req.body);
+	var teamKey = pitData.teamkey;
+	delete pitData.teamkey;
+	console.log(thisFuncName + 'teamKey=' + teamKey + ' ~ thisUserName=' + thisUserName);
+	console.log(thisFuncName + 'pitData=' + JSON.stringify(pitData));
+
+	var db = req.db;
+    var pitCol = db.get('scoutingdata');
+	var currentCol = db.get("current");
+
+	//
+	// Get the 'current' event from DB
+	//
+	currentCol.find({}, {}, function(e, docs) {
+		var noEventFound = 'No event defined';
+		var eventId = noEventFound;
+		if (docs)
+			if (docs.length > 0)
+				eventId = docs[0].event;
+		if (eventId === noEventFound) {
+			res.redirect('/adminindex');
+		}
+		var event_key = eventId;
+
+		//res.redirect("/dashboard");
+		
+		pitCol.update( { "event_key" : event_key, "team_key" : teamKey }, { $set: { "data" : pitData, "actual_scouter": thisUserName } }, function(e, docs){
+			if(e)
+				return res.send({status: 500, message: e});
+			return res.send({message: "Submitted data successfully.", status: 200});
+		});
+	});
+});
+
 router.post('/submitpit', function(req, res) {
+	//LEGACY CODE
 	var thisFuncName = "scouting.submitpit[post]: ";
 	console.log(thisFuncName + 'ENTER');
 	

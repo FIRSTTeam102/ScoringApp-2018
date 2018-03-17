@@ -99,10 +99,11 @@ var scoutingpairs = require('./routes/scoutingpairs');
 var teammembers = require("./routes/teammembers");
 var externaldata = require("./routes/externaldata");
 var dashboard = require("./routes/dashboard");
+var admindashboard = require("./routes/admindashboard");
 var scouting = require("./routes/scouting");
 var current = require("./routes/current");
 var reports = require('./routes/reports');
-var reports2 = require('./routes/reports2');
+//var reports2 = require('./routes/reports2');
 
 //CONNECT URLS TO ROUTES
 app.use('/', index);
@@ -112,10 +113,11 @@ app.use('/admin/scoutingpairs', scoutingpairs);
 app.use("/admin/teammembers", teammembers);
 app.use('/admin/data', externaldata);
 app.use('/admin/current', current);
+app.use('/admin/dashboard', admindashboard);
 app.use('/scouting', scouting);
 app.use("/dashboard", dashboard);
 app.use('/reports', reports);
-app.use('/reports2', reports2);
+//app.use('/reports2', reports2);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

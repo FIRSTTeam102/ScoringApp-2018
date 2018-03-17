@@ -115,7 +115,7 @@ router.post("/addmember", function(req, res){
 	}
 	console.log(thisFuncName + 'seniority=' + seniority);
 	
-	collection.insert({"name": name, "subteam": subteam, "className": className, "years": years, "seniority": seniority});
+	collection.insert({"name": name, "subteam": subteam, "className": className, "years": years, "seniority": seniority, "password": "default"});
 	
 	res.redirect("./");
 });

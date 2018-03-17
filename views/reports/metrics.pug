@@ -1,0 +1,31 @@
+extends ../layout
+
+block content
+	h2(class="gear-text-white") Statistical summary of ALL teams
+	h6 <i>Click on a metric to compare individual teams</i>
+	
+	if (aggdata)
+		table(class="w3-table")
+			tr
+				th Metric
+				th(class="w3-right-align") Min
+				th(class="w3-right-align") Avg
+				th(class="w3-right-align") Var
+				th(class="w3-right-align") Max
+			each agg in aggdata
+				tr
+					td(class="w3-text-light-gray w3-small")
+						a(href=`/reports/metricintel?key=${agg.key}`)= agg.key
+					- var minCol = 'w3-right-align w3-text-white'
+					- if (agg.min == 0) minCol = 'w3-right-align w3-text-gray'
+					td(class=`${minCol}`)= agg.min
+					- var avgCol = 'w3-right-align w3-text-white'
+					- if (agg.avg == 0) avgCol = 'w3-right-align w3-text-gray'
+					td(class=`${avgCol}`)= agg.avg
+					- var varCol = 'w3-right-align w3-text-white'
+					- if (agg.var == 0) varCol = 'w3-right-align w3-text-gray'
+					td(class=`${avgCol}`)= agg.var
+					- var maxCol = 'w3-right-align w3-text-white'
+					- if (agg.max == 0) maxCol = 'w3-right-align w3-text-gray'
+					td(class=`${maxCol}`)= agg.max
+

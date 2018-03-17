@@ -179,6 +179,8 @@ router.post("/deletescoutingpair", function(req, res) {
 });
 
 router.post("/generateteamallocations", function(req, res) {
+	// HARDCODED
+	var activeTeamKey = 'frc102';
 	
 	var passCheckSuccess;
 	
@@ -350,20 +352,27 @@ router.post("/generateteamallocations", function(req, res) {
 						thisAssignment["event_key"] = event_key;
 						// unique per team
 						thisAssignment["team_key"] = thisTbaTeam.key;
-						thisAssignment["primary"] = thisPrimaryAndBackup.primary;
-						if (thisPrimaryAndBackup.secondary)
-							thisAssignment["secondary"] = thisPrimaryAndBackup.secondary;
-						if (thisPrimaryAndBackup.tertiary)
-							thisAssignment["tertiary"] = thisPrimaryAndBackup.tertiary;
+						
+						// 2018-03-15, M.O'C: Skip assigning if this teams is the "active" team (currently hardcoding to 'frc102')
+						if (activeTeamKey != thisTbaTeam.key) {						
+							thisAssignment["primary"] = thisPrimaryAndBackup.primary;
+							if (thisPrimaryAndBackup.secondary)
+								thisAssignment["secondary"] = thisPrimaryAndBackup.secondary;
+							if (thisPrimaryAndBackup.tertiary)
+								thisAssignment["tertiary"] = thisPrimaryAndBackup.tertiary;
+							
+							assigneePointer += 1;
+							if (assigneePointer >= teammembersLen)
+								assigneePointer = 0;
+						} else {
+							console.log(thisFuncName + "Skipping team " + thisTbaTeam.key);
+						}
+							
 						
 						// Array for mass insert
 						teamassignments.push(thisAssignment);
 						// Map of assignments by team so we can lookup by team later during match assigning
 						teamassignmentsByTeam[thisTbaTeam.key] = thisAssignment;
-						
-						assigneePointer += 1;
-						if (assigneePointer >= teammembersLen)
-							assigneePointer = 0;
 					}
 					console.log(thisFuncName + "****** New/updated teamassignments:");
 					for (var i = 0; i < tbaTeamArrayLen; i++)
@@ -390,6 +399,8 @@ router.post("/generateteamallocations", function(req, res) {
 });	
 
 router.post("/generatematchallocations", function(req, res) {
+	// HARDCODED
+	var activeTeamKey = 'frc102';
 	
 	var passCheckSuccess;
 	
@@ -562,17 +573,23 @@ router.post("/generatematchallocations", function(req, res) {
 							if (!(thisScoreData.assigned_scorer)) {
 								// Which team is this?
 								var thisTeamKey = thisScoreData.team_key;
-								// Who is assigned to this team?
-								var thisScoutData = scoutDataByTeam[thisTeamKey];
-								var thisPossibleAssignee = thisScoutData[thisRole];
-								// Only check if this role is defined for this team
-								if (thisPossibleAssignee) {
-									// Only proceed if this person is not yet assigned elsewhere
-									if (!assignedMembers[thisPossibleAssignee]) {
-										// Good to assign!
-										thisMatchDataArray[thisMatchIdx].assigned_scorer = thisPossibleAssignee;
-										// Mark them as assigned to a team
-										assignedMembers[thisPossibleAssignee] = thisPossibleAssignee;
+								//console.log(thisFuncName + 'thisTeamKey=' + thisTeamKey);
+								
+								// 2018-03-15, M.O'C: Skip assigning if this teams is the "active" team (currently hardcoding to 'frc102')
+								if (activeTeamKey != thisTeamKey)
+								{					
+									// Who is assigned to this team?
+									var thisScoutData = scoutDataByTeam[thisTeamKey];
+									var thisPossibleAssignee = thisScoutData[thisRole];
+									// Only check if this role is defined for this team
+									if (thisPossibleAssignee) {
+										// Only proceed if this person is not yet assigned elsewhere
+										if (!assignedMembers[thisPossibleAssignee]) {
+											// Good to assign!
+											thisMatchDataArray[thisMatchIdx].assigned_scorer = thisPossibleAssignee;
+											// Mark them as assigned to a team
+											assignedMembers[thisPossibleAssignee] = thisPossibleAssignee;
+										}
 									}
 								}
 							}

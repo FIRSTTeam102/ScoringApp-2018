@@ -4,21 +4,31 @@ block content
 	h2(class="gear-text-white") Match #{match.match_number} - Winner: #{match.winning_alliance}
 	- var thisObj = {};
 
-	table(class="w3-table")
-		tr
-			th(class="gear-text-white") Attribute
-			th(class="gear-text-blue") Blue
-			th(class="gear-text-red") Red
-		- blueObj = match.score_breakdown.blue;
-		- redObj = match.score_breakdown.red;
-		- for (var property in blueObj) { if (blueObj.hasOwnProperty(property)) {
-		tr
-			td #{property}:
-			td <b>#{blueObj[property]}</b>
-			td <b>#{redObj[property]}</b>
-		- } }
-
-	h2(class="gear-text-red") Score Breakdown for Red
-	- thisObj = match.score_breakdown.red; for (var property in thisObj) { if (thisObj.hasOwnProperty(property)) {
-	h4 #{property}: <b>#{thisObj[property]}</b>
-	- } }
+	h4(class="gear-text-white") Blue team: #{match.alliances.blue.score} points
+	- var blueTeams = match.alliances.blue.team_keys[0].substring(3)+', '+match.alliances.blue.team_keys[1].substring(3)+', '+match.alliances.blue.team_keys[2].substring(3);
+	h4(class="gear-text-white") <i>#{blueTeams}</i>
+	p
+	h4(class="gear-text-white") Red team: #{match.alliances.red.score} points
+	- var redTeams = match.alliances.red.team_keys[0].substring(3)+', '+match.alliances.red.team_keys[1].substring(3)+', '+match.alliances.red.team_keys[2].substring(3);
+	h4(class="gear-text-white") <i>#{redTeams}</i>
+	if (match.videos)
+		if (match.videos[0])
+			if (match.videos[0].type == "youtube")
+				hr
+				a(href=`https://www.youtube.com/watch?v=${match.videos[0].key}`) Watch match on YouTube
+	hr
+	div(class="w3-container")
+		div(class="w3-responsive")
+			table(class="w3-table")
+				tr
+					th(class="gear-text-white") Attribute
+					th(class="gear-text-blue") Blue
+					th(class="gear-text-red") Red
+				- blueObj = match.score_breakdown.blue;
+				- redObj = match.score_breakdown.red;
+				- for (var property in blueObj) { if (blueObj.hasOwnProperty(property)) {
+				tr
+					td(class="w3-small") #{property}:
+					td <b>#{blueObj[property]}</b>
+					td <b>#{redObj[property]}</b>
+				- } }

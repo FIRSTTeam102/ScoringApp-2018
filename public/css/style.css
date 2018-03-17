@@ -71,7 +71,14 @@ a{
 
 .gear-no-border{border:none!important}
 
-.gear-btn{ min-width:100px; }
+.gear-btn{ 
+	min-width:100px; 
+	margin: 0px 8px 0px 8px;
+}
+
+.gear-counter{
+	font-weight:bold;box-sizing:content-box;width:20px;height:20px;padding:8px;
+}
 
 .gear-input-height {min-height:18px;padding:9px}
 

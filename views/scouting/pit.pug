@@ -1,9 +1,10 @@
 extends ../layout
 
 block content
+	script(src="/js/pit-client.js")
 	h3= key.replace('frc','Team #')
 	p
-	form(action="/scouting/submitpit" method="post" name="scoutform")
+	form#scoutform(name="scoutform")
 		input#teamkey(type="hidden", name="teamkey", value=`${key}`)
 		div(style="text-align:center")
 			each element in layout
@@ -23,8 +24,8 @@ block content
 						include templates/categoryHeader
 					when "spacer"
 						include templates/formSpacer
-			center
-				button( onclick="window.onbeforeunload = null;" class="w3-button w3-cyan" type="submit") submit
+	center
+		button#submit( onclick="window.onbeforeunload = null;" class="w3-button w3-cyan") submit
 	| <script>
 	each element in layout
 		case element.type

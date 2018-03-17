@@ -1,0 +1,14 @@
+extends ../layout
+
+block content
+	h2 Audit trail for match scouting
+	p
+	each row in audit
+		if (row.member)
+			hr
+			h4= row.member
+			each item in row.record
+				- var itemClass = "w3-button w3-green gear-counter"
+				- if (item == 'N') itemClass = "w3-button w3-red gear-counter"
+				div(class=`${itemClass}`)
+					span= item

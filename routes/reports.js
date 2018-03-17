@@ -8,6 +8,27 @@ router.get("/", function(req, res){
 	
 });
 
+router.get("/rankings", function(req, res){
+	var thisFuncName = "reports.rankings[get]: ";
+	console.log(thisFuncName + 'ENTER');
+	
+	var db = req.db;
+	var rankCol = db.get("currentrankings");
+	
+	rankCol.find({}, {sort: {rank: 1}}, function(e, docs) {
+		var rankings = null;
+		if (docs && docs.length > 0)
+			rankings = docs;
+
+		console.log(thisFuncName + 'rankings=' + JSON.stringify(rankings));
+		
+		res.render("./reports/rankings", {
+			title: "Rankings",
+			rankings: rankings
+		});
+	});
+});
+
 router.get("/finishedmatches", function(req, res){
 	var thisFuncName = "reports.finishedmatches[get]: ";
 	console.log(thisFuncName + 'ENTER');
@@ -199,6 +220,7 @@ router.get("/teamintel*", function(req, res){
 									//console.log(thisFuncName + 'thisLayout.type=' + thisLayout.type + ', thisLayout.id=' + thisLayout.id);
 									groupClause[thisLayout.id + "MIN"] = {$min: "$data." + thisLayout.id};
 									groupClause[thisLayout.id + "AVG"] = {$avg: "$data." + thisLayout.id};
+									groupClause[thisLayout.id + "VAR"] = {$stdDevPop: "$data." + thisLayout.id};
 									groupClause[thisLayout.id + "MAX"] = {$max: "$data." + thisLayout.id};
 								}
 							}
@@ -218,8 +240,13 @@ router.get("/teamintel*", function(req, res){
 									if (thisLayout.type == 'checkbox' || thisLayout.type == 'counter' || thisLayout.type == 'badcounter') {
 										var aggRow = {};
 										aggRow['key'] = thisLayout.id;
+										
+										// Recompute VAR first = StdDev/Mean
+										aggRow['var'] = aggRow['var'] / (aggRow['avg'] + 0.001);
+						
 										aggRow['min'] = (Math.round(aggresult[thisLayout.id + "MIN"] * 100)/100).toFixed(2);
 										aggRow['avg'] = (Math.round(aggresult[thisLayout.id + "AVG"] * 100)/100).toFixed(2);
+										aggRow['var'] = (Math.round(aggresult[thisLayout.id + "VAR"] * 100)/100).toFixed(2);
 										aggRow['max'] = (Math.round(aggresult[thisLayout.id + "MAX"] * 100)/100).toFixed(2);
 										aggTable.push(aggRow);
 									}
@@ -365,6 +392,7 @@ router.get("/metrics", function(req, res){
 					//console.log(thisFuncName + 'thisLayout.type=' + thisLayout.type + ', thisLayout.id=' + thisLayout.id);
 					groupClause[thisLayout.id + "MIN"] = {$min: "$data." + thisLayout.id};
 					groupClause[thisLayout.id + "AVG"] = {$avg: "$data." + thisLayout.id};
+					groupClause[thisLayout.id + "VAR"] = {$stdDevPop: "$data." + thisLayout.id};
 					groupClause[thisLayout.id + "MAX"] = {$max: "$data." + thisLayout.id};
 				}
 			}
@@ -384,8 +412,13 @@ router.get("/metrics", function(req, res){
 					if (thisLayout.type == 'checkbox' || thisLayout.type == 'counter' || thisLayout.type == 'badcounter') {
 						var aggRow = {};
 						aggRow['key'] = thisLayout.id;
+						
+						// Recompute VAR first = StdDev/Mean
+						aggRow['var'] = aggRow['var'] / (aggRow['avg'] + 0.001);
+					
 						aggRow['min'] = (Math.round(aggresult[thisLayout.id + "MIN"] * 100)/100).toFixed(2);
 						aggRow['avg'] = (Math.round(aggresult[thisLayout.id + "AVG"] * 100)/100).toFixed(2);
+						aggRow['var'] = (Math.round(aggresult[thisLayout.id + "VAR"] * 100)/100).toFixed(2);
 						aggRow['max'] = (Math.round(aggresult[thisLayout.id + "MAX"] * 100)/100).toFixed(2);
 						aggTable.push(aggRow);
 					}
@@ -452,6 +485,7 @@ router.get("/metricintel*", function(req, res){
 
 		groupClause[metricKey + "MIN"] = {$min: "$data." + metricKey};
 		groupClause[metricKey + "AVG"] = {$avg: "$data." + metricKey};
+		groupClause[metricKey + "VAR"] = {$stdDevPop: "$data." + metricKey};
 		groupClause[metricKey + "MAX"] = {$max: "$data." + metricKey};
 	
 		aggQuery.push({ $group: groupClause });
@@ -463,13 +497,17 @@ router.get("/metricintel*", function(req, res){
 			if (aggdata) {
 				for (var aggIdx in aggdata) {
 					var thisAgg = aggdata[aggIdx];
+					// Recompute VAR first = StdDev/Mean
+					thisAgg[metricKey + "VAR"] = thisAgg[metricKey + "VAR"] / (thisAgg[metricKey + "AVG"] + 0.001);
+					
 					thisAgg[metricKey + "MIN"] = (Math.round(thisAgg[metricKey + "MIN"] * 100)/100).toFixed(2);
 					thisAgg[metricKey + "AVG"] = (Math.round(thisAgg[metricKey + "AVG"] * 100)/100).toFixed(2);
+					thisAgg[metricKey + "VAR"] = (Math.round(thisAgg[metricKey + "VAR"] * 100)/100).toFixed(2);
 					thisAgg[metricKey + "MAX"] = (Math.round(thisAgg[metricKey + "MAX"] * 100)/100).toFixed(2);
 				}
 			}
 			
-			console.log(thisFuncName + 'aggdata=' + JSON.stringify(aggdata));
+			//console.log(thisFuncName + 'aggdata=' + JSON.stringify(aggdata));
 			
 			res.render("./reports/metricintel", {
 				title: "Intel: " + metricKey,

@@ -22,34 +22,41 @@ block content
 					h2 #{element.label}
 				when "spacer"
 					p
+	else
+		hr
+		h6 No pit scouting data yet - check back later
 	if (aggdata)
 		hr
 		h2(class="gear-text-white") Aggregate match metrics
 		h6 <i>Click on a metric to compare teams</i>
-		div(class="w3-container")
-			div(class="w3-responsive")
-				table(class="w3-table")
-					tr
-						th Metric
-						th Min
-						th Avg
-						th Max
-					each agg in aggdata
-						tr
-							td(class="w3-text-light-gray")
-								a(href=`/reports/metricintel?key=${agg.key}`)= agg.key
-							- var minCol = 'w3-text-white'
-							- if (agg.min == 0) minCol = 'w3-text-gray'
-							td(class=`${minCol}`)= agg.min
-							- var avgCol = 'w3-text-white'
-							- if (agg.avg == 0) avgCol = 'w3-text-gray'
-							td(class=`${avgCol}`)= agg.avg
-							- var maxCol = 'w3-text-white'
-							- if (agg.max == 0) maxCol = 'w3-text-gray'
-							td(class=`${maxCol}`)= agg.max
+		table(class="w3-table")
+			tr
+				th Metric
+				th(class="w3-right-align") Min
+				th(class="w3-right-align") Avg
+				th(class="w3-right-align") Var
+				th(class="w3-right-align") Max
+			each agg in aggdata
+				tr
+					td(class="w3-text-light-gray w3-small")
+						a(href=`/reports/metricintel?key=${agg.key}`)= agg.key
+					- var minCol = 'w3-right-align w3-text-white'
+					- if (agg.min == 0) minCol = 'w3-right-align w3-text-gray'
+					td(class=`${minCol}`)= agg.min
+					- var avgCol = 'w3-right-align w3-text-white'
+					- if (agg.avg == 0) avgCol = 'w3-right-align w3-text-gray'
+					td(class=`${avgCol}`)= agg.avg
+					- var varCol = 'w3-right-align w3-text-white'
+					- if (agg.var == 0) varCol = 'w3-right-align w3-text-gray'
+					td(class=`${varCol}`)= agg.var
+					- var maxCol = 'w3-right-align w3-text-white'
+					- if (agg.max == 0) maxCol = 'w3-right-align w3-text-gray'
+					td(class=`${maxCol}`)= agg.max
 
 	hr
 	h2(class="gear-text-white") Previous matches
+	h6 <i>Click team number for match scouting info</i>
+	h6 <i>Click match button for overall alliance performance</i>
 	
 	each match in matches
 		hr

@@ -1,61 +1,65 @@
 extends ../layout
 
 block content
-	h2(class="gear-text-white") Finished Matches
-	
-	each match in matches
-		hr
-		div(class="w3-row")
-			div(class="w3-col s12 m2")
-				div(class=" w3-dark-grey gear-hover-white w3-btn w3-block w3-border")
-					- var outcome = "Tie!";
-					- if (match.winning_alliance == 'red') outcome = "Red won";
-					- if (match.winning_alliance == 'blue') outcome = "Blue won";
-					a(href=`/reports/matchintel?key=${match.key}`) 
-						span Match #{match.match_number}: #{outcome}
-			div(class="w3-col m1") &nbsp;
-			div(class="w3-col s8 m2")
-				div(class="w3-col w3-border")
-					each teamkey in match.alliances.blue.team_keys
-						- var teamStyleBlue = "";
-						a(href=`/reports/teammatchintel?key=${match.key}_${teamkey}`)
-							div(class="gear-blue gear-hover-white w3-btn w3-block" style=`${teamStyleBlue}`)
-								span= teamkey.substring(3)
-			div(class="w3-col s4 m2")
-				- var divClassBlue = ' w3-dark-grey w3-btn w3-block w3-border';
-				- if (match.winning_alliance == 'blue') divClassBlue = ' w3-white w3-btn w3-block w3-border';
-				div(class=`${divClassBlue}` style="height:110px")
-					if (match.alliances.blue.score > -1)
-						span Score:
-						br
-						span= match.alliances.blue.score
-						br
-						- var blueQuests = ''
-						- if (match.score_breakdown.blue.autoQuestRankingPoint) blueQuests = 'AQ '
-						- if (match.score_breakdown.blue.faceTheBossRankingPoint) blueQuests += 'FB'
-						span= blueQuests
-					else
-						span &nbsp;
-			div(class="w3-col m1") &nbsp;
-			div(class="w3-col s8 m2")
-				div(class="w3-col w3-border")
-					each teamkey in match.alliances.red.team_keys
-						- var teamStyleRed = "";
-						a(href=`/reports/teammatchintel?key=${match.key}_${teamkey}`)
-							div(class=" gear-red gear-hover-white w3-btn w3-block" style=`${teamStyleRed}`)
-								span= teamkey.substring(3)
-			div(class="w3-col s4 m2")
-				- var divClassRed = ' w3-dark-grey w3-btn w3-block w3-border';
-				- if (match.winning_alliance == 'red') divClassRed = ' w3-white w3-btn w3-block w3-border';
-				div(class=`${divClassRed}` style="height:110px")
-					if (match.alliances.red.score > -1)
-						span Score:
-						br
-						span= match.alliances.red.score
-						br
-						- var redQuests = ''
-						- if (match.score_breakdown.red.autoQuestRankingPoint) redQuests = 'AQ '
-						- if (match.score_breakdown.red.faceTheBossRankingPoint) redQuests += 'FB'
-						span= redQuests
-					else
-						span &nbsp;	
+
+	if (matches && matches.length > 0)
+		h2(class="gear-text-white") Finished Matches
+		each match in matches
+			hr
+			div(class="w3-row")
+				div(class="w3-col s12 m2")
+					div(class=" w3-dark-grey gear-hover-white w3-btn w3-block w3-border")
+						- var outcome = "Tie!";
+						- if (match.winning_alliance == 'red') outcome = "Red won";
+						- if (match.winning_alliance == 'blue') outcome = "Blue won";
+						a(href=`/reports/matchintel?key=${match.key}`) 
+							span Match #{match.match_number}: #{outcome}
+				div(class="w3-col m1") &nbsp;
+				div(class="w3-col s8 m2")
+					div(class="w3-col w3-border")
+						each teamkey in match.alliances.blue.team_keys
+							- var teamStyleBlue = "";
+							a(href=`/reports/teammatchintel?key=${match.key}_${teamkey}`)
+								div(class="gear-blue gear-hover-white w3-btn w3-block" style=`${teamStyleBlue}`)
+									span= teamkey.substring(3)
+				div(class="w3-col s4 m2")
+					- var divClassBlue = ' w3-dark-grey w3-btn w3-block w3-border';
+					- if (match.winning_alliance == 'blue') divClassBlue = ' w3-white w3-btn w3-block w3-border';
+					div(class=`${divClassBlue}` style="height:110px")
+						if (match.alliances.blue.score > -1)
+							span Score:
+							br
+							span= match.alliances.blue.score
+							br
+							- var blueQuests = ''
+							- if (match.score_breakdown.blue.autoQuestRankingPoint) blueQuests = 'AQ '
+							- if (match.score_breakdown.blue.faceTheBossRankingPoint) blueQuests += 'FB'
+							span= blueQuests
+						else
+							span &nbsp;
+				div(class="w3-col m1") &nbsp;
+				div(class="w3-col s8 m2")
+					div(class="w3-col w3-border")
+						each teamkey in match.alliances.red.team_keys
+							- var teamStyleRed = "";
+							a(href=`/reports/teammatchintel?key=${match.key}_${teamkey}`)
+								div(class=" gear-red gear-hover-white w3-btn w3-block" style=`${teamStyleRed}`)
+									span= teamkey.substring(3)
+				div(class="w3-col s4 m2")
+					- var divClassRed = ' w3-dark-grey w3-btn w3-block w3-border';
+					- if (match.winning_alliance == 'red') divClassRed = ' w3-white w3-btn w3-block w3-border';
+					div(class=`${divClassRed}` style="height:110px")
+						if (match.alliances.red.score > -1)
+							span Score:
+							br
+							span= match.alliances.red.score
+							br
+							- var redQuests = ''
+							- if (match.score_breakdown.red.autoQuestRankingPoint) redQuests = 'AQ '
+							- if (match.score_breakdown.red.faceTheBossRankingPoint) redQuests += 'FB'
+							span= redQuests
+						else
+							span &nbsp;	
+	else
+		h2(class="gear-text-white") <i>There are no matches in the system yet</i>
+		h6 Please check back later

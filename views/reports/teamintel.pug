@@ -62,7 +62,7 @@ block content
 		hr
 		div(class="w3-row")
 			div(class="w3-col s12 m2")
-				div(class="gear-btn w3-dark-grey gear-hover-white w3-btn w3-block w3-border")
+				div(class="w3-dark-grey gear-hover-white w3-btn w3-block w3-border")
 					- var outcome = "Tie!";
 					- if (match.winning_alliance == 'red') outcome = "Red won";
 					- if (match.winning_alliance == 'blue') outcome = "Blue won";
@@ -75,10 +75,10 @@ block content
 						- var teamStyleBlue = "";
 						- if (teamkey == team.key) teamStyleBlue = "font-weight:bold";
 						a(href=`/reports/teammatchintel?key=${match.key}_${teamkey}`)
-							div(class="gear-btn gear-blue gear-hover-white w3-btn w3-block" style=`${teamStyleBlue}`)
+							div(class="gear-blue gear-hover-white w3-btn w3-block" style=`${teamStyleBlue}`)
 								span= teamkey.substring(3)
 			div(class="w3-col s4 m2")
-				- var divClassBlue = 'gear-btn w3-dark-grey w3-btn w3-block w3-border';
+				- var divClassBlue = 'w3-dark-grey w3-btn w3-block w3-border';
 				- if (match.winning_alliance == 'blue') divClassBlue = 'gear-btn w3-white w3-btn w3-block w3-border';
 				div(class=`${divClassBlue}` style="height:110px")
 					if (match.alliances.blue.score > -1)
@@ -99,10 +99,10 @@ block content
 						- var teamStyleRed = "";
 						- if (teamkey == team.key) teamStyleRed = "font-weight:bold";
 						a(href=`/reports/teammatchintel?key=${match.key}_${teamkey}`)
-							div(class="gear-btn gear-red gear-hover-white w3-btn w3-block" style=`${teamStyleRed}`)
+							div(class="gear-red gear-hover-white w3-btn w3-block" style=`${teamStyleRed}`)
 								span= teamkey.substring(3)
 			div(class="w3-col s4 m2")
-				- var divClassRed = 'gear-btn w3-dark-grey w3-btn w3-block w3-border';
+				- var divClassRed = 'w3-dark-grey w3-btn w3-block w3-border';
 				- if (match.winning_alliance == 'red') divClassRed = 'gear-btn w3-white w3-btn w3-block w3-border';
 				div(class=`${divClassRed}` style="height:110px")
 					if (match.alliances.red.score > -1)

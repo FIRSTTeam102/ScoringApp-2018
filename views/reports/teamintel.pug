@@ -1,7 +1,7 @@
 extends ../layout
 
 block content
-	h2(class="gear-text-white")= team.key.replace('frc','Team #')
+	h2(class="gear-text-white")= team.key.replace('frc','Team ')
 	p
 	h2 #{team.nickname}
 	- var country = '';
@@ -27,8 +27,8 @@ block content
 		h6 No pit scouting data yet - check back later
 	if (aggdata)
 		hr
-		h2(class="gear-text-white") Aggregate match metrics
-		h6 <i>Click on a metric to compare teams</i>
+		h2(class="gear-text-white") Statistics for #{team.key.replace('frc','team ')}
+		h6 <i>Click on a metric to compare vs. other teams</i>
 		table(class="w3-table")
 			tr
 				th Metric
@@ -55,8 +55,8 @@ block content
 
 	hr
 	h2(class="gear-text-white") Previous matches
-	h6 <i>Click team number for match scouting info</i>
-	h6 <i>Click match button for overall alliance performance</i>
+	h6 <i>Click team number for match scouting details</i>
+	h6 <i>Click match button for overall alliance performances</i>
 	
 	each match in matches
 		hr

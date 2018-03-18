@@ -249,10 +249,10 @@ router.get("/teamintel*", function(req, res){
 										// Recompute VAR first = StdDev/Mean
 										aggRow['var'] = aggRow['var'] / (aggRow['avg'] + 0.001);
 						
-										aggRow['min'] = (Math.round(aggresult[thisLayout.id + "MIN"] * 100)/100).toFixed(2);
-										aggRow['avg'] = (Math.round(aggresult[thisLayout.id + "AVG"] * 100)/100).toFixed(2);
-										aggRow['var'] = (Math.round(aggresult[thisLayout.id + "VAR"] * 100)/100).toFixed(2);
-										aggRow['max'] = (Math.round(aggresult[thisLayout.id + "MAX"] * 100)/100).toFixed(2);
+										aggRow['min'] = (Math.round(aggresult[thisLayout.id + "MIN"] * 10)/10).toFixed(1);
+										aggRow['avg'] = (Math.round(aggresult[thisLayout.id + "AVG"] * 10)/10).toFixed(1);
+										aggRow['var'] = (Math.round(aggresult[thisLayout.id + "VAR"] * 10)/10).toFixed(1);
+										aggRow['max'] = (Math.round(aggresult[thisLayout.id + "MAX"] * 10)/10).toFixed(1);
 										aggTable.push(aggRow);
 									}
 								}
@@ -425,10 +425,10 @@ router.get("/metrics", function(req, res){
 						// Recompute VAR first = StdDev/Mean
 						aggRow['var'] = aggRow['var'] / (aggRow['avg'] + 0.001);
 					
-						aggRow['min'] = (Math.round(aggresult[thisLayout.id + "MIN"] * 100)/100).toFixed(2);
-						aggRow['avg'] = (Math.round(aggresult[thisLayout.id + "AVG"] * 100)/100).toFixed(2);
-						aggRow['var'] = (Math.round(aggresult[thisLayout.id + "VAR"] * 100)/100).toFixed(2);
-						aggRow['max'] = (Math.round(aggresult[thisLayout.id + "MAX"] * 100)/100).toFixed(2);
+						aggRow['min'] = (Math.round(aggresult[thisLayout.id + "MIN"] * 10)/10).toFixed(1);
+						aggRow['avg'] = (Math.round(aggresult[thisLayout.id + "AVG"] * 10)/10).toFixed(1);
+						aggRow['var'] = (Math.round(aggresult[thisLayout.id + "VAR"] * 10)/10).toFixed(1);
+						aggRow['max'] = (Math.round(aggresult[thisLayout.id + "MAX"] * 10)/10).toFixed(1);
 						aggTable.push(aggRow);
 					}
 				}
@@ -497,7 +497,11 @@ router.get("/metricintel*", function(req, res){
 		groupClause[metricKey + "VAR"] = {$stdDevPop: "$data." + metricKey};
 		groupClause[metricKey + "MAX"] = {$max: "$data." + metricKey};
 	
-		aggQuery.push({ $group: groupClause });
+		var sortKey = metricKey + "AVG";
+		var sortClause = {};
+		sortClause[sortKey] = -1;
+	
+		aggQuery.push({ $group: groupClause }, { $sort: sortClause });
 		//console.log(thisFuncName + 'aggQuery=' + JSON.stringify(aggQuery));
 		
 		aggCol.aggregate(aggQuery, function(e, docs){
@@ -509,10 +513,10 @@ router.get("/metricintel*", function(req, res){
 					// Recompute VAR first = StdDev/Mean
 					thisAgg[metricKey + "VAR"] = thisAgg[metricKey + "VAR"] / (thisAgg[metricKey + "AVG"] + 0.001);
 					
-					thisAgg[metricKey + "MIN"] = (Math.round(thisAgg[metricKey + "MIN"] * 100)/100).toFixed(2);
-					thisAgg[metricKey + "AVG"] = (Math.round(thisAgg[metricKey + "AVG"] * 100)/100).toFixed(2);
-					thisAgg[metricKey + "VAR"] = (Math.round(thisAgg[metricKey + "VAR"] * 100)/100).toFixed(2);
-					thisAgg[metricKey + "MAX"] = (Math.round(thisAgg[metricKey + "MAX"] * 100)/100).toFixed(2);
+					thisAgg[metricKey + "MIN"] = (Math.round(thisAgg[metricKey + "MIN"] * 10)/10).toFixed(1);
+					thisAgg[metricKey + "AVG"] = (Math.round(thisAgg[metricKey + "AVG"] * 10)/10).toFixed(1);
+					thisAgg[metricKey + "VAR"] = (Math.round(thisAgg[metricKey + "VAR"] * 10)/10).toFixed(1);
+					thisAgg[metricKey + "MAX"] = (Math.round(thisAgg[metricKey + "MAX"] * 10)/10).toFixed(1);
 				}
 			}
 			

@@ -1,6 +1,7 @@
 extends layout
 
 block content
+	style html{overflow-x: visible;}
 	- if (selectedYear == null) selectedYear = (new Date()).getFullYear();
 	if locals.years
 		select#yearSelect(name="selectedYear" onChange="submitForYear()")

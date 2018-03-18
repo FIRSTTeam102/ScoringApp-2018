@@ -1,6 +1,7 @@
 extends layout
 
 block content
+	style html{overflow-x: visible;}
 	form#updatematches(name="updatematches" method="post" action="/admin/current/updatematches")
 		button#btnSubmit(type="submit" class="w3-button gear-hover-white gear-orange w3-text-white") Update all matches
 	br

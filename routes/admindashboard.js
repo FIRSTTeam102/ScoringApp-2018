@@ -2,6 +2,9 @@ var express = require('express');
 var router = express.Router();
 
 router.get("/", function(req, res) {
+	if(!require('./checkauthentication')(req, res, 'admin'))
+		return null;
+	
 	var thisFuncName = "admindashboard root: ";
 	
 	// Log message so we can see on the server side when we enter this

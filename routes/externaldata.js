@@ -6,6 +6,9 @@ var router = express.Router();
 ////////////////////////
 
 router.get("/events", function(req, res) {
+	if(!require('./checkauthentication')(req, res, 'admin'))
+		return null;
+	
 	var thisFuncName = "externaldata.events[get]: ";
 	console.log(thisFuncName + 'ENTER')
 	
@@ -52,6 +55,9 @@ router.get("/events", function(req, res) {
 });
 
 router.post("/events", function(req, res) {
+	if(!require('./checkauthentication')(req, res, 'admin'))
+		return null;
+	
 	var thisFuncName = "externaldata.events[post]: ";
 	console.log(thisFuncName + 'ENTER')
 	
@@ -132,6 +138,9 @@ router.post("/events", function(req, res) {
 ////////////////////////
 
 router.get("/matches", function(req, res) {
+	if(!require('./checkauthentication')(req, res, 'admin'))
+		return null;
+	
 	var thisFuncName = "externaldata.matches[get]: ";
 	console.log(thisFuncName + 'ENTER')
 	
@@ -166,6 +175,9 @@ router.get("/matches", function(req, res) {
 });
 
 router.post("/matches", function(req, res) {
+	if(!require('./checkauthentication')(req, res, 'admin'))
+		return null;
+	
 	var thisFuncName = "externaldata.matches[post]: ";
 	console.log(thisFuncName + 'ENTER')
 	
@@ -240,6 +252,9 @@ router.post("/matches", function(req, res) {
 ////////////////////////
 
 router.get("/teams", function(req, res) {
+	if(!require('./checkauthentication')(req, res, 'admin'))
+		return null;
+	
 	var thisFuncName = "externaldata.teams[get]: ";
 	console.log(thisFuncName + 'ENTER')
 	
@@ -276,6 +291,9 @@ router.get("/teams", function(req, res) {
 });
 
 router.post("/teams", function(req, res) {
+	if(!require('./checkauthentication')(req, res, 'admin'))
+		return null;
+	
 	var thisFuncName = "externaldata.teams[post]: ";
 	console.log(thisFuncName + 'ENTER')
 	

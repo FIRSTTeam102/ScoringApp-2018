@@ -20,7 +20,7 @@ router.get("/rankings", function(req, res){
 		if (docs && docs.length > 0)
 			rankings = docs;
 
-		console.log(thisFuncName + 'rankings=' + JSON.stringify(rankings));
+		//console.log(thisFuncName + 'rankings=' + JSON.stringify(rankings));
 		
 		res.render("./reports/rankings", {
 			title: "Rankings",

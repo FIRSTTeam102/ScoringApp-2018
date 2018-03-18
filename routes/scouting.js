@@ -2,6 +2,11 @@ var express = require('express');
 var router = express.Router();
 
 router.get('/match*', function(req, res) {
+	
+	//auth
+	if(!require('./checkauthentication')(req, res))
+		return null;
+	
 	var thisFuncName = "scouting.match*[get]: ";
 	console.log(thisFuncName + 'ENTER');
 	
@@ -29,7 +34,12 @@ router.get('/match*', function(req, res) {
 });
 
 router.post('/match/submit', function(req, res){
-
+	
+	/** We need to do this eventually for security. Commented out of fear that scouters may be logged out while scouting (by accident)
+	//auth
+	if(!require('./checkauthentication')(req, res))
+		return null;
+	*/
 	var thisFuncName = "scouting.match[post]: ";
 	console.log(thisFuncName + 'ENTER');
 	
@@ -85,7 +95,7 @@ router.post('/match/submit', function(req, res){
 		// Post modified data to DB
 		var matchCol = req.db.get('scoringdata');
 
-		matchCol.update( { "match_team_key" : matchKey }, { $set: { "data" : matchData, "actual_scorer": thisUserName } }, function(e, docs){
+		matchCol.update( { "match_team_key" : matchKey }, { $set: { "data" : matchData, "actual_scorer": thisUserName, useragent: req.shortagent } }, function(e, docs){
 			if(e)
 				return res.send({status: 500, message: e});
 			return res.send({message: "Submitted data successfully.", status: 200});
@@ -120,6 +130,10 @@ router.post('/submitmatch', function(req, res) {
 });
 
 router.get('/pit*', function(req, res) {
+	//auth
+	if(!require('./checkauthentication')(req, res))
+		return null;
+	
 	var thisFuncName = "scouting.pit*[get]: ";
 	console.log(thisFuncName + 'ENTER');
 	
@@ -149,7 +163,12 @@ router.get('/pit*', function(req, res) {
 });
 
 router.post('/pit/submit', function(req, res){
-var thisFuncName = "scouting.submitpit[post]: ";
+	/** We need to do this eventually for security. Commented out of fear that scouters may be logged out while scouting (by accident)
+	//auth
+	if(!require('./checkauthentication')(req, res))
+		return null;
+	*/
+	var thisFuncName = "scouting.submitpit[post]: ";
 	console.log(thisFuncName + 'ENTER');
 	
 	var thisUser = req.user;
@@ -184,7 +203,7 @@ var thisFuncName = "scouting.submitpit[post]: ";
 
 		//res.redirect("/dashboard");
 		
-		pitCol.update( { "event_key" : event_key, "team_key" : teamKey }, { $set: { "data" : pitData, "actual_scouter": thisUserName } }, function(e, docs){
+		pitCol.update( { "event_key" : event_key, "team_key" : teamKey }, { $set: { "data" : pitData, "actual_scouter": thisUserName, useragent: req.shortagent } }, function(e, docs){
 			if(e)
 				return res.send({status: 500, message: e});
 			return res.send({message: "Submitted data successfully.", status: 200});

@@ -8,6 +8,7 @@ var passport = require('passport');				//for user sessions
 var fs = require('fs');							//for reading whether this device is server or not
 var Client = require('node-rest-client').Client;//for reading from REST APIs (e.g., TheBlueAlliance)
 var client = new Client();
+var useragent = require('express-useragent');	//for info on connected users
 
 var monk = require("monk");		
 var db = monk("localhost:27017/local");				//for connecting to mongo
@@ -28,30 +29,34 @@ app.use(session({
 	resave: false,
 	saveUninitialized: true
 }));
+app.use(useragent.express());
 
 require('./passport-config');
 app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(function(req,res,next) {
+	
+	//Sets variables accessible to any page from req (request) object
+	req.requestTime = Date.now();
 	req.db = db;
 	req.passport = passport;
 	req.event = {
 		key: "undefined",
 		name: "undefined"
 	};
-	/*
-	req.tournament = {
-		id: "Sample Tournament Title!"
-	}; //WILL CHANGE ONCE WE GET API CALLS UP AND RUNNING
-	*/
-	res.locals.tournament=  "Tournament Title";
-	
+	req.shortagent = {
+		ip: req.connection.remoteAddress,
+		device: req.useragent.isMobile ? "mobile" : req.useragent.isDesktop ? "desktop" : (req.useragent.isiPad || req.useragent.isAndroidTablet) ? "tablet" : req.useragent.isBot ? "bot" : "other",
+		os: req.useragent.os,
+		browser: req.useragent.browser
+	}
+	console.log(req.method+" Request from "+req.shortagent.ip+" on "+req.shortagent.device+"|"+req.shortagent.os+"|"+req.shortagent.browser+" to "+req.url);
+	console.log(req.useragent);
 	if(req.user)
 		res.locals.user = req.user;
 	else if(req.app.locals.isDev == true){
 		res.locals.user = {name: '[Dev]', subteam: 'support'};
-		req.user = "Dev";
 	}
 	
 	var current = db.get('current');

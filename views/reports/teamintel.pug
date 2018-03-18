@@ -135,3 +135,10 @@ block content
 						span= redQuests
 					else
 						span &nbsp;
+		if (match.scoringdata)				
+			each element in scorelayout
+				case element.type
+					when "textblock"
+						h5(class="gear-text-white") #{element.label} <strong>#{match.scoringdata[element.id]}</strong>
+
+					

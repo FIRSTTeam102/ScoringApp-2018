@@ -52,7 +52,7 @@ app.use(function(req,res,next) {
 		browser: req.useragent.browser
 	}
 	console.log(req.method+" Request from "+req.shortagent.ip+" on "+req.shortagent.device+"|"+req.shortagent.os+"|"+req.shortagent.browser+" to "+req.url);
-	console.log(req.useragent);
+	
 	if(req.user)
 		res.locals.user = req.user;
 	else if(req.app.locals.isDev == true){

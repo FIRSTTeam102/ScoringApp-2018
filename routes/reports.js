@@ -184,8 +184,13 @@ router.get("/teamintel*", function(req, res){
 			// Pit scouting info
 			pitCol.find({ "event_key" : event_key, "team_key" : teamKey }, {}, function(e, docs){
 				var pitData = null;
-				if (docs && docs[0])
-					pitData = docs[0].data;
+				var pitData1 = null;
+				if (docs && docs[0]) {
+					if (docs[0].data)
+						pitData = docs[0].data;
+					if (docs[0].data1)
+						pitData1 = docs[0].data1;
+				}
 				//console.log(thisFuncName + 'pitData=' + JSON.stringify(pitData));
 			
 				// Pit data layout
@@ -252,11 +257,15 @@ router.get("/teamintel*", function(req, res){
 									}
 								}
 								//console.log(thisFuncName + 'aggTable=' + JSON.stringify(aggTable));
+
+								console.log(thisFuncName + 'pitData=' + JSON.stringify(pitData));
+								console.log(thisFuncName + 'pitData1=' + JSON.stringify(pitData1));
 								
 								res.render("./reports/teamintel", {
 									title: "Intel: Team " + teamKey.substring(3),
 									team: team,
 									data: pitData,
+									data1: pitData1,
 									layout: layout,
 									aggdata: aggTable,
 									matches: matches

@@ -10,6 +10,7 @@ block content
 	h4(class="gear-text-white" style="font-style:italic") #{team.name}
 	if (data)
 		hr
+		h1 Day 2 Pit Scouting Info
 		each element in layout
 			case element.type
 				when "checkbox"
@@ -24,7 +25,25 @@ block content
 					p
 	else
 		hr
-		h6 No pit scouting data yet - check back later
+		h6 No day 2 pit scouting data yet - check back later
+	if (data1)
+		hr
+		h2 Day 1 Pit Scouting Info
+		each element in layout
+			case element.type
+				when "checkbox"
+				when "counter"
+				when "badcounter"
+				when "multiselect"
+				when "textblock"
+					h5(class="gear-text-white") #{element.label} <strong>#{data1[element.id]}</strong>
+				when "h2"
+					h3 #{element.label}
+				when "spacer"
+					p
+	else
+		hr
+		h6 No day 1 pit scouting data yet - check back later
 	if (aggdata)
 		hr
 		h2(class="gear-text-white") Statistics for #{team.key.replace('frc','team ')}

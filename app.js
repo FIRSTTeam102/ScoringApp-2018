@@ -20,7 +20,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
+//app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -46,7 +46,7 @@ app.use(function(req,res,next) {
 		name: "undefined"
 	};
 	req.shortagent = {
-		ip: req.connection.remoteAddress,
+		ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
 		device: req.useragent.isMobile ? "mobile" : req.useragent.isDesktop ? "desktop" : (req.useragent.isiPad || req.useragent.isAndroidTablet) ? "tablet" : req.useragent.isBot ? "bot" : "other",
 		os: req.useragent.os,
 		browser: req.useragent.browser

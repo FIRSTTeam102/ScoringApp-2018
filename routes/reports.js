@@ -206,25 +206,25 @@ router.get("/teamintel*", function(req, res){
 						if (docs && docs.length > 0) {
 							for (var mDMidx = 0; mDMidx < docs.length; mDMidx++) {
 								var thisTeamMatch = docs[mDMidx];
-								console.log(thisFuncName + 'Match scouting data for thisTeamMatch.match_key=' + thisTeamMatch.match_key);
+								//console.log(thisFuncName + 'Match scouting data for thisTeamMatch.match_key=' + thisTeamMatch.match_key);
 								if (thisTeamMatch.data)
 								{
-									console.log(thisFuncName + 'Adding data to map');
+									//console.log(thisFuncName + 'Adding data to map');
 									matchDataMap[thisTeamMatch.match_key] = thisTeamMatch.data;
 								}
 							}
 						}
 								
 						// Match history info
-						matchCol.find({"alliances.red.score": { $ne: -1}, "event_key" : event_key, $or: [{"alliances.blue.team_keys": teamKey}, {"alliances.red.team_keys": teamKey}]}, {sort: {time: 1}}, function (e, docs) {
+						matchCol.find({"alliances.red.score": { $ne: -1}, "event_key" : event_key, $or: [{"alliances.blue.team_keys": teamKey}, {"alliances.red.team_keys": teamKey}]}, {sort: {time: -1}}, function (e, docs) {
 							var matches = docs;
 							if (matches && matches.length > 0) {
 								for (var matchesIdx = 0; matchesIdx < matches.length; matchesIdx++) {
-									console.log(thisFuncName + 'For match ' + matches[matchesIdx].key);
+									//console.log(thisFuncName + 'For match ' + matches[matchesIdx].key);
 									var thisScoreData = matchDataMap[matches[matchesIdx].key];
 									if (thisScoreData)
 									{
-										console.log(thisFuncName + 'Enhancing match #' + matchesIdx + ': match_key=' + matches[matchesIdx].match_key + ', thisScoreData=' + JSON.stringify(thisScoreData));
+										//console.log(thisFuncName + 'Enhancing match #' + matchesIdx + ': match_key=' + matches[matchesIdx].match_key + ', thisScoreData=' + JSON.stringify(thisScoreData));
 										matches[matchesIdx].scoringdata = thisScoreData;
 									}
 								}

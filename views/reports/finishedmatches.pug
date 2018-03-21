@@ -15,7 +15,7 @@ block content
 						- if (match.winning_alliance == 'red') outcome = "Red won";
 						- if (match.winning_alliance == 'blue') outcome = "Blue won";
 						a(href=`/reports/matchintel?key=${match.key}`) 
-							span #{matchPrefix}Match #{match.match_number}: #{outcome}
+							span #{matchPrefix.toUpperCase()}Match #{match.match_number}: #{outcome}
 				div(class="w3-col m1") &nbsp;
 				div(class="w3-col s8 m2")
 					div(class="w3-col w3-border")

@@ -57,7 +57,7 @@ router.get("/finishedmatches", function(req, res){
 		console.log(thisFuncName + 'event_key=' + event_key);
 
 		// Match history info
-		matchCol.find({"alliances.red.score": { $ne: -1}, "event_key" : event_key}, {sort: {time: 1}}, function (e, docs) {
+		matchCol.find({"alliances.red.score": { $ne: -1}, "event_key" : event_key}, {sort: {time: -1}}, function (e, docs) {
 			var matches = docs;
 			//console.log(thisFuncName + 'matches=' + JSON.stringify(matches));
 			res.render("./reports/finishedmatches", {

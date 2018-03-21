@@ -9,11 +9,13 @@ block content
 			div(class="w3-row")
 				div(class="w3-col s12 m2")
 					div(class=" w3-dark-grey gear-hover-white w3-btn w3-block w3-border")
+						- var matchPrefix = "";
+						- if (match.comp_level != 'qm') matchPrefix = "" + match.comp_level + "" + match.set_number + " ";
 						- var outcome = "Tie!";
 						- if (match.winning_alliance == 'red') outcome = "Red won";
 						- if (match.winning_alliance == 'blue') outcome = "Blue won";
 						a(href=`/reports/matchintel?key=${match.key}`) 
-							span Match #{match.match_number}: #{outcome}
+							span #{matchPrefix}Match #{match.match_number}: #{outcome}
 				div(class="w3-col m1") &nbsp;
 				div(class="w3-col s8 m2")
 					div(class="w3-col w3-border")

@@ -26,7 +26,7 @@ block content
 									option(value=option)= option
 					div(class="w3-col m3 w3-padding-small")
 						select(class="w3-select w3-dark-gray gear-no-border" name="className")
-							- classNames = ["freshman", "sophomore", "junior", "senior", "middleschool"	];
+							- classNames = ["freshman", "sophomore", "junior", "senior", "middleschool", "mentor", "parent" ];
 							each option in classNames
 								- if (member.className == option)
 									option(value=option selected)= option
@@ -47,7 +47,7 @@ block content
 							option(value=option)= option
 				div(class="w3-col m3 w3-padding-small")
 					select(name="className" class="w3-select w3-dark-gray gear-no-border")
-						- options = ["freshman", "sophomore", "junior", "senior", "middleschool"];
+						- options = ["freshman", "sophomore", "junior", "senior", "middleschool", "mentor", "parent" ];
 						each option in options
 							option(value=option)= option
 				div(class="w3-col m2 w3-padding-small")

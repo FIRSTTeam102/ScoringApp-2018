@@ -8,7 +8,9 @@ block content
 	- if (team.country != 'USA') country = team.country;
 	h4(class="gear-text-white" style="font-style:italic") From: #{team.city}, #{team.state_prov} #{country}
 	h4(class="gear-text-white" style="font-style:italic") #{team.name}
-	
+	a(href=`/reports/upcoming?team=${team.key}`) Click here to see upcoming matches for Team #{team.key.substring(3)}
+	p
+
 	script.
 		function showHide(id) {
 			var x = document.getElementById(id + 'Section');

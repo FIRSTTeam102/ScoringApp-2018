@@ -4,6 +4,8 @@ block content
 	h2(class="gear-text-white")= team.key.replace('frc','Team ')
 	p
 	h2 #{team.nickname}
+	if (ranking)
+		h4(class="gear-text-white") Currently ranked ##{ranking.rank} </br> #{ranking.record.wins+'-'+ranking.record.losses+'-'+ranking.record.ties} record with #{ranking.extra_stats[0]} RP
 	- var country = '';
 	- if (team.country != 'USA') country = team.country;
 	h4(class="gear-text-white" style="font-style:italic") From: #{team.city}, #{team.state_prov} #{country}

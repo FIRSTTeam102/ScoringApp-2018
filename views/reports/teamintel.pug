@@ -31,7 +31,7 @@ block content
 	button#PitScoutingButton(onClick="showHide('PitScouting')" class="gear-btn gear-orange gear-hover-white w3-btn w3-block") v Show Pit Scouting
 	div#PitScoutingSection(class="w3-container w3-hide")
 		if (data)
-			h1 Day 2 Pit Scouting Info
+			h1 Current Day Pit Scouting Info
 			each element in layout
 				case element.type
 					when "checkbox"
@@ -47,10 +47,10 @@ block content
 			if (inTable)
 				| </table>
 		else
-			h6 No day 2 pit scouting data yet - check back later
+			h6 No current day pit scouting data yet - check back later
 		if (data1)
 			hr
-			h2 Day 1 Pit Scouting Info
+			h2 Prior Day Pit Scouting Info
 			each element in layout
 				case element.type
 					when "checkbox"
@@ -65,7 +65,7 @@ block content
 						p
 		else
 			hr
-			h6 No day 1 pit scouting data yet - check back later
+			h6 No prior day pit scouting data yet - check back later
 
 	p
 	button#StatisticsButton(onClick="showHide('Statistics')" class="gear-btn gear-orange gear-hover-white w3-btn w3-block") v Show Statistics

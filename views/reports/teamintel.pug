@@ -101,74 +101,78 @@ block content
 	button#PreviousMatchesButton(onClick="showHide('PreviousMatches')" class="gear-btn gear-orange gear-hover-white w3-btn w3-block") v Show Previous Matches
 	div#PreviousMatchesSection(class="w3-container w3-hide")
 		h2(class="gear-text-white") Previous matches
-		h6 <i>Click team number for match scouting details</i>
-		h6 <i>Click match button for overall alliance performances</i>
 		
-		each match in matches
+		if (matches && matches.length > 0)		
+			h6 <i>Click team number for match scouting details</i>
+			h6 <i>Click match button for overall alliance performances</i>
+			each match in matches
+				hr
+				div(class="w3-row")
+					div(class="w3-col s12 m2")
+						div(class="w3-dark-grey gear-hover-white w3-btn w3-block w3-border")
+							- var matchPrefix = "";
+							- if (match.comp_level != 'qm') matchPrefix = "" + match.comp_level + "" + match.set_number + " ";
+							- var outcome = "Tie!";
+							- if (match.winning_alliance == 'red') outcome = "Red won";
+							- if (match.winning_alliance == 'blue') outcome = "Blue won";
+							a(href=`/reports/matchintel?key=${match.key}`) 
+								span #{matchPrefix.toUpperCase()}Match #{match.match_number}: #{outcome}
+					div(class="w3-col m1") &nbsp;
+					div(class="w3-col s8 m2")
+						div(class="w3-col w3-border")
+							each teamkey in match.alliances.blue.team_keys
+								- var teamStyleBlue = "";
+								- if (teamkey == team.key) teamStyleBlue = "font-weight:800";
+								a(href=`/reports/teammatchintel?key=${match.key}_${teamkey}`)
+									div(class="gear-blue gear-hover-white w3-btn w3-block" style=`${teamStyleBlue}`)
+										span= teamkey.substring(3)
+					div(class="w3-col s4 m2")
+						- var divClassBlue = 'w3-dark-grey w3-btn w3-block w3-border';
+						- if (match.winning_alliance == 'blue') divClassBlue = 'gear-btn w3-white w3-btn w3-block w3-border';
+						div(class=`${divClassBlue}` style="height:110px")
+							if (match.alliances.blue.score > -1)
+								span Score:
+								br
+								span= match.alliances.blue.score
+								br
+								- var blueQuests = ''
+								- if (match.score_breakdown.blue.autoQuestRankingPoint) blueQuests = 'AQ '
+								- if (match.score_breakdown.blue.faceTheBossRankingPoint) blueQuests += 'FB'
+								span= blueQuests
+							else
+								span &nbsp;
+					div(class="w3-col m1") &nbsp;
+					div(class="w3-col s8 m2")
+						div(class="w3-col w3-border")
+							each teamkey in match.alliances.red.team_keys
+								- var teamStyleRed = "";
+								- if (teamkey == team.key) teamStyleRed = "font-weight:800";
+								a(href=`/reports/teammatchintel?key=${match.key}_${teamkey}`)
+									div(class="gear-red gear-hover-white w3-btn w3-block" style=`${teamStyleRed}`)
+										span= teamkey.substring(3)
+					div(class="w3-col s4 m2")
+						- var divClassRed = 'w3-dark-grey w3-btn w3-block w3-border';
+						- if (match.winning_alliance == 'red') divClassRed = 'gear-btn w3-white w3-btn w3-block w3-border';
+						div(class=`${divClassRed}` style="height:110px")
+							if (match.alliances.red.score > -1)
+								span Score:
+								br
+								span= match.alliances.red.score
+								br
+								- var redQuests = ''
+								- if (match.score_breakdown.red.autoQuestRankingPoint) redQuests = 'AQ '
+								- if (match.score_breakdown.red.faceTheBossRankingPoint) redQuests += 'FB'
+								span= redQuests
+							else
+								span &nbsp;
+				if (match.scoringdata)
+					each element in scorelayout
+						case element.type
+							when "textblock"
+								if (match.scoringdata[element.id])
+									h5(class="gear-text-white") #{element.label} <strong>#{match.scoringdata[element.id]}</strong>
+		else
 			hr
-			div(class="w3-row")
-				div(class="w3-col s12 m2")
-					div(class="w3-dark-grey gear-hover-white w3-btn w3-block w3-border")
-						- var matchPrefix = "";
-						- if (match.comp_level != 'qm') matchPrefix = "" + match.comp_level + "" + match.set_number + " ";
-						- var outcome = "Tie!";
-						- if (match.winning_alliance == 'red') outcome = "Red won";
-						- if (match.winning_alliance == 'blue') outcome = "Blue won";
-						a(href=`/reports/matchintel?key=${match.key}`) 
-							span #{matchPrefix.toUpperCase()}Match #{match.match_number}: #{outcome}
-				div(class="w3-col m1") &nbsp;
-				div(class="w3-col s8 m2")
-					div(class="w3-col w3-border")
-						each teamkey in match.alliances.blue.team_keys
-							- var teamStyleBlue = "";
-							- if (teamkey == team.key) teamStyleBlue = "font-weight:800";
-							a(href=`/reports/teammatchintel?key=${match.key}_${teamkey}`)
-								div(class="gear-blue gear-hover-white w3-btn w3-block" style=`${teamStyleBlue}`)
-									span= teamkey.substring(3)
-				div(class="w3-col s4 m2")
-					- var divClassBlue = 'w3-dark-grey w3-btn w3-block w3-border';
-					- if (match.winning_alliance == 'blue') divClassBlue = 'gear-btn w3-white w3-btn w3-block w3-border';
-					div(class=`${divClassBlue}` style="height:110px")
-						if (match.alliances.blue.score > -1)
-							span Score:
-							br
-							span= match.alliances.blue.score
-							br
-							- var blueQuests = ''
-							- if (match.score_breakdown.blue.autoQuestRankingPoint) blueQuests = 'AQ '
-							- if (match.score_breakdown.blue.faceTheBossRankingPoint) blueQuests += 'FB'
-							span= blueQuests
-						else
-							span &nbsp;
-				div(class="w3-col m1") &nbsp;
-				div(class="w3-col s8 m2")
-					div(class="w3-col w3-border")
-						each teamkey in match.alliances.red.team_keys
-							- var teamStyleRed = "";
-							- if (teamkey == team.key) teamStyleRed = "font-weight:800";
-							a(href=`/reports/teammatchintel?key=${match.key}_${teamkey}`)
-								div(class="gear-red gear-hover-white w3-btn w3-block" style=`${teamStyleRed}`)
-									span= teamkey.substring(3)
-				div(class="w3-col s4 m2")
-					- var divClassRed = 'w3-dark-grey w3-btn w3-block w3-border';
-					- if (match.winning_alliance == 'red') divClassRed = 'gear-btn w3-white w3-btn w3-block w3-border';
-					div(class=`${divClassRed}` style="height:110px")
-						if (match.alliances.red.score > -1)
-							span Score:
-							br
-							span= match.alliances.red.score
-							br
-							- var redQuests = ''
-							- if (match.score_breakdown.red.autoQuestRankingPoint) redQuests = 'AQ '
-							- if (match.score_breakdown.red.faceTheBossRankingPoint) redQuests += 'FB'
-							span= redQuests
-						else
-							span &nbsp;
-			if (match.scoringdata)
-				each element in scorelayout
-					case element.type
-						when "textblock"
-							if (match.scoringdata[element.id])
-								h5(class="gear-text-white") #{element.label} <strong>#{match.scoringdata[element.id]}</strong>
+			h6 No previous matches yet - check back later
 
 					

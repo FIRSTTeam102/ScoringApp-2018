@@ -80,7 +80,7 @@ router.get("/", function(req, res) {
 							if (scoreData[scoreIdx].assigned_scorer == scoreData[scoreIdx].actual_scorer)
 								thisMemberArr.push("Y");
 							else
-								// Adding parent option
+								// 2018-03-22, M.O'C: Adding parent option
 								if (scoreData[scoreIdx].actual_scorer.toLowerCase().startsWith('mr') || 
 								 scoreData[scoreIdx].actual_scorer.toLowerCase().startsWith('mrs') || 
 								 scoreData[scoreIdx].actual_scorer.toLowerCase().startsWith('ms'))

@@ -622,4 +622,121 @@ router.post("/generatematchallocations", function(req, res) {
 
 });
 
+router.get("/swapmembers", function(req, res) {
+	var thisFuncName = "scoutingpairs.swapmembers[get]: ";
+	
+	// Log message so we can see on the server side when we enter this
+	console.log(thisFuncName + "ENTER");
+
+	var db = req.db;
+	var currentCol = db.get("current");
+	var scoreDataCol = db.get("scoringdata");
+	var matchCol = db.get("matches");
+	var teammembers = req.db.get("teammembers");
+
+	//
+	// Get the 'current' event from DB
+	//
+	currentCol.find({}, {}, function(e, docs) {
+		var noEventFound = 'No event defined';
+		var eventId = noEventFound;
+		if (docs)
+			if (docs.length > 0)
+				eventId = docs[0].event;
+		if (eventId === noEventFound) {
+			res.render('/adminindex', { 
+				title: 'Admin pages',
+				current: eventId
+			});
+		}
+		// for later querying by event_key
+		var event_key = eventId;
+	
+		// Get the *min* time of the as-yet-unresolved matches [where alliance scores are still -1]
+		matchCol.find({ event_key: eventId, "alliances.red.score": -1 },{sort: {"time": 1}}, function(e, docs){
+
+			// 2018-03-13, M.O'C - Fixing the bug where dashboard crashes the server if all matches at an event are done
+			var earliestTimestamp = 9999999999;
+			if (docs && docs[0])
+			{
+				var earliestMatch = docs[0];
+				earliestTimestamp = earliestMatch.time;
+			}
+				
+			// Get the distinct list of scorers from the unresolved matches
+			scoreDataCol.distinct("assigned_scorer", {"event_key": eventId, "time": { $gte: earliestTimestamp }}, function (e, docs) {
+				var scorers = docs;
+				console.log(thisFuncName + 'distinct assigned_scorers: ' + JSON.stringify(scorers));
+		
+				// Get list of all users
+				teammembers.find( {}, {sort:{ "name": 1 }}, function(e, docs){
+					var users = docs;
+
+					// Go to a Pug to show two lists & a button to do the swap - form with button
+					res.render("./admin/swapmembers", {
+						title: "Swap Match Scouts",
+						scorers: scorers,
+						users: users
+					});
+				});
+			});
+		});
+	});
+});
+
+router.post("/swapmembers", function(req, res) {
+	var thisFuncName = "scoutingpairs.swapmembers[post]: ";
+	
+	// Log message so we can see on the server side when we enter this
+	console.log(thisFuncName + "ENTER");
+	
+	// Extract 'from' & 'to' from req
+	var swapout = req.body.swapout;
+	var swapin = req.body.swapin;
+	console.log(thisFuncName + 'swap out ' + swapin + ', swap in ' + swapout);
+
+	var db = req.db;
+	var currentCol = db.get("current");
+	var scoreDataCol = db.get("scoringdata");
+	var matchCol = db.get("matches");
+	
+	//
+	// Get the 'current' event from DB
+	//
+	currentCol.find({}, {}, function(e, docs) {
+		var noEventFound = 'No event defined';
+		var eventId = noEventFound;
+		if (docs)
+			if (docs.length > 0)
+				eventId = docs[0].event;
+		if (eventId === noEventFound) {
+			res.render('/adminindex', { 
+				title: 'Admin pages',
+				current: eventId
+			});
+		}
+		// for later querying by event_key
+		var event_key = eventId;
+
+		// Get the *min* time of the as-yet-unresolved matches [where alliance scores are still -1]
+		matchCol.find({ event_key: eventId, "alliances.red.score": -1 },{sort: {"time": 1}}, function(e, docs){
+
+			// 2018-03-13, M.O'C - Fixing the bug where dashboard crashes the server if all matches at an event are done
+			var earliestTimestamp = 9999999999;
+			if (docs && docs[0])
+			{
+				var earliestMatch = docs[0];
+				earliestTimestamp = earliestMatch.time;
+			}
+				
+			// Do the updateMany - change instances of swapout to swapin
+			scoreDataCol.bulkWrite([{updateMany:{filter: { assigned_scorer: swapout, event_key: eventId, "time": { $gte: earliestTimestamp } }, 
+				update:{ $set: { assigned_scorer: swapin } }}}], function(e, docs){
+
+				res.redirect("/dashboard/matches");
+			});
+		});
+	});
+});
+
 module.exports = router;

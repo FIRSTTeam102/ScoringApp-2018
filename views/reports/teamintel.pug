@@ -14,21 +14,42 @@ block content
 	p
 
 	script.
-		function showHide(id) {
-			var x = document.getElementById(id + 'Section');
+		/*
+			function showHide(id) {
+				var x = document.getElementById(id + 'Section');
+				if (x.className.indexOf("w3-show") == -1)
+					x.className += " w3-show";
+				else
+					x.className = x.className.replace(" w3-show", "");
+					
+				var y = document.getElementById(id + 'Button');
+				if (y.textContent.indexOf("▼ Show") == -1)
+					y.textContent = y.textContent.replace("▲ Hide", "▼ Show");
+				else
+					y.textContent = y.textContent.replace("▼ Show", "▲ Hide");
+			}
+		*/
+		function toggle(sectionId, elem){
+			//hide/show
+			var x = document.getElementById(sectionId);
 			if (x.className.indexOf("w3-show") == -1)
 				x.className += " w3-show";
 			else
 				x.className = x.className.replace(" w3-show", "");
-				
-			var y = document.getElementById(id + 'Button');
-			if (y.textContent.indexOf("v Show") == -1)
-				y.textContent = y.textContent.replace("^ Hide", "v Show");
-			else
-				y.textContent = y.textContent.replace("v Show", "^ Hide");
+			
+			//change text thingy
+			var caret = elem.firstElementChild;//is span w/ caret
+			var text = caret.nextElementSibling; //is main text
+			
+			text.innerText = (caret.innerText[0] == "▼") ? "Hide " : "Show ";
+			caret.innerText = (caret.innerText[0] == "▼") ? "▲\xa0" : "▼\xa0";
+			
 		}
 		
-	button#PitScoutingButton(onClick="showHide('PitScouting')" class="gear-btn gear-orange gear-hover-white w3-btn w3-block") v Show Pit Scouting
+	button#PitScoutingButton(onClick="toggle('PitScoutingSection', this)" class="w3-block w3-btn  w3-left-align w3-border-gray w3-border-bottom") 
+		span(class="w3-left") &#9660;&nbsp;
+		span Show 
+		span Pit Scouting
 	div#PitScoutingSection(class="w3-container w3-hide")
 		if (data)
 			h1 Current Day Pit Scouting Info
@@ -68,7 +89,10 @@ block content
 			h6 No prior day pit scouting data yet - check back later
 
 	p
-	button#StatisticsButton(onClick="showHide('Statistics')" class="gear-btn gear-orange gear-hover-white w3-btn w3-block") v Show Statistics
+	button#StatisticsButton(onClick="toggle('StatisticsSection', this)" class="w3-block w3-btn  w3-left-align w3-border-gray w3-border-bottom w3-large") 
+		span(class="w3-left") &#9660;&nbsp;
+		span Show 
+		span Statistics
 	div#StatisticsSection(class="w3-container w3-hide")
 		if (aggdata)
 			h2(class="gear-text-white") Statistics for #{team.key.replace('frc','team ')}
@@ -98,7 +122,10 @@ block content
 						td(class=`${maxCol}`)= agg.max
 
 	p
-	button#PreviousMatchesButton(onClick="showHide('PreviousMatches')" class="gear-btn gear-orange gear-hover-white w3-btn w3-block") v Show Previous Matches
+	button#PreviousMatchesButton(onClick="toggle('PreviousMatchesSection', this)" class="w3-block w3-btn w3-left-align w3-border-gray w3-border-bottom") 
+		span(class="w3-left") &#9660;&nbsp;
+		span Show 
+		span Previous Matches
 	div#PreviousMatchesSection(class="w3-container w3-hide")
 		h2(class="gear-text-white") Previous matches
 		
@@ -128,7 +155,7 @@ block content
 										span= teamkey.substring(3)
 					div(class="w3-col s4 m2")
 						- var divClassBlue = 'w3-dark-grey w3-btn w3-block w3-border';
-						- if (match.winning_alliance == 'blue') divClassBlue = 'gear-btn w3-white w3-btn w3-block w3-border';
+						- if (match.winning_alliance == 'blue') divClassBlue = 'w3-white w3-btn w3-block w3-border';
 						div(class=`${divClassBlue}` style="height:110px")
 							if (match.alliances.blue.score > -1)
 								span Score:
@@ -152,7 +179,7 @@ block content
 										span= teamkey.substring(3)
 					div(class="w3-col s4 m2")
 						- var divClassRed = 'w3-dark-grey w3-btn w3-block w3-border';
-						- if (match.winning_alliance == 'red') divClassRed = 'gear-btn w3-white w3-btn w3-block w3-border';
+						- if (match.winning_alliance == 'red') divClassRed = 'w3-white w3-btn w3-block w3-border';
 						div(class=`${divClassRed}` style="height:110px")
 							if (match.alliances.red.score > -1)
 								span Score:

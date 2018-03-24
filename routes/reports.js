@@ -75,56 +75,73 @@ router.get("/upcoming", function(req, res){
 	else
 		var teamKey = req.query.team;
 	
-	var matches = req.db.get("matches");
+	var matchesCol = req.db.get("matches");
+	var currentrankings = req.db.get("currentrankings");
+	var teamRanks = {};
 	
-	if(teamKey != 'all'){
-		matches.find({
-				$and: 
-				[
-					{event_key: req.event.key},
-					{"alliances.blue.score": -1},
-					{$or: 
-						[
-							{ "alliances.blue.team_keys": teamKey },
-							{ "alliances.red.team_keys": teamKey },
-						]
-					}
-				]
-			}, {
-				sort: {time: 1}
-			}, function(e, matches){
-			
-			if(e)
-				return console.log(e);
-			//if no results, send empty array for pug to deal with
-			if(!matches)
-				return res.render('./reports/upcoming', { title:"Upcoming", matches: [] });
-			
-			res.render('./reports/upcoming', {
-				title: "Upcoming",
-				matches: matches,
-				team: teamKey
-			});
-		});
-	}
-	//if teamKey is 'all'
-	else{
-		matches.find({event_key: req.event.key, "alliances.blue.score": -1}, {sort: {time: 1}}, function(e, matches){
-			if(e)
-				return console.log(e);
-			//if no results, send empty array for pug to deal with
-			if(!matches)
-				return res.render('./reports/upcoming', { 
-					title: "Events",
-					matches: [] 
+	currentrankings.find({},{sort: {rank: 1}}, function(e, rankings){
+		
+		if(rankings)
+			for(var i = 0; i < rankings.length; i++){
+				var rankObj = rankings[i];
+				var team = rankObj.team_key;
+				
+				teamRanks[team] = rankObj.rank;
+				
+			};
+		
+		if(teamKey != 'all'){
+			matchesCol.find({
+					$and: 
+					[
+						{event_key: req.event.key},
+						{"alliances.blue.score": -1},
+						{$or: 
+							[
+								{ "alliances.blue.team_keys": teamKey },
+								{ "alliances.red.team_keys": teamKey },
+							]
+						}
+					]
+				}, {
+					sort: {time: 1}
+				}, function(e, matches){
+				
+				if(e)
+					return console.log(e);
+				//if no results, send empty array for pug to deal with
+				if(!matches)
+					return res.render('./reports/upcoming', { title:"Upcoming", matches: [] });
+				
+				console.log("Rendered in "+Date.now()-req.start+" ms");
+				res.render('./reports/upcoming', {
+					title: "Upcoming",
+					matches: matches,
+					teamRanks: teamRanks,
+					team: teamKey
 				});
-			
-			res.render('./reports/upcoming', {
-				title: "Upcoming",
-				matches: matches
 			});
-		});
-	}
+		}
+		//if teamKey is 'all'
+		else{
+			matchesCol.find({event_key: req.event.key, "alliances.blue.score": -1}, {sort: {time: 1}}, function(e, matches){
+				if(e)
+					return console.log(e);
+				//if no results, send empty array for pug to deal with
+				if(!matches)
+					return res.render('./reports/upcoming', { 
+						title: "Events",
+						matches: [] 
+					});
+				
+				res.render('./reports/upcoming', {
+					title: "Upcoming",
+					matches: matches,
+					teamRanks: teamRanks
+				});
+			});
+		}	
+	});
 });
 
 router.get("/teamintel*", function(req, res){

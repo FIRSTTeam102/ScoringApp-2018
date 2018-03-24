@@ -2,6 +2,7 @@ extends ../layout
 
 block content
 	h2(class="gear-text-white")= team.key.replace('frc','Team ')
+	- var year = (new Date()).getFullYear();
 	p
 	h2 #{team.nickname}
 	if (ranking)
@@ -10,7 +11,6 @@ block content
 	- if (team.country != 'USA') country = team.country;
 	h4(class="gear-text-white" style="font-style:italic") From: #{team.city}, #{team.state_prov} #{country}
 	h4(class="gear-text-white" style="font-style:italic") #{team.name}
-	a(href=`/reports/upcoming?team=${team.key}`) Click here to see upcoming matches for Team #{team.key.substring(3)}
 	p
 
 	script.
@@ -49,7 +49,7 @@ block content
 	button#StatisticsButton(onClick="toggle('StatisticsSection', this)" class="w3-block w3-btn  w3-left-align w3-border-gray w3-border-bottom w3-large") 
 		span(class="w3-left") &#9660;&nbsp;
 		span Show 
-		span Statistics
+		span Statistics Over Year #{year}
 	div#StatisticsSection(class="w3-container w3-hide")
 		if (aggdata)
 			h2(class="gear-text-white") Historical statistics for #{team.key.replace('frc','team ')}
@@ -80,7 +80,7 @@ block content
 	button#PreviousMatchesButton(onClick="toggle('PreviousMatchesSection', this)" class="w3-block w3-btn w3-left-align w3-border-gray w3-border-bottom") 
 		span(class="w3-left") &#9660;&nbsp;
 		span Show 
-		span Previous Matches
+		span All Matches From Year #{year}
 	div#PreviousMatchesSection(class="w3-container w3-hide")
 		h2(class="gear-text-white") ALL previous matches
 		
@@ -98,7 +98,7 @@ block content
 							- if (match.winning_alliance == 'red') outcome = "Red won";
 							- if (match.winning_alliance == 'blue') outcome = "Blue won";
 							a(href=`/reports/matchintel?key=${match.key}`) 
-								span #{match.event_key.substring(4)} #{matchPrefix.toUpperCase()}Match #{match.match_number}: #{outcome}
+								span #{match.event_key.substring(4).toUpperCase()} #{matchPrefix.toUpperCase()}Match #{match.match_number}: #{outcome}
 					div(class="w3-col m1") &nbsp;
 					div(class="w3-col s8 m2")
 						div(class="w3-col w3-border")

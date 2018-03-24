@@ -1,5 +1,7 @@
+// toggle on for local tracing
+var ifDebug = false;
 var thisFuncName = "app.js: ";
-console.log(thisFuncName + 'ENTER');
+if (ifDebug) console.log(thisFuncName + 'ENTER');
 	
 var express = require('express');				//main express shiz
 var path = require('path');						//for filesystem
@@ -41,7 +43,7 @@ app.use(passport.session());
 //sets view engine vars for user
 app.use(function(req, res, next){
 	var thisFuncName = "app.js ~ View engine: ";
-	console.log(thisFuncName + 'ENTER');
+	if (ifDebug) console.log(thisFuncName + 'ENTER');
 	
 	if(req.user)
 		res.locals.user = req.user;
@@ -49,13 +51,13 @@ app.use(function(req, res, next){
 		res.locals.user = {name: '[Dev]', subteam: 'support'};
 	}
 	next();
-	console.log(thisFuncName + 'DONE');
+	if (ifDebug) console.log(thisFuncName + 'DONE');
 });
 
 //Event stuff
 app.use(function(req,res,next) {
 	var thisFuncName = "app.js ~ Event stuff: ";
-	console.log(thisFuncName + 'ENTER');
+	if (ifDebug) console.log(thisFuncName + 'ENTER');
 		
 	//database
 	req.db = db;
@@ -71,7 +73,7 @@ app.use(function(req,res,next) {
 	
 	//finds current event
 	current.find({}, {}, function(e, current) {
-		console.log(thisFuncName + 'Inside current.find');
+		if (ifDebug) console.log(thisFuncName + 'Inside current.find');
 		
 		//sets locals to no event defined just in case we don't find thing and we can just do next();
 		var eventId = 'No event defined';
@@ -85,7 +87,7 @@ app.use(function(req,res,next) {
 			
 			//find data for current event
 			events.find({ key: eventId }, {}, function(e, event){
-				console.log(thisFuncName + 'Inside events.find');
+				if (ifDebug) console.log(thisFuncName + 'Inside events.find');
 				
 				if(e){
 					console.error(e);
@@ -104,13 +106,13 @@ app.use(function(req,res,next) {
 			next();
 		}
 	});
-	console.log(thisFuncName + 'DONE');
+	if (ifDebug) console.log(thisFuncName + 'DONE');
 });
 
 //Logging and timestamping
 app.use(function(req, res, next){
 	var thisFuncName = "app.js ~ Log and timestamp: ";
-	console.log(thisFuncName + 'ENTER');
+	if (ifDebug) console.log(thisFuncName + 'ENTER');
 		
 	//Sets variables accessible to any page from req (request) object
 	req.requestTime = Date.now();
@@ -140,13 +142,13 @@ app.use(function(req, res, next){
 	console.log(req.method+" Request from "+req.shortagent.ip+" on "+req.shortagent.device+"|"+req.shortagent.os+"|"+req.shortagent.browser+" to "+req.url+" at "+formattedReqTime);
 	
 	next();
-	console.log(thisFuncName + 'DONE');
+	if (ifDebug) console.log(thisFuncName + 'DONE');
 });
 
 //adds logging to res.render function
 app.use(function(req, res, next){
 	var thisFuncName = "app.js ~ Logging to res.render: ";
-	console.log(thisFuncName + 'ENTER');
+	if (ifDebug) console.log(thisFuncName + 'ENTER');
 	
 	res.render = (function(link, param){
 		var cached_function = res.render;
@@ -164,10 +166,10 @@ app.use(function(req, res, next){
 		}
 	}());
 	next();
-	console.log(thisFuncName + 'DONE');
+	if (ifDebug) console.log(thisFuncName + 'DONE');
 });
 
-console.log(thisFuncName + 'Require routes');
+if (ifDebug) console.log(thisFuncName + 'Require routes');
 
 //ADD ROUTES HERE
 var index = require('./routes/index');
@@ -183,7 +185,7 @@ var current = require("./routes/current");
 var reports = require('./routes/reports');
 //var reports2 = require('./routes/reports2');
 
-console.log(thisFuncName + 'URLs to routes');
+if (ifDebug) console.log(thisFuncName + 'URLs to routes');
 
 //CONNECT URLS TO ROUTES
 app.use('/', index);
@@ -199,7 +201,7 @@ app.use("/dashboard", dashboard);
 app.use('/reports', reports);
 //app.use('/reports2', reports2);
 
-console.log(thisFuncName + 'After URLs to routes');
+if (ifDebug) console.log(thisFuncName + 'After URLs to routes');
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -243,6 +245,6 @@ fs.readFile('./isServer', "binary", function(err, data){
 	}
 });
 
-console.log(thisFuncName + 'DONE');
+if (ifDebug) console.log(thisFuncName + 'DONE');
 
 module.exports = app;

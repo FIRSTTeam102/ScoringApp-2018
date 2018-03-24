@@ -144,7 +144,7 @@ router.get("/upcoming", function(req, res){
 	});
 });
 
-router.get("/teamintel*", function(req, res){
+router.get("/teamintel", function(req, res){
 	var thisFuncName = "reports.teamintel*[get]: ";
 	console.log(thisFuncName + 'ENTER');
 	
@@ -335,7 +335,7 @@ router.get("/teamintel*", function(req, res){
 	});
 });
 
-router.get("/teamintelhistory*", function(req, res){
+router.get("/teamintelhistory", function(req, res){
 	var thisFuncName = "reports.teamintelhistory*[get]: ";
 	console.log(thisFuncName + 'ENTER');
 	
@@ -345,6 +345,12 @@ router.get("/teamintelhistory*", function(req, res){
 		return;
 	}
 	console.log(thisFuncName + 'teamKey=' + teamKey);
+	
+	// need the current year to see data
+	var year = (new Date()).getFullYear();
+	// need timestamp at 00:00 on Jan 1 for match querying - looking for matches where time > Jan 1. {year}
+	var yearString = year + '-01-01T00:00:00';
+	var yearInt = new Date(yearString).getTime() / 1000;
 	
 	var db = req.db;
 	var teamsCol = req.db.get('teams');
@@ -369,7 +375,7 @@ router.get("/teamintelhistory*", function(req, res){
 
 		// Pull in ALL individual scouting data for this team, for this event, to enhance the match data
 		console.log(thisFuncName + 'Pulling scoring data for teamKey=' + teamKey);
-		aggCol.find({"team_key": teamKey, "event_key": event_key}, {}, function (e, docs) {
+		aggCol.find({"team_key": teamKey, "year": year}, {}, function (e, docs) {
 			// Build a map of match_key->data
 			var matchDataMap = {};
 			if (docs && docs.length > 0) {
@@ -383,9 +389,10 @@ router.get("/teamintelhistory*", function(req, res){
 					}
 				}
 			}
-					
+
 			// ALL Match history info
-			matchCol.find({"alliances.red.score": { $ne: -1}, $or: [{"alliances.blue.team_keys": teamKey}, {"alliances.red.team_keys": teamKey}]}, {sort: {time: -1}}, function (e, docs) {
+			var yearMatch = year + '/';
+			matchCol.find({"alliances.red.score": { $ne: -1}, "time": { $gt: yearInt}, $or: [{"alliances.blue.team_keys": teamKey}, {"alliances.red.team_keys": teamKey}]}, {sort: {time: -1}}, function (e, docs) {
 				var matches = docs;
 				if (matches && matches.length > 0) {
 					for (var matchesIdx = 0; matchesIdx < matches.length; matchesIdx++) {
@@ -412,7 +419,7 @@ router.get("/teamintelhistory*", function(req, res){
 				scoreCol.find({}, {sort: {"order": 1}}, function(e, docs){
 					var scorelayout = docs;
 					var aggQuery = [];
-					aggQuery.push({ $match : { "data":{$exists:true}, "team_key": teamKey } });
+					aggQuery.push({ $match : { "data":{$exists:true}, "team_key": teamKey, "year": year } });
 					var groupClause = {};
 					groupClause["_id"] = "$team_key";
 

@@ -46,57 +46,13 @@ block content
 			
 		}
 		
-	button#PitScoutingButton(onClick="toggle('PitScoutingSection', this)" class="w3-block w3-btn  w3-left-align w3-border-gray w3-border-bottom") 
-		span(class="w3-left") &#9660;&nbsp;
-		span Show 
-		span Pit Scouting
-	div#PitScoutingSection(class="w3-container w3-hide")
-		if (data)
-			h1 Current Day Pit Scouting Info
-			each element in layout
-				case element.type
-					when "checkbox"
-					when "counter"
-					when "badcounter"
-					when "multiselect"
-					when "textblock"
-						h4(class="gear-text-white") #{element.label} <strong>#{data[element.id]}</strong>
-					when "h2"
-						h2 #{element.label}
-					when "spacer"
-						p
-			if (inTable)
-				| </table>
-		else
-			h6 No current day pit scouting data yet - check back later
-		if (data1)
-			hr
-			h2 Prior Day Pit Scouting Info
-			each element in layout
-				case element.type
-					when "checkbox"
-					when "counter"
-					when "badcounter"
-					when "multiselect"
-					when "textblock"
-						h5(class="gear-text-white") #{element.label} <strong>#{data1[element.id]}</strong>
-					when "h2"
-						h3 #{element.label}
-					when "spacer"
-						p
-		else
-			hr
-			h6 No prior day pit scouting data yet - check back later
-
-	p
 	button#StatisticsButton(onClick="toggle('StatisticsSection', this)" class="w3-block w3-btn  w3-left-align w3-border-gray w3-border-bottom w3-large") 
 		span(class="w3-left") &#9660;&nbsp;
 		span Show 
 		span Statistics
 	div#StatisticsSection(class="w3-container w3-hide")
 		if (aggdata)
-			h2(class="gear-text-white") Statistics for #{team.key.replace('frc','team ')}
-			h6 <i>Click on a metric to compare vs. other teams</i>
+			h2(class="gear-text-white") Historical statistics for #{team.key.replace('frc','team ')}
 			table(class="w3-table")
 				tr
 					th Metric
@@ -106,8 +62,7 @@ block content
 					th(class="w3-right-align") Max
 				each agg in aggdata
 					tr
-						td(class="w3-text-light-gray w3-small")
-							a(href=`/reports/metricintel?key=${agg.key}`)= agg.key
+						td(class="w3-text-light-gray w3-small")= agg.key
 						- var minCol = 'w3-right-align w3-text-white'
 						- if (agg.min == 0) minCol = 'w3-right-align w3-text-gray'
 						td(class=`${minCol}`)= agg.min
@@ -127,7 +82,7 @@ block content
 		span Show 
 		span Previous Matches
 	div#PreviousMatchesSection(class="w3-container w3-hide")
-		h2(class="gear-text-white") Previous matches
+		h2(class="gear-text-white") ALL previous matches
 		
 		if (matches && matches.length > 0)		
 			h6 <i>Click team number for match scouting details</i>
@@ -143,7 +98,7 @@ block content
 							- if (match.winning_alliance == 'red') outcome = "Red won";
 							- if (match.winning_alliance == 'blue') outcome = "Blue won";
 							a(href=`/reports/matchintel?key=${match.key}`) 
-								span #{matchPrefix.toUpperCase()}Match #{match.match_number}: #{outcome}
+								span #{match.event_key.substring(4)} #{matchPrefix.toUpperCase()}Match #{match.match_number}: #{outcome}
 					div(class="w3-col m1") &nbsp;
 					div(class="w3-col s8 m2")
 						div(class="w3-col w3-border")

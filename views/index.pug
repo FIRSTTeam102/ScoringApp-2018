@@ -94,7 +94,7 @@ block content
 		$("#teamNo").click(function(e){
 			setTimeout( isTeamFilled(this), 1);
 		});
-		$("#teamSelect").click(function(e){
+		$("#teamSelect").on("change", function(e){
 			setTimeout( isTeamFilled(this), 1);
 		});
 		function isTeamFilled(teamNo){

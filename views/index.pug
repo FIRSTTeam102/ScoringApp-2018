@@ -9,18 +9,26 @@ block content
 		a(href="/reports/rankings")
 			div(class="gear-btn gear-orange gear-hover-white w3-btn")
 				span Current Rankings
-		p
+		br 
 		a(href="/reports/finishedmatches")
 			div(class="gear-btn gear-orange gear-hover-white w3-btn")
 				span Completed Matches [All teams]
-		p
+		br 
 		a(href="/reports/metrics")
 			div(class="gear-btn gear-orange gear-hover-white w3-btn")
 				span Statistics
-		p
+	div(class="w3-container w3-section")
 		h4(class="gear-text-white") Team Info
-		label
-			input(class="w3-padding gear-orange w3-border-white w3-border w3-margin-right" style="border: none; width: 6.2em" type="number" placeholder="Team #" id="teamNo")
+		if( teamList && teamList[0] )
+			label(class="")
+				select#teamSelect(class="gear-btn gear-orange w3-btn")
+					option(value="") Team #
+					each team in teamList
+						option(value=team class="w3-bar-item") #{team}
+		//-
+			label(style="position:relative;top:8px")
+				input(class="w3-padding gear-orange w3-border-white w3-border w3-margin-right" style="border: none; width: 6.2em" type="number" placeholder="Team #" id="teamNo")
+		//
 		a
 			button(class="gear-btn gear-orange w3-btn w3-disabled" onclick="redIntel()" id="stats" disabled)
 				span Stats
@@ -33,7 +41,7 @@ block content
 			a(href="/login/scouter") 
 				div(class="gear-btn gear-orange gear-hover-white w3-btn")
 					span Scouter Login
-			p
+			br 
 			a(href="/login/admin")
 				div(class="gear-btn gear-orange gear-hover-white w3-btn")
 					span Admin Login
@@ -42,23 +50,39 @@ block content
 			h4(class="gear-text-white")=user.name
 			a(href="/dashboard")
 				div(class="gear-btn gear-orange gear-hover-white w3-btn") Dashboard
+			if( user.subteam == "support" || user.subteam == "exec" )
+				a(href="/admin")
+					div(class="gear-btn gear-orange gear-hover-white w3-btn") Admin Index
 	script.
 		function redIntel(){
-			if( !$("#teamNo").val() ){
-				if( !$("#stats").prop("disabled"))
+			if( !$("#teamSelect").val() ){
+				if( !!$("#teamNo").val()) {
+					//if teamSelect is filled, proceed to intel url
+					var key = "frc".concat($("#teamNo").val());
+					console.log("/reports/teamintel?team="+key);
+					window.location.href = "/reports/teamintel?team="+key;
+				
+				}else if( !$("#stats").prop("disabled"))
+					//if nothing selected then do alert thang
 					alert("You must specify a team.");
 			}else{
-				var key = "frc".concat($("#teamNo").val());
+				//if text input is filled, proceed to intel url
+				var key = "frc".concat($("#teamSelect").val());
 				console.log("/reports/teamintel?team="+key);
 				window.location.href = "/reports/teamintel?team="+key;
 			}
 		}
 		function redUpcoming(){
-			if( !$("#teamNo").val() ){
+			if( !$("#teamNo").val() && !$("#teamSelect").val() ){
 				window.location.href = "/reports/upcoming";
 			}else{
-				var key = "frc".concat($("#teamNo").val());
-				window.location.href = "/reports/upcoming?team="+key;
+				if(!!$("#teamSelect").val){
+					var key = "frc".concat($("#teamSelect").val());
+					window.location.href = "/reports/upcoming?team="+key;
+				}else{
+					var key = "frc".concat($("#teamNo").val());
+					window.location.href = "/reports/upcoming?team="+key;
+				}
 			}
 		}
 		$("#teamNo").keyup(function(e){
@@ -68,10 +92,13 @@ block content
 			}
 		});
 		$("#teamNo").click(function(e){
-			setTimeout( isTeamFilled(this), 1)
+			setTimeout( isTeamFilled(this), 1);
+		});
+		$("#teamSelect").click(function(e){
+			setTimeout( isTeamFilled(this), 1);
 		});
 		function isTeamFilled(teamNo){
-			console.log(teamNo);
+			//console.log(teamNo);
 			console.log(teamNo.value);
 			if( teamNo.value != ""){
 				$("#stats").addClass("gear-hover-white");

@@ -3,9 +3,22 @@ block content
 	style.
 		.teamNo{ 
 			display: inline-block;
-			width: 33.3%;
-			padding: 12px 5px 12px 5px;
+			/*width: 33.3%;*/
+			min-width: 40px;
+			/*padding: 12px 5px 12px 5px;*/
 			text-align: center;
+		}
+		.rank{
+			display: none;
+			min-width: 30px;
+		}
+		html{
+			overflow-x: visible;
+		}
+		@media (max-width: 601px){
+			.teamNo{
+				width: 33.3%;
+			}
 		}
 	- team = !!team ? team.substring(3) : null;
 	if !matches[0] && !team
@@ -17,11 +30,16 @@ block content
 			h3(class="gear-text-white") Upcoming matches for team #{team}
 		else
 			h3(class="gear-text-white") Upcoming matches
-		label(class="gear-text-white")  
+		div(class="w3-container")
+			label(class="gear-text-white")  
 			input(class="w3-padding gear-dark-gray w3-margin-right" style="border: none; width: 6.2em; position:relative;top:1px;" type="number" placeholder="Team #" id="teamNo")
-		a
-			div(class="gear-btn gear-dark-gray gear-hover-white w3-btn" onclick="redUpcoming()")
-				span View for another team
+			a
+				div(class="gear-btn gear-dark-gray gear-hover-white w3-btn" onclick="redUpcoming()") View for another team
+		div#chkShowRanksContainer(class="w3-container")
+			input#chkShowRanks(type="checkbox" class="w3-check")
+			h4(class="gear-text-white w3-show-inline-block w3-margin-left")
+				label(for="chkShowRanks") Show Team Ranks
+		
 		each match, i in matches
 			- match.teams = [];
 			each team, i in match.alliances.blue.team_keys
@@ -29,38 +47,47 @@ block content
 			each team, i in match.alliances.red.team_keys
 				- match.teams[i + 3] = team.substring(3);
 				
-			//gets date crap
+			- //gets date crap
 			- var date = new Date( match.time * 1000 )
 			- if (match.predicted_time) date = new Date( match.predicted_time * 1000 );
 			- var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 			- var day = days[date.getDay()];
 			- var hour = date.getHours();
 			- var minute = date.getMinutes();
-			//makes minute crap 2 digits
+			- //makes minute crap 2 digits
 			- minute = (minute.toString().length==1) ? "0".concat(minute.toString()) : minute;
 			
-			div(class="w3-container w3-padding" style="align-content: center!important")
-				div(class="w3-mobile w3-left")
-					div(class="w3-right gear-dark-gray w3-mobile" style="height:60px" onmouseenter="hover(this, 1)" onmouseleave="unhover(this, 1)")
-						div(class="w3-margin-right" style="position: relative; display: inline-block; top: 18px; left: 12px;")
-							span #{day} @ #{hour}:#{minute} 
-							span(style="display: inline-block; min-width: 85px") - Match #{match.match_number}: 
-				div(class="w3-mobile")
-					div(class="w3-left gear-dark-gray w3-padding w3-mobile" style="display: inline-block" onmouseenter="hover(this, 2)" onmouseleave="unhover(this, 2)")
-						span(class="w3-content w3-left w3-mobile gear-blue w3-margin-right w3-text-white" style="width: 180px;")
+			div(class="w3-container w3-padding")
+				div(class="w3-mobile w3-left gear-dark-gray")
+					div(class="w3-mobile w3-left")
+						div(class="gear-dark-gray w3-mobile" style="height:60px")
+							div(class="w3-margin-right" style="position: relative; display: inline-block; top: 18px; left: 12px;")
+								span #{day} @ #{hour}:#{minute} 
+								span(style="display: inline-block; min-width: 85px") - Match #{match.match_number}:
+								
+					div(class="w3-left gear-dark-gray w3-padding w3-mobile")
+						div(class="w3-mobile w3-show-block w3-content gear-blue w3-text-white " style="min-width: 10px;")
 							each teamNo, j in match.teams
 								- if (j <= 2)
 									- if (team == match.teams[j])
-										a(href=`/reports/teamintel?team=frc${teamNo}` style="font-weight: bold" class="gear-hover-white teamNo")=teamNo
+										a(href=`/reports/teamintel?team=frc${teamNo}` style="font-weight: bold" class="gear-hover-white teamNo w3-padding")
+											span(class="teamNo")=teamNo
+											span(class="rank gear-text-white") &nbsp[#{teamRanks['frc'+teamNo]}]
 									- else
-										a(href=`/reports/teamintel?team=frc${teamNo}` class="gear-hover-white teamNo")=teamNo
-						span(class="w3-content w3-right w3-mobile gear-red w3-margin-left w3-text-white" style="width: 180px;")
+										a(href=`/reports/teamintel?team=frc${teamNo}` class="gear-hover-white teamNo w3-padding-large")
+											span(class="teamNo")=teamNo
+											span(class="rank gear-text-white") &nbsp[#{teamRanks['frc'+teamNo]}]
+						div(class="w3-mobile w3-show-block w3-content gear-red w3-text-white" style="min-width: 10px;")
 							each teamNo, j in match.teams
 								- if (j >= 3)
 									- if (team == match.teams[j])
-										a(href=`/reports/teamintel?team=frc${teamNo}` style="font-weight: bold" class="gear-hover-white teamNo")=teamNo
+										a(href=`/reports/teamintel?team=frc${teamNo}` style="font-weight: bold" class="gear-hover-white teamNo w3-padding-large")
+											span(class="teamNo")=teamNo
+											span(class="rank gear-text-white") &nbsp[#{teamRanks['frc'+teamNo]}]
 									- else
-										a(href=`/reports/teamintel?team=frc${teamNo}` class="gear-hover-white teamNo")=teamNo
+										a(href=`/reports/teamintel?team=frc${teamNo}` class="gear-hover-white teamNo w3-padding-large")
+											span(class="teamNo")=teamNo
+											span(class="rank gear-text-white") &nbsp[#{teamRanks['frc'+teamNo]}]
 				div(class="w3-rest")
 					//can be used for results later for anothah pug fiel
 	script.
@@ -78,6 +105,13 @@ block content
 		$("#teamNo").keydown(function(e){
 			if(e.keyCode == 13){
 				redUpcoming();
+			}
+		});
+		$("#chkShowRanks").click(function(e){
+			if(this.checked){
+				$(".rank").css("display", "inherit");
+			}else{
+				$(".rank").css("display", "none");
 			}
 		});
 		/*

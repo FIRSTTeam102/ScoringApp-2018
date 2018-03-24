@@ -35,30 +35,29 @@ require('./passport-config');
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(function(req,res,next) {
-	
-	//Sets variables accessible to any page from req (request) object
-	req.requestTime = Date.now();
-	req.db = db;
-	req.passport = passport;
-	req.event = {
-		key: "undefined",
-		name: "undefined"
-	};
-	req.shortagent = {
-		ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
-		device: req.useragent.isMobile ? "mobile" : req.useragent.isDesktop ? "desktop" : (req.useragent.isiPad || req.useragent.isAndroidTablet) ? "tablet" : req.useragent.isBot ? "bot" : "other",
-		os: req.useragent.os,
-		browser: req.useragent.browser
-	}
-	console.log(req.method+" Request from "+req.shortagent.ip+" on "+req.shortagent.device+"|"+req.shortagent.os+"|"+req.shortagent.browser+" to "+req.url);
+//sets view engine vars for user
+app.use(function(req, res, next){
 	
 	if(req.user)
 		res.locals.user = req.user;
 	else if(req.app.locals.isDev == true){
 		res.locals.user = {name: '[Dev]', subteam: 'support'};
 	}
+	next();
+});
+
+//Event stuff
+app.use(function(req,res,next) {
+		
+	//database
+	req.db = db;
+	req.passport = passport;
+	req.event = {
+		key: "undefined",
+		name: "undefined"
+	};
 	
+	//for finding current event
 	var current = db.get('current');
 	var events = db.get('events');
 	
@@ -94,6 +93,60 @@ app.use(function(req,res,next) {
 			next();
 		}
 	});
+});
+
+//Logging and timestamping
+app.use(function(req, res, next){
+		
+	//Sets variables accessible to any page from req (request) object
+	req.requestTime = Date.now();
+	
+	//formatted request time for logging
+	var d = new Date(req.requestTime),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear(),
+		hours = d.getHours(),
+		minutes = d.getMinutes(),
+		seconds = d.getSeconds();
+	month = month.length<2? '0'+month : month;
+	day = day.length<2? '0'+day : day;
+	var formattedReqTime = (
+		[year, month, day, [hours, minutes, seconds].join(':')].join('-')
+	)
+	
+	//user agent
+	req.shortagent = {
+		ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
+		device: req.useragent.isMobile ? "mobile" : req.useragent.isDesktop ? "desktop" : (req.useragent.isiPad || req.useragent.isAndroidTablet) ? "tablet" : req.useragent.isBot ? "bot" : "other",
+		os: req.useragent.os,
+		browser: req.useragent.browser
+	}
+	//logs request
+	console.log(req.method+" Request from "+req.shortagent.ip+" on "+req.shortagent.device+"|"+req.shortagent.os+"|"+req.shortagent.browser+" to "+req.url+" at "+formattedReqTime);
+	
+	next();
+});
+
+//adds logging to res.render function
+app.use(function(req, res, next){
+	
+	res.render = (function(link, param){
+		var cached_function = res.render;
+		
+		return function(link, param){
+			
+			var beforeRenderTime = Date.now() - req.requestTime;
+			
+			var result = cached_function.apply(this, arguments);
+			
+			var renderTime = Date.now() - req.requestTime - beforeRenderTime;
+			console.log("Completed route in "+beforeRenderTime+" ms; Rendered page in "+renderTime+" ms");
+			
+			return result;
+		}
+	}());
+	next();
 });
 
 //ADD ROUTES HERE
@@ -154,7 +207,7 @@ fs.readFile('./isDev', "binary", function(err, data){
 	}
 });
 
-//reads if server is marked as SERVER or not (used for subdirectory thingamajiggies)
+//reads if server is marked as SERVER or not (currently not used, but we might wanna add something)
 fs.readFile('./isServer', "binary", function(err, data){
 	if(err)
 		console.log(err);

@@ -43,9 +43,13 @@ router.post('/match/submit', function(req, res){
 	var thisFuncName = "scouting.match[post]: ";
 	console.log(thisFuncName + 'ENTER');
 	
-	var thisUser = req.user;
-	var thisUserName = thisUser.name;
-		
+	if(req.user && req.user.name){
+		var thisUser = req.user;
+		var thisUserName = thisUser.name;
+	}else{
+		var thisUser = { name: "Mr. Unknown" };
+		var thisUserName = "Mr. Unknown";
+	}
 	var matchData = req.body;
 	if(!matchData)
 		return res.send({status: 500, message: "No data was sent to /scouting/match/submit."});

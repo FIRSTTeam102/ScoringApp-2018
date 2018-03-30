@@ -40,15 +40,3 @@ block content
 		form#setCurrentEvent(name="setCurrentEvent" method="post" action="/admin/setcurrent")
 			input#setEvent(type="text", name="eventId")
 			button#btnSubmit(type="submit") Set current eventId
-
-	//-
-		h1= title
-		p Welcome to #{title}
-		div
-			p
-				a(href="./admin/scoutingpairs") Scouting pairs
-				br
-				a(href="./admin/teammembers") Manage Members
-				br
-				a(href="./admin/teammembers/present") Set who is present at the current event
-	//

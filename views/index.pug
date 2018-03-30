@@ -1,7 +1,14 @@
+//-
+	Index/homepage. Provides links to tournament details. If a user isn't logged in, then includes login links.
+	PARAM
+		res.locals.user		[Object] {name, subteam, assigned, ...} If user is logged in, object exists. If not, null.
+	CALLED FROM
+		index.js
+ //
 extends layout
-
 block content
-	h6(class="gear-text-white") <i>Click the top graphic on any page to get back to this home page!</i>
+	h6(class="gear-text-white") 
+		i Click the top graphic on any page to get back to this home page!
 	p
 	div(class="w3-container w3-section")
 		h4(class="gear-text-white") Tournament Info
@@ -19,6 +26,7 @@ block content
 				span Statistics
 	div(class="w3-container w3-section")
 		h4(class="gear-text-white") Team Info
+		//teamSelect dropdown for intel and upcoming pages.
 		if( teamList && teamList[0] )
 			label(class="")
 				select#teamSelect(class="gear-btn gear-orange w3-btn")
@@ -28,13 +36,14 @@ block content
 		//-
 			label(style="position:relative;top:8px")
 				input(class="w3-padding gear-orange w3-border-white w3-border w3-margin-right" style="border: none; width: 6.2em" type="number" placeholder="Team #" id="teamNo")
-		//
+		 //
 		a
 			button(class="gear-btn gear-orange w3-btn w3-disabled" onclick="redIntel()" id="stats" disabled)
 				span Stats
 		a
 			div(class="gear-btn gear-orange gear-hover-white w3-btn" onclick="redUpcoming()")
 				span Upcoming Matches [Team or All]
+	//Login if not logged in
 	if( !user || (user && user.name == "[Dev]"))
 		div(class="w3-container w3-section")
 			h4(class="gear-text-white") Team 102 Log In
@@ -54,6 +63,7 @@ block content
 				a(href="/admin")
 					div(class="gear-btn gear-orange gear-hover-white w3-btn") Admin Index
 	script.
+		//Checks if teamSelect/teamNo are filled, and if so, redirect the user to intel.
 		function redIntel(){
 			if( !$("#teamSelect").val() ){
 				if( !!$("#teamNo").val()) {
@@ -72,6 +82,7 @@ block content
 				window.location.href = "/reports/teamintel?team="+key;
 			}
 		}
+		//Checks if teamSelect/teamNo are filled; and if so, redirect user to upcoming page.
 		function redUpcoming(){
 			if( !$("#teamNo").val() && !$("#teamSelect").val() ){
 				window.location.href = "/reports/upcoming";

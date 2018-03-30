@@ -3,8 +3,8 @@
 	PARAM
 		res.locals.user		[Object] {name, subteam, assigned, ...} If user is logged in, object exists. If not, null.
 	CALLED FROM
-		index.js
- //
+		index.js	'/'
+	//
 extends layout
 block content
 	h6(class="gear-text-white") 
@@ -36,7 +36,7 @@ block content
 		//-
 			label(style="position:relative;top:8px")
 				input(class="w3-padding gear-orange w3-border-white w3-border w3-margin-right" style="border: none; width: 6.2em" type="number" placeholder="Team #" id="teamNo")
-		 //
+			//
 		a
 			button(class="gear-btn gear-orange w3-btn w3-disabled" onclick="redIntel()" id="stats" disabled)
 				span Stats

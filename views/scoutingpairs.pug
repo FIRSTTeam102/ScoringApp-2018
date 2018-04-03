@@ -53,6 +53,10 @@ block content
 	div( onclick="promptPass('WARNING: Erases existing SCORING data for current event.', '/admin/scoutingpairs/generatematchallocations');")
 		button(class="w3-btn w3-cyan" type="submit") (Re)Allocate teams@matches to MATCH SCORING members
 	br 
+	br 
+	div( onclick="promptPass('WARNING: Erases MATCH SCORING ASSIGNMENTS for current event.', '/admin/scoutingpairs/clearmatchallocations');")
+		button(class="w3-btn w3-cyan" type="submit") Clear all MATCH SCORING assignments
+	br 
 	script.
 		
 		function promptPass(message, url){

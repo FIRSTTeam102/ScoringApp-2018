@@ -398,6 +398,181 @@ router.post("/generateteamallocations", function(req, res) {
 
 });	
 
+router.post("/generatematchallocations2", function(req, res) {
+	// HARDCODED
+	var activeTeamKey = 'frc102';
+	
+	var passCheckSuccess;
+	
+	if( !req.body.password || req.body.password == ""){
+		return res.send({status: 401, alert: "No password entered."});
+	}
+	if( !require('./checkauthentication')(req, res, 'admin') )
+		return console.log('admin not logged in on generateteamallocations');
+	
+	var teammembers = req.db.get('teammembers');
+	
+	teammembers.find( { name: req.user.name }, {}, function( e, user ){
+		if(e)
+			return console.error(e);
+		if(!user[0]){
+			res.send({status: 500, alert:"Passport error: no user found in db?"});
+			return console.error("no user found? generateteamallocations");
+		}
+		
+		bcrypt.compare( req.body.password, user[0].password, function(e, out){
+			if(e)
+				return console.error(e);
+			if(out == true)
+				passCheckSuccess = true;
+			else
+				return res.send({status: 401, alert: "Password incorrect."});
+			
+			if(passCheckSuccess){
+/* Begin regular code ----------------------------------------------------------- */
+	
+	var thisFuncName = "scoutingpairs.generateMATCHallocations2[post]: ";
+
+	// used when writing data to DB, for later querying by year
+	var year = (new Date()).getFullYear();
+							
+	// Log message so we can see on the server side when we enter this
+	console.log(thisFuncName + "ENTER");
+	
+	var db = req.db;
+	var currentCol = db.get("current");
+	var scoutPairCol = db.get("scoutingpairs");
+	var memberCol = db.get("teammembers");
+	var scoutDataCol = db.get("scoutingdata");
+	var scoreDataCol = db.get("scoringdata");
+
+	if(db._state == 'closed'){ //If database does not exist, send error
+		return res.render('./error',{
+			message: "Database error: Offline",
+			error: {status: "If the database is running, try restarting the Node server."}
+		});
+	}
+
+	// nodeclient
+	var Client = require('node-rest-client').Client;
+	var client = new Client();
+	var args = {
+		headers: { "accept": "application/json", "X-TBA-Auth-Key": "iSpbq2JH2g27Jx2CI5yujDsoKYeC8pGuMw94YeK3gXFU6lili7S2ByYZYZOYI3ew" }
+	}
+		
+	//
+	// Get the 'current' event from DB
+	//
+	currentCol.find({}, {}, function(e, docs) {
+		var noEventFound = 'No event defined';
+		var eventId = noEventFound;
+		if (docs)
+			if (docs.length > 0)
+				eventId = docs[0].event;
+		if (eventId === noEventFound) {
+			return res.render('./adminindex', { 
+				title: 'Admin pages',
+				current: eventId
+			});
+		}
+		// used when writing data to DB, for later querying by event_key
+		var event_key = eventId;
+
+		// { year, event_key, match_key, match_number, alliance, 'match_team_key', assigned_scorer, actual_scorer, scoring_data: {} }
+
+		//
+		// TODO
+		//
+		
+		return res.send({status: 200, alert: "Generated team allocations successfully."});
+	});
+		
+/* End regular code ----------------------------------------------------------- */
+			}
+		});
+	});
+});
+
+router.post("/clearmatchallocations", function(req, res) {
+	var passCheckSuccess;
+	
+	if( !req.body.password || req.body.password == ""){
+		return res.send({status: 401, alert: "No password entered."});
+	}
+	if( !require('./checkauthentication')(req, res, 'admin') )
+		return console.log('admin not logged in on generateteamallocations');
+	
+	var teammembers = req.db.get('teammembers');
+	
+	teammembers.find( { name: req.user.name }, {}, function( e, user ){
+		if(e)
+			return console.error(e);
+		if(!user[0]){
+			res.send({status: 500, alert:"Passport error: no user found in db?"});
+			return console.error("no user found? generateteamallocations");
+		}
+		
+		bcrypt.compare( req.body.password, user[0].password, function(e, out){
+			if(e)
+				return console.error(e);
+			if(out == true)
+				passCheckSuccess = true;
+			else
+				return res.send({status: 401, alert: "Password incorrect."});
+			
+			if(passCheckSuccess){
+/* Begin regular code ----------------------------------------------------------- */
+	
+	var thisFuncName = "scoutingpairs.clearMATCHallocations[post]: ";
+
+	// used when writing data to DB, for later querying by year
+	var year = (new Date()).getFullYear();
+							
+	// Log message so we can see on the server side when we enter this
+	console.log(thisFuncName + "ENTER");
+	
+	var db = req.db;
+	var currentCol = db.get("current");
+	var scoreDataCol = db.get("scoringdata");
+
+	if(db._state == 'closed'){ //If database does not exist, send error
+		return res.render('./error',{
+			message: "Database error: Offline",
+			error: {status: "If the database is running, try restarting the Node server."}
+		});
+	}
+
+	//
+	// Get the 'current' event from DB
+	//
+	currentCol.find({}, {}, function(e, docs) {
+		var noEventFound = 'No event defined';
+		var eventId = noEventFound;
+		if (docs)
+			if (docs.length > 0)
+				eventId = docs[0].event;
+		if (eventId === noEventFound) {
+			return res.render('./adminindex', { 
+				title: 'Admin pages',
+				current: eventId
+			});
+		}
+		var event_key = eventId;
+
+		//
+		// Remove 'assigned_scorer' from all matching scoringdata elements
+		//
+		scoreDataCol.bulkWrite([{updateMany:{filter:{ "event_key": eventId }, update:{ $unset: { "assigned_scorer" : "" } }}}], function(e, docs){
+			return res.send({status: 200, alert: "Cleared existing match scouting assignments successfully."});
+		});
+	});
+		
+/* End regular code ----------------------------------------------------------- */
+			}
+		});
+	});
+});
+
 router.post("/generatematchallocations", function(req, res) {
 	// HARDCODED
 	var activeTeamKey = 'frc102';
@@ -619,7 +794,6 @@ router.post("/generatematchallocations", function(req, res) {
 			}
 		});
 	});
-
 });
 
 router.get("/swapmembers", function(req, res) {

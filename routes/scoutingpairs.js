@@ -53,16 +53,25 @@ router.get("/", function(req, res) {
 						console.log(thisFuncName + e);
 					}
 					assigned = docs;
+
+					// 2018-04-03, M.O'C - Adding in set of "present but not assigned" people
+					collection.find({"assigned": "false", "present": "true"}, {sort: {"name": 1}}, function(e, docs) {
+						if(e){ //if error, log to console
+							console.log(thisFuncName + e);
+						}
+						available = docs;
 					
-					//Renders page through Jade.
-					console.log(thisFuncName + "RENDERING");
-					
-					res.render("./scoutingpairs", {
-						title: "Scouting Pairs",
-						prog: progTeam,
-						mech: mechTeam,
-						elec: elecTeam,
-						assigned: assigned
+						//Renders page through Jade.
+						console.log(thisFuncName + "RENDERING");
+						
+						res.render("./scoutingpairs", {
+							title: "Scouting Pairs",
+							prog: progTeam,
+							mech: mechTeam,
+							elec: elecTeam,
+							assigned: assigned,
+							available: available
+						});
 					});
 				});
 			});
@@ -398,47 +407,26 @@ router.post("/generateteamallocations", function(req, res) {
 
 });	
 
+//////////// Match allocating by batches of matches
+
 router.post("/generatematchallocations2", function(req, res) {
 	// HARDCODED
 	var activeTeamKey = 'frc102';
 	
-	var passCheckSuccess;
-	
-	if( !req.body.password || req.body.password == ""){
-		return res.send({status: 401, alert: "No password entered."});
-	}
-	if( !require('./checkauthentication')(req, res, 'admin') )
-		return console.log('admin not logged in on generateteamallocations');
-	
-	var teammembers = req.db.get('teammembers');
-	
-	teammembers.find( { name: req.user.name }, {}, function( e, user ){
-		if(e)
-			return console.error(e);
-		if(!user[0]){
-			res.send({status: 500, alert:"Passport error: no user found in db?"});
-			return console.error("no user found? generateteamallocations");
-		}
-		
-		bcrypt.compare( req.body.password, user[0].password, function(e, out){
-			if(e)
-				return console.error(e);
-			if(out == true)
-				passCheckSuccess = true;
-			else
-				return res.send({status: 401, alert: "Password incorrect."});
-			
-			if(passCheckSuccess){
-/* Begin regular code ----------------------------------------------------------- */
-	
 	var thisFuncName = "scoutingpairs.generateMATCHallocations2[post]: ";
+	// Log message so we can see on the server side when we enter this
+	console.log(thisFuncName + "ENTER");
+
+	var availableArray = [];
+	console.log(thisFuncName + '*** Tagged as available:');
+	for(var i in req.body) {
+		console.log(thisFuncName + i);
+		availableArray.push(i);
+	}
 
 	// used when writing data to DB, for later querying by year
 	var year = (new Date()).getFullYear();
 							
-	// Log message so we can see on the server side when we enter this
-	console.log(thisFuncName + "ENTER");
-	
 	var db = req.db;
 	var currentCol = db.get("current");
 	var scoutPairCol = db.get("scoutingpairs");
@@ -481,14 +469,34 @@ router.post("/generatematchallocations2", function(req, res) {
 		// { year, event_key, match_key, match_number, alliance, 'match_team_key', assigned_scorer, actual_scorer, scoring_data: {} }
 
 		//
-		// TODO
+		// Read all assigned OR tagged members, ordered by 'seniority' ~ have an array ordered by seniority
 		//
-		
-		return res.send({status: 200, alert: "Generated team allocations successfully."});
-	});
-		
-/* End regular code ----------------------------------------------------------- */
+		memberCol.find({$or: [{"name": {$in: availableArray}}, {"assigned": "true"}]}, { sort: {"seniority": 1, "subteam": 1, "name": 1} }, function(e, docs) {
+			if(e){ //if error, log to console
+				console.log(thisFuncName + e);
 			}
+			var matchscouts = docs;
+			var matchscoutsLen = matchscouts.length;
+			console.log(thisFuncName + "*** Assigned + available, by seniority:");
+			for (var i = 0; i < matchscoutsLen; i++)
+				console.log(thisFuncName + "member["+i+"] = " + matchscouts[i].name);
+			
+			//
+			// TODO
+			// - matchscouts is the "queue"; need a pointer to indicate where we are
+			// - Clear 'assigned_scorer', 'data' from all unresolved matches ('data' is just in case)
+			// - Find the latest unresolved match
+			// - Get list of matches from latest unresolved onward
+			// - Iterate until "break"
+			// -- Pull off the next 6 scouts
+			// -- Pull off the next 5 matches {or less than 5, if "break" hit; also test if break is after 5th match}
+			// -- In each match, assign 6 scouts to 6 teams in 'scoringdata'
+			// *** PUZZLE: How to do team preferential assignment?
+			// * Cycle through - attempt to assign teams to primary (if not yet assigned)
+			// * Cycle through remaining teams, assigning remaining scouts
+			// --- Update scoringdata, set assigned_scorer where team_key, match_key, etc.
+
+			res.redirect("/dashboard/matches");
 		});
 	});
 });
@@ -572,6 +580,8 @@ router.post("/clearmatchallocations", function(req, res) {
 		});
 	});
 });
+
+//////////// Match allocating by team assignment
 
 router.post("/generatematchallocations", function(req, res) {
 	// HARDCODED

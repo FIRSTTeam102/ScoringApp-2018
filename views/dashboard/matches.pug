@@ -11,10 +11,19 @@ block content
 				th Team Name
 			each match, i in matches
 				- if (i%6==0)
+					- //gets date crap
+					- var date = new Date( match.time * 1000 )
+					- if (match.predicted_time) date = new Date( match.predicted_time * 1000 );
+					- var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+					- var day = days[date.getDay()];
+					- var hour = date.getHours();
+					- var minute = date.getMinutes();
+					- //makes minute crap 2 digits
+					- minute = (minute.toString().length==1) ? "0".concat(minute.toString()) : minute;
 					tr(class="w3-border-top")
 						td  
 						th(class="w3-right w3-margin-top") 
-							span( style="position:relative;left: 20%;") Match #{match.match_number}
+							span( style="position:relative;left: 20%;") Match #{match.match_number} <br/> #{day} @ #{hour}:#{minute}
 						td  
 				tr(class="item")
 					- match.alliance = (match.alliance == "red") ? "Red" : "Blue";

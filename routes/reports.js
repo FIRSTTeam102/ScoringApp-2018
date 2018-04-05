@@ -623,6 +623,7 @@ router.get("/metricsranked", function(req, res){
 					if (thisLayout.type == 'checkbox' || thisLayout.type == 'counter' || thisLayout.type == 'badcounter') {
 						var aggRow = {};
 						aggRow['key'] = thisLayout.id;
+						aggRow['team'] = 'frcNone';
 						aggRow['avg'] = -1;
 
 						// cycle through each team row, looking for a higher (or equal) value for this particular scoring ID
@@ -649,7 +650,7 @@ router.get("/metricsranked", function(req, res){
 						aggTable.push(aggRow);
 					}
 				}
-				//console.log(thisFuncName + 'aggTable=' + JSON.stringify(aggTable));
+				console.log(thisFuncName + 'aggTable=' + JSON.stringify(aggTable));
 				
 				res.render("./reports/metricsranked", {
 					title: "Metrics For All Teams",

@@ -413,6 +413,11 @@ router.post("/generatematchallocations2", function(req, res) {
 	// HARDCODED
 	var activeTeamKey = 'frc102';
 	
+	// Gap between matches equal to or over this value means a "major" gap (e.g., lunch, overnight, etc.)
+	var matchGapBreakThreshold = 15 * 60;  // 12 minutes, in seconds
+	// Size of match blocks to be scouted
+	var matchBlockSize = 5;  // scouts will do this many matches in a row
+	
 	var thisFuncName = "scoutingpairs.generateMATCHallocations2[post]: ";
 	// Log message so we can see on the server side when we enter this
 	console.log(thisFuncName + "ENTER");
@@ -433,6 +438,7 @@ router.post("/generatematchallocations2", function(req, res) {
 	var memberCol = db.get("teammembers");
 	var scoutDataCol = db.get("scoutingdata");
 	var scoreDataCol = db.get("scoringdata");
+	var matchCol = db.get("matches");
 
 	if(db._state == 'closed'){ //If database does not exist, send error
 		return res.render('./error',{
@@ -469,34 +475,194 @@ router.post("/generatematchallocations2", function(req, res) {
 		// { year, event_key, match_key, match_number, alliance, 'match_team_key', assigned_scorer, actual_scorer, scoring_data: {} }
 
 		//
-		// Read all assigned OR tagged members, ordered by 'seniority' ~ have an array ordered by seniority
+		// Need map of team IDs to scouts (scoutingdata)
 		//
-		memberCol.find({$or: [{"name": {$in: availableArray}}, {"assigned": "true"}]}, { sort: {"seniority": 1, "subteam": 1, "name": 1} }, function(e, docs) {
+		scoutDataCol.find({"event_key": event_key}, function(e, docs) {
 			if(e){ //if error, log to console
 				console.log(thisFuncName + e);
 			}
-			var matchscouts = docs;
-			var matchscoutsLen = matchscouts.length;
-			console.log(thisFuncName + "*** Assigned + available, by seniority:");
-			for (var i = 0; i < matchscoutsLen; i++)
-				console.log(thisFuncName + "member["+i+"] = " + matchscouts[i].name);
+			var scoutDataArray = docs;
 			
-			//
-			// TODO
-			// - matchscouts is the "queue"; need a pointer to indicate where we are
-			// - Clear 'assigned_scorer', 'data' from all unresolved matches ('data' is just in case)
-			// - Find the latest unresolved match
-			// - Get list of matches from latest unresolved onward
-			// - Iterate until "break"
-			// -- Pull off the next 6 scouts
-			// -- Pull off the next 5 matches {or less than 5, if "break" hit; also test if break is after 5th match}
-			// -- In each match, assign 6 scouts to 6 teams in 'scoringdata'
-			// *** PUZZLE: How to do team preferential assignment?
-			// * Cycle through - attempt to assign teams to primary (if not yet assigned)
-			// * Cycle through remaining teams, assigning remaining scouts
-			// --- Update scoringdata, set assigned_scorer where team_key, match_key, etc.
+			// Build teamID->primary/secondar/tertiary lookup
+			var scoutDataByTeam = {};
+			var scoutDataLen = scoutDataArray.length;
+			for (var i = 0; i < scoutDataLen; i++) {
+				scoutDataByTeam[scoutDataArray[i].team_key] = scoutDataArray[i];
+				//console.log(thisFuncName + "Scout data: For team " + scoutDataArray[i].team_key + ", array is " + JSON.stringify(scoutDataArray[i]));
+			}
 
-			res.redirect("/dashboard/matches");
+			//
+			// Read all assigned OR tagged members, ordered by 'seniority' ~ have an array ordered by seniority
+			//
+			memberCol.find({$or: [{"name": {$in: availableArray}}, {"assigned": "true"}]}, { sort: {"seniority": 1, "subteam": 1, "name": 1} }, function(e, docs) {
+				if(e){ //if error, log to console
+					console.log(thisFuncName + e);
+				}
+				// - matchscouts is the "queue"; need a pointer to indicate where we are
+				var matchScouts = docs;
+				var matchScoutsLen = matchScouts.length;
+				console.log(thisFuncName + "*** Assigned + available, by seniority:");
+				for (var i = 0; i < matchScoutsLen; i++)
+					console.log(thisFuncName + "member["+i+"] = " + matchScouts[i].name);
+
+				// who is "first" in line in the 'queue'
+				var nextMatchScout = 0;
+	
+				//
+				// Get the *min* time of the as-yet-unresolved matches [where alliance scores are still -1]
+				//
+				matchCol.find({ event_key: eventId, "alliances.red.score": -1 },{sort: {"time": 1}}, function(e, docs){
+
+					// Avoid crashing server if all matches at an event are done
+					var earliestTimestamp = 9999999999;
+					if (docs && docs[0]) {
+						var earliestMatch = docs[0];
+						earliestTimestamp = earliestMatch.time;
+					}
+
+					// Clear 'assigned_scorer', 'data' from all unresolved team@matches ('data' is just in case)
+					scoreDataCol.bulkWrite([{updateMany:{filter:{ "event_key": eventId, "time": { $gte: earliestTimestamp } }, update:{ $unset: { "assigned_scorer" : "", "data": "" } }}}], function(e, docs){
+					
+						// Get list of matches from latest unresolved onward
+						//scoreDataCol.find({"event_key": eventId, "assigned_scorer": thisUserName, "time": { $gte: earliestTimestamp }}, { limit: 10, sort: {"time": 1} }, function (e, docs) {
+						matchCol.find({"event_key": eventId, "time": { $gte: earliestTimestamp }}, { sort: {"time": 1}}, function (e, docs) {
+							var comingMatches = docs;
+							var lastMatchTimestamp = earliestTimestamp;
+							
+							var matchBlockCounter = matchBlockSize;  // initialize at the max size so in the first loop iteration, it'll set up the scout list
+							var scoutPointer = 0;  // start off with the 0th position
+							var scoutArray = [];  // the current set of scouts (gets regenerated every N matches)
+							var scoutAvailableMap = {};  // pool of available scouts
+							
+							var redBlueToggle = 0;  // flips between 0 and 1, signals whether to allocate red alliance or blue alliance first
+							
+							for (var matchesIdx = 0; matchesIdx < comingMatches.length; matchesIdx++) {
+								var thisMatchKey = comingMatches[matchesIdx].key;
+								
+								var teamScoutMap = {};  // map of team->scout associations; reset for each match
+								
+								// Work in sets of up to 5 matches {could be less than 5, if "break" or end is hit}
+								if (matchBlockCounter >= matchBlockSize) {
+									// Pull off the next 6 scouts
+									scoutArray = [];
+									for (var i = 0; i < 6; i++) {
+										scoutArray.push(matchScouts[scoutPointer].name);
+										scoutPointer++;
+										if (scoutPointer >= matchScoutsLen)
+											scoutPointer = 0;
+									}
+									console.log(thisFuncName + "Updated current scouts: " + JSON.stringify(scoutArray));
+									
+									matchBlockCounter = 0;
+								}
+								matchBlockCounter++;
+								
+								// reset the scout available map
+								scoutAvailableMap = {};
+								for (var i = 0; i < 6; i++)
+									scoutAvailableMap[scoutArray[i]] = scoutArray[i];
+								
+								
+								var matchGap = comingMatches[matchesIdx].time - lastMatchTimestamp;
+								// Iterate until a "break" is found (or otherwise, if the loop is exhausted)
+								if (matchGap > matchGapBreakThreshold) {
+									console.log(thisFuncName + "matchGap=" + matchGap + "... found a break");
+									break;
+								}
+								
+								//console.log(thisFuncName + "comingMatch[" + matchesIdx + "]: matchGap=" + (matchGap) + ", redteams=" + JSON.stringify(comingMatches[matchesIdx].alliances.red.team_keys) + ", blueteams=" + JSON.stringify(comingMatches[matchesIdx].alliances.blue.team_keys));
+								var teamArray = [];
+								var teamScoutMatchMap = {};
+								if (redBlueToggle == 0)
+									for (var i = 0; i < 3; i++) {
+										teamArray.push(comingMatches[matchesIdx].alliances.red.team_keys[i]);
+										teamArray.push(comingMatches[matchesIdx].alliances.blue.team_keys[i]);
+									}
+								else
+									for (var i = 0; i < 3; i++) {
+										teamArray.push(comingMatches[matchesIdx].alliances.blue.team_keys[i]);
+										teamArray.push(comingMatches[matchesIdx].alliances.red.team_keys[i]);
+									}
+								console.log(thisFuncName + "comingMatch[" + matchesIdx + "]: matchGap=" + (matchGap) + ", teamArray=" + JSON.stringify(teamArray));
+								
+								// -- In each match, assign 6 scouts to 6 teams in 'scoringdata'
+								// *** PUZZLE: How to do team preferential assignment?
+								// * Cycle through - attempt to assign teams to primary (if not yet assigned) ~ pseudorandom? sort { time: 1, _id: 1 }
+								// * Cycle through remaining teams - assigning remaining scouts
+								// --- Update scoringdata, set assigned_scorer where team_key, match_key, etc.
+
+								// Go through assigning primaries first, then secondaries, then tertiaries
+								var roleArray = [ "primary", "secondary", "tertiary" ];
+								for (var roleIdx = 0; roleIdx < roleArray.length; roleIdx++) {
+									// Which role (primary? secondary? tertiary?) are we checking
+									var thisRole = roleArray[roleIdx];
+
+									// Cycle through teams
+									for (var i = 0; i < 6; i++) {
+										var thisTeamKey = teamArray[i];
+										// Assigned yet? If not...
+										if (teamScoutMap[thisTeamKey] == null) {
+											// Who is assigned to this team?
+											var thisScoutData = scoutDataByTeam[thisTeamKey];
+											var thisPossibleAssignee = thisScoutData[thisRole];
+											//console.log(thisFuncName + ">> Comparing: " + thisTeamKey + ", for role " + thisRole + " is " + thisPossibleAssignee);
+											
+											// Are they available?
+											if (thisPossibleAssignee != null && scoutAvailableMap[thisPossibleAssignee] != null) {
+												// Assign them!
+												//console.log(thisFuncName + "** Assigning " + thisPossibleAssignee + " to " + thisTeamKey);
+												teamScoutMap[thisTeamKey] = thisPossibleAssignee;
+												// Take assignee out of available
+												delete scoutAvailableMap[thisPossibleAssignee];
+											}
+										}
+									}
+								}
+								
+								// fill in the rest
+								var leftoverScouts = [];
+								for (var property in scoutAvailableMap)
+									if (scoutAvailableMap.hasOwnProperty(property))
+										leftoverScouts.push(scoutAvailableMap[property]);
+								//console.log(thisFuncName + "leftover scouts are " + JSON.stringify(leftoverScouts));
+
+								// cycle through teams, find the ones without assignees
+								var leftoverPointer = 0;
+								for (var i = 0; i < 6; i++) {
+									var thisTeamKey = teamArray[i];
+									// Assigned yet? If not...
+									if (teamScoutMap[thisTeamKey] == null) {
+										// Grab the next available scout & increment the pointer
+										teamScoutMap[thisTeamKey] = leftoverScouts[leftoverPointer];
+										leftoverPointer++;
+									}
+								}
+
+								// show all the team-scout assignments
+								for (var property in teamScoutMap) {
+									if (teamScoutMap.hasOwnProperty(property)) {
+										// Write the assignment to the DB!
+										var thisMatchTeamKey = thisMatchKey + "_" + property;
+										var thisScout = teamScoutMap[property];
+										
+										scoreDataCol.update(
+											{ "match_team_key" : thisMatchTeamKey },
+											{ $set: { "assigned_scorer" : thisScout } }
+										)
+										//console.log(thisFuncName + "Assigned " + thisMatchTeamKey + " to " + thisScout);
+									}
+								}									
+								
+								// update the 'lastMatchTimestamp' so we can track until a break
+								lastMatchTimestamp = comingMatches[matchesIdx].time;
+							}
+
+							// all done, go to the matches list
+							res.redirect("/dashboard/matches");
+						});
+					});
+				});
+			});
 		});
 	});
 });

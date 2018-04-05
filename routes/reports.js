@@ -550,6 +550,116 @@ router.get("/teammatchintel*", function(req, res){
 	});
 });
 
+router.get("/metricsranked", function(req, res){
+	var thisFuncName = "reports.metricsranked[get]: ";
+	console.log(thisFuncName + 'ENTER');
+	
+	var db = req.db;
+	var aggCol = req.db.get('scoringdata');
+	var scoreCol = db.get("scoringlayout");
+	var currentCol = db.get("current");
+	
+	//
+	// Get the 'current' event from DB
+	//
+	currentCol.find({}, {}, function(e, docs) {
+		var noEventFound = 'No event defined';
+		var eventId = noEventFound;
+		if (docs)
+			if (docs.length > 0)
+				eventId = docs[0].event;
+		if (eventId === noEventFound) {
+			res.render('/adminindex', { 
+				title: 'Admin pages',
+				current: eventId
+			});
+		}
+		// for later querying by event_key
+		var event_key = eventId;
+		console.log(thisFuncName + 'event_key=' + event_key);
+	
+		// Match data layout - use to build dynamic Mongo aggregation query  --- No team key specified! Will combo ALL teams
+		// db.scoringdata.aggregate( [ 
+		// { $match : { "data":{$exists:true}, "event_key": "2018njfla" } }, 
+		// { $group : { _id: "$team_key",
+		// "teleScaleMIN": {$min: "$data.teleScale"},
+		// "teleScaleAVG": {$avg: "$data.teleScale"},
+		// "teleScaleMAX": {$max: "$data.teleScale"}
+		//  } }
+		// ] );						
+		scoreCol.find({}, {sort: {"order": 1}}, function(e, docs){
+			var scorelayout = docs;
+			var aggQuery = [];
+			aggQuery.push({ $match : { "data":{$exists:true}, "event_key": event_key } });
+			var groupClause = {};
+			// group teams for 1 row per team
+			groupClause["_id"] = "$team_key";
+
+			for (var scoreIdx = 0; scoreIdx < scorelayout.length; scoreIdx++) {
+				var thisLayout = scorelayout[scoreIdx];
+				if (thisLayout.type == 'checkbox' || thisLayout.type == 'counter' || thisLayout.type == 'badcounter') {
+					//console.log(thisFuncName + 'thisLayout.type=' + thisLayout.type + ', thisLayout.id=' + thisLayout.id);
+					//groupClause[thisLayout.id + "MIN"] = {$min: "$data." + thisLayout.id};
+					groupClause[thisLayout.id + "AVG"] = {$avg: "$data." + thisLayout.id};
+					//groupClause[thisLayout.id + "VAR"] = {$stdDevPop: "$data." + thisLayout.id};
+					//groupClause[thisLayout.id + "MAX"] = {$max: "$data." + thisLayout.id};
+				}
+			}
+			aggQuery.push({ $group: groupClause });
+			//console.log(thisFuncName + 'aggQuery=' + JSON.stringify(aggQuery));
+			
+			aggCol.aggregate(aggQuery, function(e, docs){
+				var aggData = [];
+				//var aggresult = {};
+				if (docs)
+					aggData = docs;
+					//aggresult = docs[0];
+				//console.log(thisFuncName + 'aggresult=' + JSON.stringify(aggresult));
+
+				// Unspool rows of aggregate results into tabular form - update values as higher values found
+				var aggTable = [];
+				for (var scoreIdx = 0; scoreIdx < scorelayout.length; scoreIdx++) {
+					var thisLayout = scorelayout[scoreIdx];
+					if (thisLayout.type == 'checkbox' || thisLayout.type == 'counter' || thisLayout.type == 'badcounter') {
+						var aggRow = {};
+						aggRow['key'] = thisLayout.id;
+						aggRow['avg'] = -1;
+
+						// cycle through each team row, looking for a higher (or equal) value for this particular scoring ID
+						for (var aggIdx = 0; aggIdx < aggData.length; aggIdx++) {
+							var aggresult = aggData[aggIdx];
+							// Recompute VAR first = StdDev/Mean
+							//aggRow['var'] = aggRow['var'] / (aggRow['avg'] + 0.001);
+							
+							var thisAvg = (Math.round(aggresult[thisLayout.id + "AVG"] * 10)/10).toFixed(1);
+							if (thisAvg > aggRow['avg']) {
+								aggRow['team'] = aggresult['_id'];
+								aggRow['avg'] = thisAvg;
+							}
+							else if (thisAvg == aggRow['avg']) {
+								if (aggRow['team'] != 'frc(mult)')
+									aggRow['team'] = 'frc(mult)';
+							}
+							
+							////aggRow['min'] = (Math.round(aggresult[thisLayout.id + "MIN"] * 10)/10).toFixed(1);
+							//aggRow['avg'] = (Math.round(aggresult[thisLayout.id + "AVG"] * 10)/10).toFixed(1);
+							////aggRow['var'] = (Math.round(aggresult[thisLayout.id + "VAR"] * 10)/10).toFixed(1);
+							////aggRow['max'] = (Math.round(aggresult[thisLayout.id + "MAX"] * 10)/10).toFixed(1);
+						}
+						aggTable.push(aggRow);
+					}
+				}
+				//console.log(thisFuncName + 'aggTable=' + JSON.stringify(aggTable));
+				
+				res.render("./reports/metricsranked", {
+					title: "Metrics For All Teams",
+					aggdata: aggTable
+				});
+			});
+		});
+	});	
+});
+
 router.get("/metrics", function(req, res){
 	var thisFuncName = "reports.metrics[get]: ";
 	console.log(thisFuncName + 'ENTER');

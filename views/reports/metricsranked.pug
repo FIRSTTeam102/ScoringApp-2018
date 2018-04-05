@@ -1,0 +1,29 @@
+extends ../layout
+
+block content
+	h2(class="gear-text-white") Statistical summary of ALL teams
+	h6 <i>Click on a metric to compare individual teams</i>
+	h6 <i>Click on a team to jump to team intel</i>
+	
+	if (aggdata)
+		table(class="w3-table")
+			tr
+				th Metric
+				th(class="w3-center") Team
+				th(class="w3-right-align") Avg
+			each agg in aggdata
+				tr
+					- var text = agg.key; var result1 = text.replace( /([A-Z])/g, " $1" ); var result2 = result1.charAt(0).toUpperCase() + result1.slice(1)
+					td(class="w3-text-light-gray w3-small")
+						a(href=`/reports/metricintel?key=${agg.key}`)= result2
+					if (agg.team.substring(3) == '(mult)')
+						td(class='w3-text-white w3-center')= agg.team.substring(3)
+					else
+						td(class='w3-text-white w3-center')
+							a(href=`/reports/teamintel?team=${agg.team}`)= agg.team.substring(3)
+					- var avgCol = 'w3-right-align w3-text-white'
+					- if (agg.avg == 0) avgCol = 'w3-right-align w3-text-gray'
+					td(class=`${avgCol}`)= agg.avg
+		p
+		a(href='/reports/metrics') Click here to see overall aggregated event data
+

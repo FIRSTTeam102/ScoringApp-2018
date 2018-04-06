@@ -204,7 +204,7 @@ block content
 								span= redQuests
 							else
 								span &nbsp;
-				if (match.scoringdata)
+				if (match.scoringdata && user)
 					each element in scorelayout
 						case element.type
 							when "textblock"

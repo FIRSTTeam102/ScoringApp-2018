@@ -550,6 +550,125 @@ router.get("/teammatchintel*", function(req, res){
 	});
 });
 
+router.get("/upcomingmatchmetrics", function(req, res) {
+	var thisFuncName = "reports.upcomingmatchmetrics[get]: ";
+	console.log(thisFuncName + 'ENTER');
+	
+	var db = req.db;
+	var aggCol = req.db.get('scoringdata');
+	var scoreCol = db.get("scoringlayout");
+	var currentCol = db.get("current");
+	var matchCol = db.get('matches');
+	
+	var matchKey = req.query.key;
+	
+	//
+	// Get the 'current' event from DB
+	//
+	currentCol.find({}, {}, function(e, docs) {
+		var noEventFound = 'No event defined';
+		var eventId = noEventFound;
+		if (docs)
+			if (docs.length > 0)
+				eventId = docs[0].event;
+		if (eventId === noEventFound) {
+			res.render('/adminindex', { 
+				title: 'Admin pages',
+				current: eventId
+			});
+		}
+		// for later querying by event_key
+		var event_key = eventId;
+		console.log(thisFuncName + 'event_key=' + event_key);
+	
+		// get the specified match object
+		matchCol.find({"key": matchKey}, {}, function (e, docs) {
+			var match = {};
+			if (docs && docs[0])
+				match = docs[0];
+	
+			// Match data layout - use to build dynamic Mongo aggregation query  --- Comboing twice, on two sets of team keys: red alliance & blue alliance
+			// db.scoringdata.aggregate( [ 
+			// { $match : { "team_key":{$in: [...]}, "event_key": event_key } }, 
+			// { $group : { _id: "$event_key",
+			// "autoScaleAVG": {$avg: "$data.autoScale"},
+			// "teleScaleAVG": {$avg: "$data.teleScale"},
+			//  } }
+			// ] );						
+			scoreCol.find({}, {sort: {"order": 1}}, function(e, docs){
+				var scorelayout = docs;
+				var aggQuery = [];
+				var redAllianceArray = match.alliances.red.team_keys;
+				aggQuery.push({ $match : { "team_key": {$in: redAllianceArray}, "event_key": event_key } });
+				var groupClause = {};
+				// group teams for 1 row per event (we're doing this twice, once for red & once for blue)
+				groupClause["_id"] = "$event_key";
+
+				for (var scoreIdx = 0; scoreIdx < scorelayout.length; scoreIdx++) {
+					var thisLayout = scorelayout[scoreIdx];
+					if (thisLayout.type == 'checkbox' || thisLayout.type == 'counter' || thisLayout.type == 'badcounter')
+						groupClause[thisLayout.id + "AVG"] = {$avg: "$data." + thisLayout.id};
+				}
+				aggQuery.push({ $group: groupClause });
+				//console.log(thisFuncName + 'aggQuery=' + JSON.stringify(aggQuery));
+				
+				aggCol.aggregate(aggQuery, function(e, docs){
+					var aggresult = {};
+					if (docs && docs[0])
+						aggresult = docs[0];
+					//console.log(thisFuncName + 'aggresult=' + JSON.stringify(aggresult));
+
+					// Unspool single row of aggregate results into tabular form
+					var aggTable = [];
+					for (var scoreIdx = 0; scoreIdx < scorelayout.length; scoreIdx++) {
+						var thisLayout = scorelayout[scoreIdx];
+						if (thisLayout.type == 'checkbox' || thisLayout.type == 'counter' || thisLayout.type == 'badcounter') {
+							var aggRow = {};
+							aggRow['key'] = thisLayout.id;
+							aggRow['red'] = (Math.round(aggresult[thisLayout.id + "AVG"] * 10)/10).toFixed(1);
+							aggTable.push(aggRow);
+						}
+					}
+
+					// repeat aggregation for blue alliance
+					aggQuery = [];
+					var blueAllianceArray = match.alliances.blue.team_keys;
+					aggQuery.push({ $match : { "team_key": {$in: blueAllianceArray}, "event_key": event_key } });
+					// reuse prior groupClause
+					aggQuery.push({ $group: groupClause });
+					//console.log(thisFuncName + 'aggQuery=' + JSON.stringify(aggQuery));
+				
+					aggCol.aggregate(aggQuery, function(e, docs){
+						aggresult = {};
+						if (docs && docs[0])
+							aggresult = docs[0];
+						//console.log(thisFuncName + 'aggresult=' + JSON.stringify(aggresult));
+
+						// Unspool single row of aggregate results into tabular form
+						// Utilize pointer to aggTable to line up data
+						var aggTablePointer = 0;
+						for (var scoreIdx = 0; scoreIdx < scorelayout.length; scoreIdx++) {
+							var thisLayout = scorelayout[scoreIdx];
+							if (thisLayout.type == 'checkbox' || thisLayout.type == 'counter' || thisLayout.type == 'badcounter') {
+								aggTable[aggTablePointer].blue = (Math.round(aggresult[thisLayout.id + "AVG"] * 10)/10).toFixed(1);
+								aggTablePointer++;
+							}
+						}
+					
+						console.log(thisFuncName + 'aggTable=' + JSON.stringify(aggTable));
+					
+						res.render("./reports/upcomingmatchmetrics", {
+							title: "Metrics For Upcoming Match",
+							aggdata: aggTable,
+							match: match
+						});
+					});
+				});
+			});
+		});	
+	});
+});
+
 router.get("/metricsranked", function(req, res){
 	var thisFuncName = "reports.metricsranked[get]: ";
 	console.log(thisFuncName + 'ENTER');

@@ -14,6 +14,7 @@ router.get('/match*', function(req, res) {
 	var thisUserName = thisUser.name;
 
 	var matchKey = req.query.key;
+	var alliance = req.query.alliance;
 	if (!matchKey) {
 		res.redirect("/dashboard");
 		return;
@@ -28,7 +29,8 @@ router.get('/match*', function(req, res) {
 		res.render("./scouting/match", {
 			title: "Match Scouting",
 			layout: layout,
-			key: matchKey
+			key: matchKey,
+			alliance: alliance
 		});
 	});
 });

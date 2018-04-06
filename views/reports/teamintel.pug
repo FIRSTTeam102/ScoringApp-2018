@@ -56,6 +56,7 @@ block content
 	div#PitScoutingSection(class="w3-container w3-hide")
 		if (data)
 			h1 Current Day Pit Scouting Info
+			- var changeCount = -0.5;
 			each element in layout
 				case element.type
 					when "checkbox"
@@ -63,11 +64,18 @@ block content
 					when "badcounter"
 					when "multiselect"
 					when "textblock"
-						h4(class="gear-text-white") #{element.label} <strong>#{data[element.id]}</strong>
+						if (data[element.id] != 0 && data[element.id] != '' && data[element.id] != null)
+							- changeCount++;
+							h4(class="gear-text-white") #{element.label} <strong>#{data[element.id]}</strong>
 					when "h2"
+						if (changeCount == 0)
+							h4(class="gear-text-white") <i>(no change)</i>
+						- changeCount = 0;
 						h2 #{element.label}
 					when "spacer"
 						p
+			if (changeCount == 0)
+				h4(class="gear-text-white") (no change)
 			if (inTable)
 				| </table>
 		else

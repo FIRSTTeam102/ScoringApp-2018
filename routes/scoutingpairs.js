@@ -53,16 +53,25 @@ router.get("/", function(req, res) {
 						console.log(thisFuncName + e);
 					}
 					assigned = docs;
+
+					// 2018-04-03, M.O'C - Adding in set of "present but not assigned" people
+					collection.find({"assigned": "false", "present": "true"}, {sort: {"name": 1}}, function(e, docs) {
+						if(e){ //if error, log to console
+							console.log(thisFuncName + e);
+						}
+						available = docs;
 					
-					//Renders page through Jade.
-					console.log(thisFuncName + "RENDERING");
-					
-					res.render("./scoutingpairs", {
-						title: "Scouting Pairs",
-						prog: progTeam,
-						mech: mechTeam,
-						elec: elecTeam,
-						assigned: assigned
+						//Renders page through Jade.
+						console.log(thisFuncName + "RENDERING");
+						
+						res.render("./scoutingpairs", {
+							title: "Scouting Pairs",
+							prog: progTeam,
+							mech: mechTeam,
+							elec: elecTeam,
+							assigned: assigned,
+							available: available
+						});
 					});
 				});
 			});
@@ -398,6 +407,348 @@ router.post("/generateteamallocations", function(req, res) {
 
 });	
 
+//////////// Match allocating by batches of matches
+
+router.post("/generatematchallocations2", function(req, res) {
+	// HARDCODED
+	var activeTeamKey = 'frc102';
+	
+	// Gap between matches equal to or over this value means a "major" gap (e.g., lunch, overnight, etc.)
+	var matchGapBreakThreshold = 15 * 60;  // 12 minutes, in seconds
+	// Size of match blocks to be scouted
+	var matchBlockSize = 5;  // scouts will do this many matches in a row
+	
+	var thisFuncName = "scoutingpairs.generateMATCHallocations2[post]: ";
+	// Log message so we can see on the server side when we enter this
+	console.log(thisFuncName + "ENTER");
+
+	var availableArray = [];
+	console.log(thisFuncName + '*** Tagged as available:');
+	for(var i in req.body) {
+		console.log(thisFuncName + i);
+		availableArray.push(i);
+	}
+
+	// used when writing data to DB, for later querying by year
+	var year = (new Date()).getFullYear();
+							
+	var db = req.db;
+	var currentCol = db.get("current");
+	var scoutPairCol = db.get("scoutingpairs");
+	var memberCol = db.get("teammembers");
+	var scoutDataCol = db.get("scoutingdata");
+	var scoreDataCol = db.get("scoringdata");
+	var matchCol = db.get("matches");
+
+	if(db._state == 'closed'){ //If database does not exist, send error
+		return res.render('./error',{
+			message: "Database error: Offline",
+			error: {status: "If the database is running, try restarting the Node server."}
+		});
+	}
+
+	// nodeclient
+	var Client = require('node-rest-client').Client;
+	var client = new Client();
+	var args = {
+		headers: { "accept": "application/json", "X-TBA-Auth-Key": "iSpbq2JH2g27Jx2CI5yujDsoKYeC8pGuMw94YeK3gXFU6lili7S2ByYZYZOYI3ew" }
+	}
+		
+	//
+	// Get the 'current' event from DB
+	//
+	currentCol.find({}, {}, function(e, docs) {
+		var noEventFound = 'No event defined';
+		var eventId = noEventFound;
+		if (docs)
+			if (docs.length > 0)
+				eventId = docs[0].event;
+		if (eventId === noEventFound) {
+			return res.render('./adminindex', { 
+				title: 'Admin pages',
+				current: eventId
+			});
+		}
+		// used when writing data to DB, for later querying by event_key
+		var event_key = eventId;
+
+		// { year, event_key, match_key, match_number, alliance, 'match_team_key', assigned_scorer, actual_scorer, scoring_data: {} }
+
+		//
+		// Need map of team IDs to scouts (scoutingdata)
+		//
+		scoutDataCol.find({"event_key": event_key}, function(e, docs) {
+			if(e){ //if error, log to console
+				console.log(thisFuncName + e);
+			}
+			var scoutDataArray = docs;
+			
+			// Build teamID->primary/secondar/tertiary lookup
+			var scoutDataByTeam = {};
+			var scoutDataLen = scoutDataArray.length;
+			for (var i = 0; i < scoutDataLen; i++) {
+				scoutDataByTeam[scoutDataArray[i].team_key] = scoutDataArray[i];
+				//console.log(thisFuncName + "Scout data: For team " + scoutDataArray[i].team_key + ", array is " + JSON.stringify(scoutDataArray[i]));
+			}
+
+			//
+			// Read all assigned OR tagged members, ordered by 'seniority' ~ have an array ordered by seniority
+			//
+			memberCol.find({$or: [{"name": {$in: availableArray}}, {"assigned": "true"}]}, { sort: {"seniority": 1, "subteam": 1, "name": 1} }, function(e, docs) {
+				if(e){ //if error, log to console
+					console.log(thisFuncName + e);
+				}
+				// - matchscouts is the "queue"; need a pointer to indicate where we are
+				var matchScouts = docs;
+				var matchScoutsLen = matchScouts.length;
+				console.log(thisFuncName + "*** Assigned + available, by seniority:");
+				for (var i = 0; i < matchScoutsLen; i++)
+					console.log(thisFuncName + "member["+i+"] = " + matchScouts[i].name);
+
+				// who is "first" in line in the 'queue'
+				var nextMatchScout = 0;
+	
+				//
+				// Get the *min* time of the as-yet-unresolved matches [where alliance scores are still -1]
+				//
+				matchCol.find({ event_key: eventId, "alliances.red.score": -1 },{sort: {"time": 1}}, function(e, docs){
+
+					// Avoid crashing server if all matches at an event are done
+					var earliestTimestamp = 9999999999;
+					if (docs && docs[0]) {
+						var earliestMatch = docs[0];
+						earliestTimestamp = earliestMatch.time;
+					}
+
+					// Clear 'assigned_scorer', 'data' from all unresolved team@matches ('data' is just in case)
+					scoreDataCol.bulkWrite([{updateMany:{filter:{ "event_key": eventId, "time": { $gte: earliestTimestamp } }, update:{ $unset: { "assigned_scorer" : "", "data": "" } }}}], function(e, docs){
+					
+						// Get list of matches from latest unresolved onward
+						//scoreDataCol.find({"event_key": eventId, "assigned_scorer": thisUserName, "time": { $gte: earliestTimestamp }}, { limit: 10, sort: {"time": 1} }, function (e, docs) {
+						matchCol.find({"event_key": eventId, "time": { $gte: earliestTimestamp }}, { sort: {"time": 1}}, function (e, docs) {
+							var comingMatches = docs;
+							var lastMatchTimestamp = earliestTimestamp;
+							
+							var matchBlockCounter = matchBlockSize;  // initialize at the max size so in the first loop iteration, it'll set up the scout list
+							var scoutPointer = 0;  // start off with the 0th position
+							var scoutArray = [];  // the current set of scouts (gets regenerated every N matches)
+							var scoutAvailableMap = {};  // pool of available scouts
+							
+							var redBlueToggle = 0;  // flips between 0 and 1, signals whether to allocate red alliance or blue alliance first
+							
+							for (var matchesIdx = 0; matchesIdx < comingMatches.length; matchesIdx++) {
+								var thisMatchKey = comingMatches[matchesIdx].key;
+								
+								var teamScoutMap = {};  // map of team->scout associations; reset for each match
+								
+								// Work in sets of up to 5 matches {could be less than 5, if "break" or end is hit}
+								if (matchBlockCounter >= matchBlockSize) {
+									// Pull off the next 6 scouts
+									scoutArray = [];
+									for (var i = 0; i < 6; i++) {
+										scoutArray.push(matchScouts[scoutPointer].name);
+										scoutPointer++;
+										if (scoutPointer >= matchScoutsLen)
+											scoutPointer = 0;
+									}
+									console.log(thisFuncName + "Updated current scouts: " + JSON.stringify(scoutArray));
+									
+									matchBlockCounter = 0;
+								}
+								matchBlockCounter++;
+								
+								// reset the scout available map
+								scoutAvailableMap = {};
+								for (var i = 0; i < 6; i++)
+									scoutAvailableMap[scoutArray[i]] = scoutArray[i];
+								
+								
+								var matchGap = comingMatches[matchesIdx].time - lastMatchTimestamp;
+								// Iterate until a "break" is found (or otherwise, if the loop is exhausted)
+								if (matchGap > matchGapBreakThreshold) {
+									console.log(thisFuncName + "matchGap=" + matchGap + "... found a break");
+									break;
+								}
+								
+								//console.log(thisFuncName + "comingMatch[" + matchesIdx + "]: matchGap=" + (matchGap) + ", redteams=" + JSON.stringify(comingMatches[matchesIdx].alliances.red.team_keys) + ", blueteams=" + JSON.stringify(comingMatches[matchesIdx].alliances.blue.team_keys));
+								var teamArray = [];
+								var teamScoutMatchMap = {};
+								if (redBlueToggle == 0)
+									for (var i = 0; i < 3; i++) {
+										teamArray.push(comingMatches[matchesIdx].alliances.red.team_keys[i]);
+										teamArray.push(comingMatches[matchesIdx].alliances.blue.team_keys[i]);
+									}
+								else
+									for (var i = 0; i < 3; i++) {
+										teamArray.push(comingMatches[matchesIdx].alliances.blue.team_keys[i]);
+										teamArray.push(comingMatches[matchesIdx].alliances.red.team_keys[i]);
+									}
+								console.log(thisFuncName + "comingMatch[" + matchesIdx + "]: matchGap=" + (matchGap) + ", teamArray=" + JSON.stringify(teamArray));
+								
+								// -- In each match, assign 6 scouts to 6 teams in 'scoringdata'
+								// *** PUZZLE: How to do team preferential assignment?
+								// * Cycle through - attempt to assign teams to primary (if not yet assigned) ~ pseudorandom? sort { time: 1, _id: 1 }
+								// * Cycle through remaining teams - assigning remaining scouts
+								// --- Update scoringdata, set assigned_scorer where team_key, match_key, etc.
+
+								// Go through assigning primaries first, then secondaries, then tertiaries
+								var roleArray = [ "primary", "secondary", "tertiary" ];
+								for (var roleIdx = 0; roleIdx < roleArray.length; roleIdx++) {
+									// Which role (primary? secondary? tertiary?) are we checking
+									var thisRole = roleArray[roleIdx];
+
+									// Cycle through teams
+									for (var i = 0; i < 6; i++) {
+										var thisTeamKey = teamArray[i];
+										// Assigned yet? If not...
+										if (teamScoutMap[thisTeamKey] == null) {
+											// Who is assigned to this team?
+											var thisScoutData = scoutDataByTeam[thisTeamKey];
+											var thisPossibleAssignee = thisScoutData[thisRole];
+											//console.log(thisFuncName + ">> Comparing: " + thisTeamKey + ", for role " + thisRole + " is " + thisPossibleAssignee);
+											
+											// Are they available?
+											if (thisPossibleAssignee != null && scoutAvailableMap[thisPossibleAssignee] != null) {
+												// Assign them!
+												//console.log(thisFuncName + "** Assigning " + thisPossibleAssignee + " to " + thisTeamKey);
+												teamScoutMap[thisTeamKey] = thisPossibleAssignee;
+												// Take assignee out of available
+												delete scoutAvailableMap[thisPossibleAssignee];
+											}
+										}
+									}
+								}
+								
+								// fill in the rest
+								var leftoverScouts = [];
+								for (var property in scoutAvailableMap)
+									if (scoutAvailableMap.hasOwnProperty(property))
+										leftoverScouts.push(scoutAvailableMap[property]);
+								//console.log(thisFuncName + "leftover scouts are " + JSON.stringify(leftoverScouts));
+
+								// cycle through teams, find the ones without assignees
+								var leftoverPointer = 0;
+								for (var i = 0; i < 6; i++) {
+									var thisTeamKey = teamArray[i];
+									// Assigned yet? If not...
+									if (teamScoutMap[thisTeamKey] == null) {
+										// Grab the next available scout & increment the pointer
+										teamScoutMap[thisTeamKey] = leftoverScouts[leftoverPointer];
+										leftoverPointer++;
+									}
+								}
+
+								// show all the team-scout assignments
+								for (var property in teamScoutMap) {
+									if (teamScoutMap.hasOwnProperty(property)) {
+										// Write the assignment to the DB!
+										var thisMatchTeamKey = thisMatchKey + "_" + property;
+										var thisScout = teamScoutMap[property];
+										
+										scoreDataCol.update(
+											{ "match_team_key" : thisMatchTeamKey },
+											{ $set: { "assigned_scorer" : thisScout } }
+										)
+										//console.log(thisFuncName + "Assigned " + thisMatchTeamKey + " to " + thisScout);
+									}
+								}									
+								
+								// update the 'lastMatchTimestamp' so we can track until a break
+								lastMatchTimestamp = comingMatches[matchesIdx].time;
+							}
+
+							// all done, go to the matches list
+							res.redirect("/dashboard/matches");
+						});
+					});
+				});
+			});
+		});
+	});
+});
+
+router.post("/clearmatchallocations", function(req, res) {
+	var passCheckSuccess;
+	
+	if( !req.body.password || req.body.password == ""){
+		return res.send({status: 401, alert: "No password entered."});
+	}
+	if( !require('./checkauthentication')(req, res, 'admin') )
+		return console.log('admin not logged in on generateteamallocations');
+	
+	var teammembers = req.db.get('teammembers');
+	
+	teammembers.find( { name: req.user.name }, {}, function( e, user ){
+		if(e)
+			return console.error(e);
+		if(!user[0]){
+			res.send({status: 500, alert:"Passport error: no user found in db?"});
+			return console.error("no user found? generateteamallocations");
+		}
+		
+		bcrypt.compare( req.body.password, user[0].password, function(e, out){
+			if(e)
+				return console.error(e);
+			if(out == true)
+				passCheckSuccess = true;
+			else
+				return res.send({status: 401, alert: "Password incorrect."});
+			
+			if(passCheckSuccess){
+/* Begin regular code ----------------------------------------------------------- */
+	
+	var thisFuncName = "scoutingpairs.clearMATCHallocations[post]: ";
+
+	// used when writing data to DB, for later querying by year
+	var year = (new Date()).getFullYear();
+							
+	// Log message so we can see on the server side when we enter this
+	console.log(thisFuncName + "ENTER");
+	
+	var db = req.db;
+	var currentCol = db.get("current");
+	var scoreDataCol = db.get("scoringdata");
+
+	if(db._state == 'closed'){ //If database does not exist, send error
+		return res.render('./error',{
+			message: "Database error: Offline",
+			error: {status: "If the database is running, try restarting the Node server."}
+		});
+	}
+
+	//
+	// Get the 'current' event from DB
+	//
+	currentCol.find({}, {}, function(e, docs) {
+		var noEventFound = 'No event defined';
+		var eventId = noEventFound;
+		if (docs)
+			if (docs.length > 0)
+				eventId = docs[0].event;
+		if (eventId === noEventFound) {
+			return res.render('./adminindex', { 
+				title: 'Admin pages',
+				current: eventId
+			});
+		}
+		var event_key = eventId;
+
+		//
+		// Remove 'assigned_scorer' from all matching scoringdata elements
+		//
+		scoreDataCol.bulkWrite([{updateMany:{filter:{ "event_key": eventId }, update:{ $unset: { "assigned_scorer" : "" } }}}], function(e, docs){
+			return res.send({status: 200, alert: "Cleared existing match scouting assignments successfully."});
+		});
+	});
+		
+/* End regular code ----------------------------------------------------------- */
+			}
+		});
+	});
+});
+
+//////////// Match allocating by team assignment
+
 router.post("/generatematchallocations", function(req, res) {
 	// HARDCODED
 	var activeTeamKey = 'frc102';
@@ -619,7 +970,6 @@ router.post("/generatematchallocations", function(req, res) {
 			}
 		});
 	});
-
 });
 
 router.get("/swapmembers", function(req, res) {

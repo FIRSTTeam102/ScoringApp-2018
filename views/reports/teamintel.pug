@@ -12,7 +12,8 @@ block content
 	h4(class="gear-text-white" style="font-style:italic") #{team.name}
 	a(href=`/reports/upcoming?team=${team.key}`) Click here to see upcoming matches for Team #{team.key.substring(3)}
 	br
-	a(href=`/reports/teamintelhistory?team=${team.key}`) Click here to see all data for Team #{team.key.substring(3)} from this year
+	i
+		a(class="gear-text-white" href=`/reports/teamintelhistory?team=${team.key}`) Click here to see all data for Team #{team.key.substring(3)} from this year
 	p
 
 	script.
@@ -55,6 +56,7 @@ block content
 	div#PitScoutingSection(class="w3-container w3-hide")
 		if (data)
 			h1 Current Day Pit Scouting Info
+			- var changeCount = -0.5;
 			each element in layout
 				case element.type
 					when "checkbox"
@@ -62,11 +64,18 @@ block content
 					when "badcounter"
 					when "multiselect"
 					when "textblock"
-						h4(class="gear-text-white") #{element.label} <strong>#{data[element.id]}</strong>
+						if (data[element.id] != 0 && data[element.id] != '' && data[element.id] != null)
+							- changeCount++;
+							h4(class="gear-text-white") #{element.label} <strong>#{data[element.id]}</strong>
 					when "h2"
+						if (changeCount == 0)
+							h4(class="gear-text-white") <i>(no change)</i>
+						- changeCount = 0;
 						h2 #{element.label}
 					when "spacer"
 						p
+			if (changeCount == 0)
+				h4(class="gear-text-white") (no change)
 			if (inTable)
 				| </table>
 		else
@@ -108,8 +117,9 @@ block content
 					th(class="w3-right-align") Max
 				each agg in aggdata
 					tr
+						- var text = agg.key; var result1 = text.replace( /([A-Z])/g, " $1" ); var result2 = result1.charAt(0).toUpperCase() + result1.slice(1)
 						td(class="w3-text-light-gray w3-small")
-							a(href=`/reports/metricintel?key=${agg.key}`)= agg.key
+							a(href=`/reports/metricintel?key=${agg.key}`)= result2
 						- var minCol = 'w3-right-align w3-text-white'
 						- if (agg.min == 0) minCol = 'w3-right-align w3-text-gray'
 						td(class=`${minCol}`)= agg.min
@@ -194,7 +204,7 @@ block content
 								span= redQuests
 							else
 								span &nbsp;
-				if (match.scoringdata)
+				if (match.scoringdata && user)
 					each element in scorelayout
 						case element.type
 							when "textblock"

@@ -88,6 +88,8 @@ block content
 										a(href=`/reports/teamintel?team=frc${teamNo}` class="gear-hover-white teamNo w3-padding-large")
 											span(class="teamNo")=teamNo
 											span(class="rank gear-text-white") &nbsp[#{teamRanks['frc'+teamNo]}]
+					div(class="w3-left gear-dark-gray w3-padding w3-mobile")
+						a(href=`/reports/upcomingmatchmetrics?key=${match.key}`) <i>Click here to compare alliances</i>
 				div(class="w3-rest")
 					//can be used for results later for anothah pug fiel
 	script.

@@ -82,11 +82,24 @@ router.get('/', function(req, res) {
 							earliestTimestamp = earliestMatch.time;
 						}
 				
+						// 2018-04-05, M.O'C - Adding 'predicted time' to a map for later enriching of 'scoreData' results
+						var matchLookup = {};
+						if (docs)
+							for (var matchIdx = 0; matchIdx < docs.length; matchIdx++) {
+								//console.log(thisFuncName + 'associating ' + matches[matchIdx].predicted_time + ' with ' + matches[matchIdx].key);
+								matchLookup[docs[matchIdx].key] = docs[matchIdx];
+							}
+							
 						// Get all the UNRESOLVED matches where they're set to score
 						scoreDataCol.find({"event_key": eventId, "assigned_scorer": thisUserName, "time": { $gte: earliestTimestamp }}, { limit: 10, sort: {"time": 1} }, function (e, docs) {
 							var scoringMatches = docs;
 							for (var matchesIdx = 0; matchesIdx < scoringMatches.length; matchesIdx++)
 								console.log(thisFuncName + "scoringMatch[" + matchesIdx + "]: num,team=" + scoringMatches[matchesIdx].match_number + "," + scoringMatches[matchesIdx].team_key);
+
+							for (var scoreIdx = 0; scoreIdx < scoringMatches.length; scoreIdx++) {
+								//console.log(thisFuncName + 'getting for ' + scoreData[scoreIdx].match_key);
+								scoringMatches[scoreIdx].predicted_time = matchLookup[scoringMatches[scoreIdx].match_key].predicted_time;
+							}
 							
 							res.render('./dashboard/dashboard-index',{
 								title: "Dashboard for "+thisUserName,
@@ -215,7 +228,7 @@ router.get('/matches', function(req, res) {
 
 		// Get the *min* time of the as-yet-unresolved matches [where alliance scores are still -1]
 		matchCol.find({ event_key: eventId, "alliances.red.score": -1 },{sort: {"time": 1}}, function(e, matches){
-			
+
 			// 2018-03-13, M.O'C - Fixing the bug where dashboard crashes the server if all matches at an event are done
 			var earliestTimestamp = 9999999999;
 			if (matches && matches[0])
@@ -223,6 +236,14 @@ router.get('/matches', function(req, res) {
 				var earliestMatch = matches[0];
 				earliestTimestamp = earliestMatch.time;
 			}
+			
+			// 2018-04-05, M.O'C - Adding 'predicted time' to a map for later enriching of 'scoreData' results
+			var matchLookup = {};
+			if (matches)
+				for (var matchIdx = 0; matchIdx < matches.length; matchIdx++) {
+					//console.log(thisFuncName + 'associating ' + matches[matchIdx].predicted_time + ' with ' + matches[matchIdx].key);
+					matchLookup[matches[matchIdx].key] = matches[matchIdx];
+				}
 	
 			console.log(thisFuncName + 'earliestTimestamp=' + earliestTimestamp);
 	
@@ -230,6 +251,11 @@ router.get('/matches', function(req, res) {
 			scoreDataCol.find({"event_key": eventId, "time": { $gte: earliestTimestamp }}, { limit: 60, sort: {"time": 1, "alliance": 1, "team_key": 1} }, function (e, scoreData) {
 				if(!scoreData)
 					return console.error("mongo error at dashboard/matches");
+
+				for (var scoreIdx = 0; scoreIdx < scoreData.length; scoreIdx++) {
+					//console.log(thisFuncName + 'getting for ' + scoreData[scoreIdx].match_key);
+					scoreData[scoreIdx].predicted_time = matchLookup[scoreData[scoreIdx].match_key].predicted_time;
+				}
 				
 				console.log(thisFuncName + 'DEBUG getting nicknames next?');
 				// read in team list for data

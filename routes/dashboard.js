@@ -132,9 +132,20 @@ router.get('/allianceselection', function(req, res){
 			if(e || !rankings[0])
 				return console.error(e || "Failed to find rankings".red);
 			//console.log(rankings);
+			
+			var alliances = [];
+			for(var i = 0; i < 8; i++){
+				alliances[i] = {
+					team1: rankings[i].team_key,
+					team2: undefined,
+					team3: undefined
+				}
+			}
+			console.log(alliances);
 			res.render('./dashboard/allianceselection', {
 				title: "Alliance Selection",
-				rankings: rankings
+				rankings: rankings,
+				alliances: alliances
 			})
 		}
 	);

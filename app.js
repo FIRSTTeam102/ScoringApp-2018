@@ -184,6 +184,7 @@ var admindashboard = require("./routes/admindashboard");
 var scouting = require("./routes/scouting");
 var current = require("./routes/current");
 var reports = require('./routes/reports');
+var allianceselection = require('./routes/allianceselection');
 //var reports2 = require('./routes/reports2');
 
 if (ifDebug) console.log(thisFuncName + 'URLs to routes');
@@ -200,6 +201,7 @@ app.use('/admin/dashboard', admindashboard);
 app.use('/scouting', scouting);
 app.use("/dashboard", dashboard);
 app.use('/reports', reports);
+app.use('/allianceselection', allianceselection);
 //app.use('/reports2', reports2);
 
 if (ifDebug) console.log(thisFuncName + 'After URLs to routes');

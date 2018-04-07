@@ -127,11 +127,12 @@ router.get('/unassigned', function(req, res) {
 
 router.get('/allianceselection', function(req, res){
 	
+	var currentEventKey = req.event.key;
+	
 	req.db.get('currentrankings').find(
 		{}, {}, function(e, rankings){
 			if(e || !rankings[0])
-				return console.error(e || "Failed to find rankings".red);
-			//console.log(rankings);
+				return console.error(e || "Couldn't find rankings in allianceselection".red);
 			
 			var alliances = [];
 			for(var i = 0; i < 8; i++){
@@ -141,12 +142,64 @@ router.get('/allianceselection', function(req, res){
 					team3: undefined
 				}
 			}
-			console.log(alliances);
-			res.render('./dashboard/allianceselection', {
-				title: "Alliance Selection",
-				rankings: rankings,
-				alliances: alliances
-			})
+				
+			var rankMap = {};
+			for (var rankIdx = 0; rankIdx < rankings.length; rankIdx++) {
+				//console.log(thisFuncName + 'rankIdx=' + rankIdx + ', team_key=' + rankings[rankIdx].team_key + ', rank=' + rankings[rankIdx].rank);
+				rankMap[rankings[rankIdx].team_key] = rankings[rankIdx];
+			}
+			
+			req.db.get('scoringlayout').find(
+				{}, {sort: {"order": 1}}, function(e, scorelayout){
+					if(e || !scorelayout[0])
+						return console.error(e || "Couldn't find scoringlayout in allianceselection".red);
+					
+					var aggQuery = [];
+					aggQuery.push({ $match : { "event_key": currentEventKey } });
+					var groupClause = {};
+					// group teams for 1 row per team
+					groupClause["_id"] = "$team_key";
+
+					for (var scoreIdx = 0; scoreIdx < scorelayout.length; scoreIdx++) {
+						var thisLayout = scorelayout[scoreIdx];
+						thisLayout.key = thisLayout.id;
+						scorelayout[scoreIdx] = thisLayout;
+						if (thisLayout.type == 'checkbox' || thisLayout.type == 'counter' || thisLayout.type == 'badcounter')
+							groupClause[thisLayout.id] = {$avg: "$data." + thisLayout.id};
+					}
+					aggQuery.push({ $group: groupClause });
+					aggQuery.push({ $sort: { rank: 1 } });
+					//console.log(thisFuncName + 'aggQuery=' + JSON.stringify(aggQuery));
+					
+					req.db.get('scoringdata').aggregate(aggQuery, function(e, aggArray){
+						if(e || !aggArray[0])
+							return console.error(e || "Couldn't find scoringdata in allianceselection".red)
+						
+						// Rewrite data into display-friendly values
+						for (var aggIdx = 0; aggIdx < aggArray.length; aggIdx++) {
+							var thisAgg = aggArray[aggIdx];
+							for (var scoreIdx = 0; scoreIdx < scorelayout.length; scoreIdx++) {
+								var thisLayout = scorelayout[scoreIdx];
+								if (thisLayout.type == 'checkbox' || thisLayout.type == 'counter' || thisLayout.type == 'badcounter') {
+									var roundedVal = (Math.round(thisAgg[thisLayout.id] * 10)/10).toFixed(1);
+									thisAgg[thisLayout.id] = roundedVal;
+								}
+							}
+							thisAgg['rank'] = rankMap[thisAgg._id].rank;
+							thisAgg['value'] = rankMap[thisAgg._id].value;
+							aggArray[aggIdx] = thisAgg;
+						}
+						//console.log(thisFuncName + 'aggArray=' + JSON.stringify(aggArray));
+						res.render('./dashboard/allianceselection', {
+							title: "Alliance Selection",
+							rankings: rankings,
+							alliances: alliances,
+							aggdata: aggArray,
+							layout: scorelayout
+						});
+					});
+				}
+			);
 		}
 	);
 });

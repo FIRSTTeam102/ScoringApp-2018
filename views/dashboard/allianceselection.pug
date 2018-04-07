@@ -7,9 +7,11 @@ block content
 	div(class="w3-mobile w3-center")
 		h6(class="gear-text-white w3-margin-bottom")
 			i Tap a team, then tap the empty slot [2] or [3] to move them up.
+		//-div(class="w3-section")
+			div(class="w3-btn gear-btn w3-cyan" id="undo") Undo Last Action
 		each alliance, i in alliances
 			- var allianceNum = i+1;
-			div(class="w3-quarter gear-opacity w3-mobile w3-margin-bottom")
+			div(class="w3-quarter gear-dark-gray w3-mobile w3-margin-bottom")
 				h4
 					span(class="w3-margin-right" style="width: 40px")=allianceNum
 					span(id=`all${allianceNum}tm1` class="alliance-team")=alliance.team1.substring(3)
@@ -17,9 +19,22 @@ block content
 					span(id=`all${allianceNum}tm3` class="alliance-team")=(alliance.team3) ? alliance.team3.substring(3) : "[3]"
 		each team, i in rankings
 			- if(i >= 8 )
-				div(class="alliance-team unassigned-team w3-padding-large")=team.team_key.substring(3)
+				div( id=i+1 class="alliance-team unassigned-team w3-padding-large")=team.team_key.substring(3)
+		div(class="w3-section")
+			input(class="w3-check w3-margin-right" type="checkbox" id="showHideData")
+			label(for="showHideData") Show Team Data
+		div#data(style="display: none;")
+			include allianceselection-info
 	script.
 		window.onbeforeunload = function(){return "This page won't be saved."};
+		
+		$("#showHideData").click(function(e){
+			if(this.checked){
+				$("#data").show();
+			}else{
+				$("#data").hide();
+			}
+		})
 		
 		var allianceTeams = $('.alliance-team');
 		
@@ -81,13 +96,17 @@ block content
 			
 			if(!selectedAlliance){
 				$(selected).hide();
+				$('#rank'+selected.id).hide();
 				undo = function(){
 					target.innerHTML = '[' + target.id.substring(6) + ']';
 					$(undoElems.selected).show();
+					$('#rank'+undoElems.selected.id).show();
 				}
 			}
 			if( selectedSlotNo && selectedSlotNo == 1 )
 				moveAlliancesUp( selectedAlliance );
+				
+			//$("#undo").click(undo);
 		}
 		
 		function moveAlliancesUp(allianceThatMoved){
@@ -108,9 +127,12 @@ block content
 					console.log(unassignedTeams[i])
 					var nextCaptain = unassignedTeams[i].innerHTML;
 					$(unassignedTeams[i]).hide();
+					console.log(i+9);
+					$("#rank"+(i+9)).hide();
 					break;
 				}
 			}
+			
 			$("#all8tm1")[0].innerHTML = nextCaptain;
 		}
 		

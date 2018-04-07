@@ -125,6 +125,21 @@ router.get('/unassigned', function(req, res) {
 	});	
 });
 
+router.get('/allianceselection', function(req, res){
+	
+	req.db.get('currentrankings').find(
+		{}, {}, function(e, rankings){
+			if(e || !rankings[0])
+				return console.error(e || "Failed to find rankings".red);
+			//console.log(rankings);
+			res.render('./dashboard/allianceselection', {
+				title: "Alliance Selection",
+				rankings: rankings
+			})
+		}
+	);
+});
+
 router.get('/pits', function(req, res) {
 	var thisFuncName = "dashboard.puts[get]: ";
 	console.log(thisFuncName + 'ENTER');

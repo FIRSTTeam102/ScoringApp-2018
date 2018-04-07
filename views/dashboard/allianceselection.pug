@@ -1,0 +1,5 @@
+extends ../layout
+block content
+	each team, i in rankings
+		- if(i <= 8)
+			h2=team.rank+" "+team.team_key.substring(3)

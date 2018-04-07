@@ -14,6 +14,7 @@ var fs = require('fs');							//for reading whether this device is server or not
 var Client = require('node-rest-client').Client;//for reading from REST APIs (e.g., TheBlueAlliance)
 var client = new Client();
 var useragent = require('express-useragent');	//for info on connected users
+var colors = require('colors');					//for pretty debugging
 
 var monk = require("monk");		
 var db = monk("localhost:27017/local");				//for connecting to mongo

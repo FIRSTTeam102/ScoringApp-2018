@@ -1,5 +1,18 @@
+//-
+	Pit scouting page. Contains dynamic inputs that are created based on JSOn in the database.
+	PARAM
+		layout			[Object Array] Layout, located in layout collection in db.
+	CALLED FROM
+		scouting.js 	'/pit'
+	INCLUDES
+		templates/formCheckbox
+		templates/formCounterInput
+		templates/formBadcounter
+		templates/dropdown
+		templates/formTextblock
+		templates/categoryHeader
+		templates/formSpacer
 extends ../layout
-
 block content
 	script(src="/js/pit-client.js")
 	h3= key.replace('frc','Team #')

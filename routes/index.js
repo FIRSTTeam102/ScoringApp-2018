@@ -10,7 +10,6 @@ var router = express.Router();
 
 //GET index page.
 router.get('/', function(req, res) {
-	
 	//If there's been a GET request, prepare an alert
 	if(req.query)
 		var alert = req.query.alert || null;

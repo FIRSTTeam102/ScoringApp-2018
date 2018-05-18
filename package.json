@@ -1,6 +1,6 @@
 {
-  "name": "ScoringApp-2018",
-  "version": "0.0.0",
+  "name": "Team 102 Scoring App",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "start": "node ./www"

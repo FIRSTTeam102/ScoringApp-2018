@@ -191,29 +191,15 @@ router.post('/pit/submit', function(req, res){
 
 	var db = req.db;
     var pitCol = db.get('scoutingdata');
-	var currentCol = db.get("current");
 
-	//
-	// Get the 'current' event from DB
-	//
-	currentCol.find({}, {}, function(e, docs) {
-		var noEventFound = 'No event defined';
-		var eventId = noEventFound;
-		if (docs)
-			if (docs.length > 0)
-				eventId = docs[0].event;
-		if (eventId === noEventFound) {
-			res.redirect('/adminindex');
-		}
-		var event_key = eventId;
+	var event_key = req.event.key;
 
-		//res.redirect("/dashboard");
-		
-		pitCol.update( { "event_key" : event_key, "team_key" : teamKey }, { $set: { "data" : pitData, "actual_scouter": thisUserName, useragent: req.shortagent } }, function(e, docs){
-			if(e)
-				return res.send({status: 500, message: e});
-			return res.send({message: "Submitted data successfully.", status: 200});
-		});
+	//res.redirect("/dashboard");
+	
+	pitCol.update( { "event_key" : event_key, "team_key" : teamKey }, { $set: { "data" : pitData, "actual_scouter": thisUserName, useragent: req.shortagent } }, function(e, docs){
+		if(e)
+			return res.send({status: 500, message: e});
+		return res.send({message: "Submitted data successfully.", status: 200});
 	});
 });
 
@@ -236,26 +222,10 @@ router.post('/submitpit', function(req, res) {
 
 	var db = req.db;
     var pitCol = db.get('scoutingdata');
-	var currentCol = db.get("current");
-
-	//
-	// Get the 'current' event from DB
-	//
-	currentCol.find({}, {}, function(e, docs) {
-		var noEventFound = 'No event defined';
-		var eventId = noEventFound;
-		if (docs)
-			if (docs.length > 0)
-				eventId = docs[0].event;
-		if (eventId === noEventFound) {
-			res.sendStatus(500);
-			res.log("No event found", "red", true);
-		}
-		var event_key = eventId;
-		
-		pitCol.update( { "event_key" : event_key, "team_key" : teamKey }, { $set: { "data" : pitData, "actual_scouter": thisUserName } }, function(e, docs){
-			res.redirect("/dashboard");
-		});
+	var event_key = req.event.key;
+	
+	pitCol.update( { "event_key" : event_key, "team_key" : teamKey }, { $set: { "data" : pitData, "actual_scouter": thisUserName } }, function(e, docs){
+		res.redirect("/dashboard");
 	});
 });
 

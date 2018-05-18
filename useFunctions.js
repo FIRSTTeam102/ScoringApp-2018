@@ -32,13 +32,14 @@ functions.getEventInfo = function(req, res, next) {
 		
 		//sets locals to no event defined just in case we don't find thing and we can just do next();
 		var eventId = 'No event defined';
-		res.locals.tournament = eventId;
+		res.locals.eventName = eventId;
 		
 		//if exist
 		if (current && current[0]){
 			eventId = current[0].event;
 			//set event key
 			req.event.key = eventId;
+			res.locals.event_key = req.event.key;
 			
 			//find data for current event
 			events.find({ key: eventId }, {}, function(e, event){
@@ -49,7 +50,7 @@ functions.getEventInfo = function(req, res, next) {
 				}
 				//set tournament thing to event name
 				if(event && event[0]){
-					res.locals.tournament = event[0].name;
+					res.locals.eventName = event[0].name;
 					req.event.name = event[0].name;
 					next();
 				}else{

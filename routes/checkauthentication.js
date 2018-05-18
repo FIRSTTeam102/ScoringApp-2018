@@ -3,7 +3,7 @@ var passport = require('passport');
 module.exports = function(req, res, type){
     
 	//if dev server, always return true.
-	if(req.app.locals.isDev){
+	if(req.app.isDev){
 		return true;
 	}
 	

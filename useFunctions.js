@@ -1,7 +1,8 @@
+//require("colors");
+
 var functions = module.exports = {};
 //View engine locals variables
 functions.userViewVars = function(req, res, next){
-	var thisFuncName = "app.js ~ View engine: ";
 	
 	if(req.user)
 		res.locals.user = req.user;
@@ -13,7 +14,6 @@ functions.userViewVars = function(req, res, next){
 
 //Gets event info from local db
 functions.getEventInfo = function(req, res, next) {
-	var thisFuncName = "app.js ~ Event stuff: ";
 	
 	//database
 	var db = req.db;
@@ -62,6 +62,7 @@ functions.getEventInfo = function(req, res, next) {
 	});
 }
 
+//logger for res.log
 functions.logger = function(req, res, next){
 	
 	res.log = function(message, param2, param3){
@@ -88,7 +89,7 @@ functions.logger = function(req, res, next){
 	req.requestTime = Date.now();
 	
 	//formatted request time for logging
-	var d = new Date(req.requestTime),
+	let d = new Date(req.requestTime),
         month = '' + (d.getMonth() + 1),
         day = '' + d.getDate(),
         year = d.getFullYear(),
@@ -97,7 +98,7 @@ functions.logger = function(req, res, next){
 		seconds = d.getSeconds();
 	month = month.length<2? '0'+month : month;
 	day = day.length<2? '0'+day : day;
-	var formattedReqTime = (
+	let formattedReqTime = (
 		[year, month, day, [hours, minutes, seconds].join(':')].join('-')
 	)
 	
@@ -109,28 +110,61 @@ functions.logger = function(req, res, next){
 		browser: req.useragent.browser
 	}
 	//logs request
-	console.log(req.method+" Request from "+req.shortagent.ip+" on "+req.shortagent.device+"|"+req.shortagent.os+"|"+req.shortagent.browser+" to "+req.url+" at "+formattedReqTime);
+	console.log( (req.method).red 
+		+ " Request from " 
+		+ req.shortagent.ip
+		+ " on " 
+		+ req.shortagent.device 
+		+ "|"
+		+ req.shortagent.os
+		+ "|"
+		+ req.shortagent.browser
+		+ " to "
+		+ (req.url).cyan
+		+ " at "
+		+ formattedReqTime);
 	
 	next();
 	}
 
+//Logs when res.render is called
 functions.renderLogger = function(req, res, next){
-	var thisFuncName = "app.js ~ Logging to res.render: ";
 	
 	res.render = (function(link, param){
 		var cached_function = res.render;
 		
 		return function(link, param){
 			
-			var beforeRenderTime = Date.now() - req.requestTime;
+			let beforeRenderTime = Date.now() - req.requestTime;
 			
-			var result = cached_function.apply(this, arguments);
+			let result = cached_function.apply(this, arguments);
 			
-			var renderTime = Date.now() - req.requestTime - beforeRenderTime;
-			console.log("Completed route in "+beforeRenderTime+" ms; Rendered page in "+renderTime+" ms");
+			let renderTime = Date.now() - req.requestTime - beforeRenderTime;
+			
+			console.log("Completed route in "
+				+ (beforeRenderTime).toString().yellow
+				+ " ms; Rendered page in " 
+				+ (renderTime).toString().yellow
+				+ " ms");
 			
 			return result;
 		}
 	}());
 	next();
+}
+
+functions.notFoundHandler = function(req, res, next) {
+	var err = new Error('Not Found');
+	err.status = 404;
+	next(err);
+};
+
+functions.errorHandler = function(err, req, res, next) {
+	// set locals, only providing error in development
+	res.locals.message = err.message;
+	res.locals.error = req.app.get('env') === 'development' ? err : {};
+  
+	// render the error page
+	res.status(err.status || 500);
+	res.render('error');
 }

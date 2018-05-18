@@ -1,43 +1,61 @@
-var express = require('express');				//main express shiz
-var path = require('path');						//for filesystem
-var favicon = require('serve-favicon');			//serves favicon
-var logger = require('morgan'); 				//logger
-var bodyParser = require('body-parser');		//parses http request information
-var session = require('express-session');		//session middleware (uses cookies)
-var passport = require('passport');				//for user sessions
-var fs = require('fs');							//for reading whether this device is server or not
-var Client = require('node-rest-client').Client;//for reading from REST APIs (e.g., TheBlueAlliance)
-var useragent = require('express-useragent');	//for info on connected users
-var colors = require('colors');					//for pretty debugging
-var monk = require("monk");						//Monk for connecting to db
+const express = require('express');					//main express shiz
+const path = require('path');						//for filesystem
+const favicon = require('serve-favicon');			//serves favicon
+const bodyParser = require('body-parser');			//parses http request information
+const session = require('express-session');			//session middleware (uses cookies)
+const passport = require('passport');				//for user sessions
+const Client = require('node-rest-client').Client;//for reading from REST APIs (e.g., TheBlueAlliance)
+const useragent = require('express-useragent');	//for info on connected users
+const colors = require('colors');					//for pretty debugging
+const monk = require("monk");						//Monk for connecting to db
+const useFunctions = require('./useFunctions');		//Functions inside separate module for app.use
 
 var db = monk("localhost:27017/local");			//Local db on localhost
-var useFunctions = require('./useFunctions');	//Functions inside separate module for app.use
 var client = new Client();						//Creates node-rest-client.
 
 var app = express();							//Creates app.
-//app.debug is used in res.log custom function. If true, res.log("message", "color", [override?]); will log. If not, will not.
-app.debug = false;
 
-var thisFuncName = "app.js: ";
-if (app.debug) console.log(thisFuncName + 'ENTER');
+/* Checks process arguments.
+	If -dev or --dev, isDev = true.
+	If -debug or --debug, debug = true.
+	If -d or --d, both = true.
+*/
+app.isDev = false; //isDev is typically used as a locals var in view engine.
+app.debug = false; //debug is used for logging.
+for(var i in process.argv){
+	switch(process.argv[i]){
+		case "-dev":
+		case "--dev":
+			app.isDev = true;
+			break;
+		case "-d":
+		case "--d":
+			app.isDev = true;
+		case "-debug":
+		case "--debug":
+			app.debug = true;
+			break;
+	}
+}
 
-// view engine setup
+//Boilerplate setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
-
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-//app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
+
+//Session
 app.use(session({
 	secret: 'keyboard cat',
 	resave: false,
 	saveUninitialized: true
 }));
+//User agent for logging
 app.use(useragent.express());
 
+//Passport setup (user authentication)
 require('./passport-config');
 app.use(passport.initialize());
 app.use(passport.session());
@@ -56,8 +74,6 @@ app.use(useFunctions.logger);
 //adds logging to res.render function
 app.use(useFunctions.renderLogger);
 
-if (app.debug) console.log(thisFuncName + 'Require routes');
-
 //ADD ROUTES HERE
 var index = require('./routes/index');
 var adminindex = require('./routes/adminindex');
@@ -71,9 +87,6 @@ var scouting = require("./routes/scouting");
 var current = require("./routes/current");
 var reports = require('./routes/reports');
 var allianceselection = require('./routes/allianceselection');
-//var reports2 = require('./routes/reports2');
-
-if (app.debug) console.log(thisFuncName + 'URLs to routes');
 
 //CONNECT URLS TO ROUTES
 app.use('/', index);
@@ -88,52 +101,10 @@ app.use('/scouting', scouting);
 app.use("/dashboard", dashboard);
 app.use('/reports', reports);
 app.use('/allianceselection', allianceselection);
-//app.use('/reports2', reports2);
-
-if (app.debug) console.log(thisFuncName + 'After URLs to routes');
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
-
+app.use(useFunctions.notFoundHandler);
 // error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
-
-//reads if server is marked as dev or not
-fs.readFile('./isDev', "binary", function(err, data){
-	if(err)
-		console.log(err);
-		app.locals.isDev = false;
-	if(data){
-		console.log("isDev: " + data);
-		//set isDev equal to data (true or false)
-		app.locals.isDev = (data == 'true');
-	}
-});
-
-//reads if server is marked as SERVER or not (currently not used, but we might wanna add something)
-fs.readFile('./isServer', "binary", function(err, data){
-	if(err)
-		console.log(err);
-		app.locals.isServer = false;
-	if(data){
-		console.log("isServer: " + data);
-		//set isServer equal to data (true or false)
-		app.locals.isServer = (data == 'true');
-	}
-});
-
-if (app.debug) console.log(thisFuncName + 'DONE');
+app.use(useFunctions.errorHandler);
 
 module.exports = app;

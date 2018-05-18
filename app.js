@@ -26,13 +26,16 @@ for(var i in process.argv){
 	switch(process.argv[i]){
 		case "-dev":
 		case "--dev":
+			console.log("Dev");
 			app.isDev = true;
 			break;
 		case "-d":
 		case "--d":
+			console.log("Dev");
 			app.isDev = true;
 		case "-debug":
 		case "--debug":
+			console.log("Debug");
 			app.debug = true;
 			break;
 	}

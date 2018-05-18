@@ -248,14 +248,10 @@ router.post('/submitpit', function(req, res) {
 			if (docs.length > 0)
 				eventId = docs[0].event;
 		if (eventId === noEventFound) {
-			res.render('/adminindex', { 
-				title: 'Admin pages',
-				current: eventId
-			});
+			res.sendStatus(500);
+			res.log("No event found", "red", true);
 		}
 		var event_key = eventId;
-
-		//res.redirect("/dashboard");
 		
 		pitCol.update( { "event_key" : event_key, "team_key" : teamKey }, { $set: { "data" : pitData, "actual_scouter": thisUserName } }, function(e, docs){
 			res.redirect("/dashboard");

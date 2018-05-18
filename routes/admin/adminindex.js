@@ -13,7 +13,7 @@ router.get('/', function(req, res) {
     var db = req.db;
 	var currentCol = db.get("current");
 	
-	if( !require('./checkauthentication')(req, res, 'admin') ){
+	if( !require('../checkauthentication')(req, res, 'admin') ){
 		console.log(thisFuncName + 'returning null');
 		return null;
 	}

@@ -196,7 +196,7 @@ router.post("/generateteamallocations", function(req, res) {
 	if( !req.body.password || req.body.password == ""){
 		return res.send({status: 401, alert: "No password entered."});
 	}
-	if( !require('./checkauthentication')(req, res, 'admin') )
+	if( !require('../checkauthentication')(req, res, 'admin') )
 		return console.log('admin not logged in on generateteamallocations');
 	
 	var teammembers = req.db.get('teammembers');
@@ -673,7 +673,7 @@ router.post("/clearmatchallocations", function(req, res) {
 	if( !req.body.password || req.body.password == ""){
 		return res.send({status: 401, alert: "No password entered."});
 	}
-	if( !require('./checkauthentication')(req, res, 'admin') )
+	if( !require('../checkauthentication')(req, res, 'admin') )
 		return console.log('admin not logged in on generateteamallocations');
 	
 	var teammembers = req.db.get('teammembers');
@@ -758,7 +758,7 @@ router.post("/generatematchallocations", function(req, res) {
 	if( !req.body.password || req.body.password == ""){
 		return res.send({status: 401, alert: "No password entered."});
 	}
-	if( !require('./checkauthentication')(req, res, 'admin') )
+	if( !require('../checkauthentication')(req, res, 'admin') )
 		return console.log('admin not logged in on generateteamallocations');
 	
 	var teammembers = req.db.get('teammembers');

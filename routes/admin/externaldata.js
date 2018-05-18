@@ -6,7 +6,7 @@ var router = express.Router();
 ////////////////////////
 
 router.get("/events", function(req, res) {
-	if(!require('./checkauthentication')(req, res, 'admin'))
+	if(!require('../checkauthentication')(req, res, 'admin'))
 		return null;
 	
 	var thisFuncName = "externaldata.events[get]: ";
@@ -55,7 +55,7 @@ router.get("/events", function(req, res) {
 });
 
 router.post("/events", function(req, res) {
-	if(!require('./checkauthentication')(req, res, 'admin'))
+	if(!require('../checkauthentication')(req, res, 'admin'))
 		return null;
 	
 	var thisFuncName = "externaldata.events[post]: ";
@@ -138,7 +138,7 @@ router.post("/events", function(req, res) {
 ////////////////////////
 
 router.get("/matches", function(req, res) {
-	if(!require('./checkauthentication')(req, res, 'admin'))
+	if(!require('../checkauthentication')(req, res, 'admin'))
 		return null;
 	
 	var thisFuncName = "externaldata.matches[get]: ";
@@ -175,7 +175,7 @@ router.get("/matches", function(req, res) {
 });
 
 router.post("/matches", function(req, res) {
-	if(!require('./checkauthentication')(req, res, 'admin'))
+	if(!require('../checkauthentication')(req, res, 'admin'))
 		return null;
 	
 	var thisFuncName = "externaldata.matches[post]: ";
@@ -252,7 +252,7 @@ router.post("/matches", function(req, res) {
 ////////////////////////
 
 router.get("/teams", function(req, res) {
-	if(!require('./checkauthentication')(req, res, 'admin'))
+	if(!require('../checkauthentication')(req, res, 'admin'))
 		return null;
 	
 	var thisFuncName = "externaldata.teams[get]: ";
@@ -291,7 +291,7 @@ router.get("/teams", function(req, res) {
 });
 
 router.post("/teams", function(req, res) {
-	if(!require('./checkauthentication')(req, res, 'admin'))
+	if(!require('../checkauthentication')(req, res, 'admin'))
 		return null;
 	
 	var thisFuncName = "externaldata.teams[post]: ";

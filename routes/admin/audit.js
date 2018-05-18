@@ -1,14 +1,16 @@
 var express = require('express');
 var router = express.Router();
 
+/**
+ * Scoring audit page.
+ * @url /admin/scoringaudit
+ * @view /admin/index, /admin/scoringaudit
+ */
 router.get("/", function(req, res) {
-	if(!require('./checkauthentication')(req, res, 'admin'))
+	if(!require('../checkauthentication')(req, res, 'admin'))
 		return null;
 	
-	var thisFuncName = "admindashboard root: ";
-	
-	// Log message so we can see on the server side when we enter this
-	console.log(thisFuncName + "ENTER");
+	res.log("Scoring audit: enter");
 	
 	var db = req.db;
 	
@@ -22,10 +24,8 @@ router.get("/", function(req, res) {
 	var currentCol = db.get("current");
 	var scoreDataCol = db.get("scoringdata");
 	var matchCol = db.get("matches");
-
-	//
+	
 	// Get the 'current' event from DB
-	//
 	currentCol.find({}, {}, function(e, docs) {
 		var noEventFound = 'No event defined';
 		var eventId = noEventFound;
@@ -51,9 +51,9 @@ router.get("/", function(req, res) {
 				var earliestMatch = matches[0];
 				earliestTimestamp = earliestMatch.time;
 			}
-	
-			console.log(thisFuncName + 'earliestTimestamp=' + earliestTimestamp);
-	
+			
+			res.log("Scoring audit: earliestTimestamp=" + earliestTimestamp);
+			
 			// Get all the RESOLVED matches
 			scoreDataCol.find({"event_key": eventId, "time": { $lt: earliestTimestamp }}, { sort: {"assigned_scorer": 1, "time": 1, "alliance": 1, "team_key": 1} }, function (e, scoreData) {
 				if(!scoreData)
@@ -63,6 +63,7 @@ router.get("/", function(req, res) {
 				var memberArr = [];
 				var lastMember = 'NOLASTMEMBER';
 				var thisMemberArr = [];
+				
 				if (scoreData && scoreData.length > 0) {
 					for (var scoreIdx = 0; scoreIdx < scoreData.length; scoreIdx++) {
 						var thisMember = scoreData[scoreIdx].assigned_scorer;
@@ -96,20 +97,11 @@ router.get("/", function(req, res) {
 					thisRow['record'] = thisMemberArr;
 					memberArr.push(thisRow);
 				}
-					
-				//console.log(thisFuncName + 'memberArr=' + JSON.stringify(memberArr));
 				
-				res.render('./admin/dashboard',{
-					title: "Admin Dashboard",
+				res.render('./admin/audit',{
+					title: "Scoring Audit",
 					audit: memberArr
 				});
-				
-				/*
-				res.render('./dashboard/matches',{
-					title: "Match Scouting",
-					matches: scoreData
-				});
-				*/
 			});
 		});
 	});

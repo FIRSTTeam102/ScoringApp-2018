@@ -74,37 +74,40 @@ app.use(useFunctions.logger);
 //adds logging to res.render function
 app.use(useFunctions.renderLogger);
 
-//ADD ROUTES HERE
+//USER ROUTES
 var index = require('./routes/index');
-var adminindex = require('./routes/adminindex');
 var login = require('./routes/login');
-var scoutingpairs = require('./routes/scoutingpairs');
-var teammembers = require("./routes/teammembers");
-var externaldata = require("./routes/externaldata");
 var dashboard = require("./routes/dashboard");
-var admindashboard = require("./routes/admindashboard");
 var scouting = require("./routes/scouting");
-var current = require("./routes/current");
 var reports = require('./routes/reports');
 var allianceselection = require('./routes/allianceselection');
+//ADMIN ROUTES
+var adminindex = require('./routes/admin/adminindex');
+var scoutingaudit = require("./routes/admin/audit");
+var current = require("./routes/admin/current");
+var externaldata = require("./routes/admin/externaldata");
+var scoutingpairs = require('./routes/admin/scoutingpairs');
+var teammembers = require("./routes/admin/teammembers");
 
 //CONNECT URLS TO ROUTES
 app.use('/', index);
-app.use('/admin', adminindex);
 app.use('/login', login);
-app.use('/admin/scoutingpairs', scoutingpairs);
-app.use("/admin/teammembers", teammembers);
-app.use('/admin/data', externaldata);
-app.use('/admin/current', current);
-app.use('/admin/dashboard', admindashboard);
 app.use('/scouting', scouting);
 app.use("/dashboard", dashboard);
 app.use('/reports', reports);
 app.use('/allianceselection', allianceselection);
+app.use('/admin', adminindex);
+app.use('/admin/scoutingpairs', scoutingpairs);
+app.use("/admin/teammembers", teammembers);
+app.use('/admin/data', externaldata);
+app.use('/admin/current', current);
+app.use('/admin/audit', scoutingaudit);
 
 // catch 404 and forward to error handler
 app.use(useFunctions.notFoundHandler);
 // error handler
 app.use(useFunctions.errorHandler);
+
+console.log("app.js:".red + " Ready")
 
 module.exports = app;

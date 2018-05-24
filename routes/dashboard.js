@@ -1,14 +1,17 @@
 var express = require('express');
 var router = express.Router();
 
-/* GET index page. */
+/**
+ * Scouter's dashboard page. Provides a scouter's assigned teams for scouting and assigned matches for scoring
+ * @url /dashboard
+ * @view dashboard/dashboard-index
+ */
 router.get('/', function(req, res) {
 	var thisFuncName = "dashboard.{root}[get]: ";
-	console.log(thisFuncName + 'ENTER');
-	
+	res.log(thisFuncName + 'ENTER');
 	
 	if( !require('./checkauthentication')(req, res, 'scouting') ){
-		return console.log(thisFuncName + 'returning null');
+		return res.log(thisFuncName + 'returning null');
 	}
 	
 	var thisUser = req.user;
@@ -23,45 +26,71 @@ router.get('/', function(req, res) {
 	// for later querying by event_key
 	var eventId = req.event.key;
 
-	//
 	// Check to see if the logged in user is one of the scouting/scoring assignees
-	//
-	scoutDataCol.find({"event_key": eventId, "primary": thisUserName}, { sort: {"team_key": 1} }, function (e, docs) {
+	scoutDataCol.find({
+		"event_key": eventId, 
+		"primary": thisUserName
+	}, {
+		sort: { "team_key": 1 }
+	}, 
+	function (e, docs) {
+		
 		var assignedTeams = docs;
 		
 		// if no assignments, send off to unassigned
 		if (assignedTeams.length == 0) {
-			console.log(thisFuncName + "User '" + thisUserName + "' has no assigned teams");
+			res.log(thisFuncName + "User '" + thisUserName + "' has no assigned teams");
 			res.redirect('./dashboard/unassigned');
 			return;
 		}
 		for (var assignedIdx = 0; assignedIdx < assignedTeams.length; assignedIdx++)
-			console.log(thisFuncName + "assignedTeam[" + assignedIdx + "]=" + assignedTeams[assignedIdx].team_key + "; data=" + assignedTeams[assignedIdx].data);
+			res.log(thisFuncName + "assignedTeam[" + assignedIdx + "]=" + assignedTeams[assignedIdx].team_key + "; data=" + assignedTeams[assignedIdx].data);
 
 		// Get their scouting team
-		pairsDataCol.find({$or: [{"member1": thisUserName}, {"member2": thisUserName}, {"member3": thisUserName}]}, {}, function (e, docs) {
+		pairsDataCol.find({
+			$or:
+				[{"member1": thisUserName},
+				{"member2": thisUserName},
+				{"member3": thisUserName}]
+		}, {}, 
+		function (e, docs) {
 			// we assume they're in a pair!
 			var thisPair = docs[0];
+			
+			//Sets up pair label
 			var thisPairLabel = thisPair.member1;
 			if (thisPair.member2)
 				thisPairLabel = thisPairLabel + ", " + thisPair.member2;
 			if (thisPair.member3)
 				thisPairLabel = thisPairLabel + ", " + thisPair.member3;
-			console.log(thisFuncName + "thisPairLabel= " + thisPairLabel);
-		
-			// Get teams where they're backup (if any)
-			scoutDataCol.find({"event_key": eventId, $or: [{"secondary": thisUserName}, {"tertiary": thisUserName}]}, { sort: {"team_key": 1} }, function (e, docs) {
+					
+			//Get teams where they're backup (if any) from scout data collection
+			scoutDataCol.find({
+				"event_key": eventId,
+				$or:
+					[{"secondary": thisUserName},
+					{"tertiary": thisUserName}]
+			}, {
+				sort: {"team_key": 1} 
+			}, 
+			function (e, docs) {
 				var backupTeams = docs;
+				
+				//logs backup teams to console
 				for (var backupIdx = 0; backupIdx < backupTeams.length; backupIdx++)
-					console.log(thisFuncName + "backupTeam[" + backupIdx + "]=" + backupTeams[backupIdx].team_key);
+					res.log(thisFuncName + "backupTeam[" + backupIdx + "]=" + backupTeams[backupIdx].team_key);
 			
 				// Get the *min* time of the as-yet-unresolved matches [where alliance scores are still -1]
-				matchCol.find({ event_key: eventId, "alliances.red.score": -1 },{sort: {"time": 1}}, function(e, docs){
-
-					// 2018-03-13, M.O'C - Fixing the bug where dashboard crashes the server if all matches at an event are done
+				matchCol.find({
+					event_key: eventId, 
+					"alliances.red.score": -1
+				},{
+					sort: {"time": 1}
+				}, 
+				function(e, docs){
+					
 					var earliestTimestamp = 9999999999;
-					if (docs && docs[0])
-					{
+					if (docs && docs[0]){
 						var earliestMatch = docs[0];
 						earliestTimestamp = earliestMatch.time;
 					}
@@ -70,7 +99,7 @@ router.get('/', function(req, res) {
 					var matchLookup = {};
 					if (docs)
 						for (var matchIdx = 0; matchIdx < docs.length; matchIdx++) {
-							//console.log(thisFuncName + 'associating ' + matches[matchIdx].predicted_time + ' with ' + matches[matchIdx].key);
+							//res.log(thisFuncName + 'associating ' + matches[matchIdx].predicted_time + ' with ' + matches[matchIdx].key);
 							matchLookup[docs[matchIdx].key] = docs[matchIdx];
 						}
 						
@@ -78,10 +107,10 @@ router.get('/', function(req, res) {
 					scoreDataCol.find({"event_key": eventId, "assigned_scorer": thisUserName, "time": { $gte: earliestTimestamp }}, { limit: 10, sort: {"time": 1} }, function (e, docs) {
 						var scoringMatches = docs;
 						for (var matchesIdx = 0; matchesIdx < scoringMatches.length; matchesIdx++)
-							console.log(thisFuncName + "scoringMatch[" + matchesIdx + "]: num,team=" + scoringMatches[matchesIdx].match_number + "," + scoringMatches[matchesIdx].team_key);
+							res.log(thisFuncName + "scoringMatch[" + matchesIdx + "]: num,team=" + scoringMatches[matchesIdx].match_number + "," + scoringMatches[matchesIdx].team_key);
 
 						for (var scoreIdx = 0; scoreIdx < scoringMatches.length; scoreIdx++) {
-							//console.log(thisFuncName + 'getting for ' + scoreData[scoreIdx].match_key);
+							//res.log(thisFuncName + 'getting for ' + scoreData[scoreIdx].match_key);
 							scoringMatches[scoreIdx].predicted_time = matchLookup[scoringMatches[scoreIdx].match_key].predicted_time;
 						}
 						
@@ -99,15 +128,25 @@ router.get('/', function(req, res) {
 	});
 });
 
+/**
+ * Page for unassigned scorers. Provides links to one-off score matches or scout teams.
+ * @url /dashboard/unassigned
+ * @view dashboard/unassigned
+ */
 router.get('/unassigned', function(req, res) {
 	var thisFuncName = "dashboard.unassigned[get]: ";
-	console.log(thisFuncName + 'ENTER');
+	res.log(thisFuncName + 'ENTER');
 	
 	res.render('./dashboard/unassigned',{
 		title: 'Unassigned'
 	});	
 });
 
+/**
+ * Alliance selection page
+ * @url /dashboard/allianceselection
+ * @view dashboard/allianceselection
+ */
 router.get('/allianceselection', function(req, res){
 	
 	var currentEventKey = req.event.key;
@@ -128,7 +167,7 @@ router.get('/allianceselection', function(req, res){
 				
 			var rankMap = {};
 			for (var rankIdx = 0; rankIdx < rankings.length; rankIdx++) {
-				//console.log(thisFuncName + 'rankIdx=' + rankIdx + ', team_key=' + rankings[rankIdx].team_key + ', rank=' + rankings[rankIdx].rank);
+				//res.log(thisFuncName + 'rankIdx=' + rankIdx + ', team_key=' + rankings[rankIdx].team_key + ', rank=' + rankings[rankIdx].rank);
 				rankMap[rankings[rankIdx].team_key] = rankings[rankIdx];
 			}
 			
@@ -152,7 +191,7 @@ router.get('/allianceselection', function(req, res){
 					}
 					aggQuery.push({ $group: groupClause });
 					aggQuery.push({ $sort: { rank: 1 } });
-					//console.log(thisFuncName + 'aggQuery=' + JSON.stringify(aggQuery));
+					//res.log(thisFuncName + 'aggQuery=' + JSON.stringify(aggQuery));
 					
 					req.db.get('scoringdata').aggregate(aggQuery, function(e, aggArray){
 						if(e || !aggArray[0])
@@ -172,7 +211,7 @@ router.get('/allianceselection', function(req, res){
 							thisAgg['value'] = rankMap[thisAgg._id].value;
 							aggArray[aggIdx] = thisAgg;
 						}
-						//console.log(thisFuncName + 'aggArray=' + JSON.stringify(aggArray));
+						//res.log(thisFuncName + 'aggArray=' + JSON.stringify(aggArray));
 						res.render('./dashboard/allianceselection', {
 							title: "Alliance Selection",
 							rankings: rankings,
@@ -189,7 +228,7 @@ router.get('/allianceselection', function(req, res){
 
 router.get('/pits', function(req, res) {
 	var thisFuncName = "dashboard.puts[get]: ";
-	console.log(thisFuncName + 'ENTER');
+	res.log(thisFuncName + 'ENTER');
 
 	var db = req.db;
 	var scoutDataCol = db.get("scoutingdata");
@@ -209,14 +248,14 @@ router.get('/pits', function(req, res) {
 			var teamKeyMap = {};
 			for (var teamIdx = 0; teamIdx < teamArray.length; teamIdx++)
 			{
-				//console.log(thisFuncName + 'teamIdx=' + teamIdx + ', teamArray[]=' + JSON.stringify(teamArray[teamIdx]));
+				//res.log(thisFuncName + 'teamIdx=' + teamIdx + ', teamArray[]=' + JSON.stringify(teamArray[teamIdx]));
 				teamKeyMap[teamArray[teamIdx].key] = teamArray[teamIdx];
 			}
 
 			// Add data to 'teams' data
 			for (var teamIdx = 0; teamIdx < teams.length; teamIdx++)
 			{
-				//console.log(thisFuncName + 'teams[teamIdx]=' + JSON.stringify(teams[teamIdx]) + ', teamKeyMap[teams[teamIdx].team_key]=' + JSON.stringify(teamKeyMap[teams[teamIdx].team_key]));
+				//res.log(thisFuncName + 'teams[teamIdx]=' + JSON.stringify(teams[teamIdx]) + ', teamKeyMap[teams[teamIdx].team_key]=' + JSON.stringify(teamKeyMap[teams[teamIdx].team_key]));
 				teams[teamIdx].nickname = teamKeyMap[teams[teamIdx].team_key].nickname;
 			}
 			
@@ -230,7 +269,7 @@ router.get('/pits', function(req, res) {
 
 router.get('/matches', function(req, res) {
 	var thisFuncName = "dashboard.matches[get]: ";
-	console.log(thisFuncName + 'ENTER');
+	res.log(thisFuncName + 'ENTER');
 
 	var db = req.db;
 	var scoreDataCol = db.get("scoringdata");
@@ -255,11 +294,11 @@ router.get('/matches', function(req, res) {
 		var matchLookup = {};
 		if (matches)
 			for (var matchIdx = 0; matchIdx < matches.length; matchIdx++) {
-				//console.log(thisFuncName + 'associating ' + matches[matchIdx].predicted_time + ' with ' + matches[matchIdx].key);
+				//res.log(thisFuncName + 'associating ' + matches[matchIdx].predicted_time + ' with ' + matches[matchIdx].key);
 				matchLookup[matches[matchIdx].key] = matches[matchIdx];
 			}
 
-		console.log(thisFuncName + 'earliestTimestamp=' + earliestTimestamp);
+		res.log(thisFuncName + 'earliestTimestamp=' + earliestTimestamp);
 
 		// Get all the UNRESOLVED matches
 		scoreDataCol.find({"event_key": eventId, "time": { $gte: earliestTimestamp }}, { limit: 60, sort: {"time": 1, "alliance": 1, "team_key": 1} }, function (e, scoreData) {
@@ -267,11 +306,11 @@ router.get('/matches', function(req, res) {
 				return console.error("mongo error at dashboard/matches");
 
 			for (var scoreIdx = 0; scoreIdx < scoreData.length; scoreIdx++) {
-				//console.log(thisFuncName + 'getting for ' + scoreData[scoreIdx].match_key);
+				//res.log(thisFuncName + 'getting for ' + scoreData[scoreIdx].match_key);
 				scoreData[scoreIdx].predicted_time = matchLookup[scoreData[scoreIdx].match_key].predicted_time;
 			}
 			
-			console.log(thisFuncName + 'DEBUG getting nicknames next?');
+			res.log(thisFuncName + 'DEBUG getting nicknames next?');
 			// read in team list for data
 			teamsCol.find({},{ sort: {team_number: 1} }, function(e, docs) {
 				var teamArray = docs;
@@ -280,7 +319,7 @@ router.get('/matches', function(req, res) {
 				var teamKeyMap = {};
 				for (var teamIdx = 0; teamIdx < teamArray.length; teamIdx++)
 				{
-					//console.log(thisFuncName + 'teamIdx=' + teamIdx + ', teamArray[]=' + JSON.stringify(teamArray[teamIdx]));
+					//res.log(thisFuncName + 'teamIdx=' + teamIdx + ', teamArray[]=' + JSON.stringify(teamArray[teamIdx]));
 					teamKeyMap[teamArray[teamIdx].key] = teamArray[teamIdx];
 				}
 

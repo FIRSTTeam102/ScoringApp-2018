@@ -12,18 +12,22 @@ functions.userViewVars = function(req, res, next){
 	next();
 }
 
-//Gets event info from local db
+/**
+ * Gets event info from local db
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
 functions.getEventInfo = function(req, res, next) {
 	
-	//database
-	var db = req.db;
 	//req.passport = passport;
 	req.event = {
 		key: "undefined",
 		name: "undefined"
 	};
 	
-	//for finding current event
+	//Get s collections for finding current event
+	var db = req.db;
 	var current = db.get('current');
 	var events = db.get('events');
 	
@@ -63,7 +67,12 @@ functions.getEventInfo = function(req, res, next) {
 	});
 }
 
-//logger for res.log
+/**
+ * logger for res.log
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
 functions.logger = function(req, res, next){
 	
 	res.log = function(message, param2, param3){
@@ -128,21 +137,31 @@ functions.logger = function(req, res, next){
 	next();
 	}
 
-//Logs when res.render is called
+/**
+ * Logs when res.render is called
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
 functions.renderLogger = function(req, res, next){
 	
+	//Changes res.render
 	res.render = (function(link, param){
 		var cached_function = res.render;
 		
 		return function(link, param){
 			
+			//stores pre-render post-request time
 			let beforeRenderTime = Date.now() - req.requestTime;
 			
+			//applies render function
 			let result = cached_function.apply(this, arguments);
 			
+			//stores post-render time
 			let renderTime = Date.now() - req.requestTime - beforeRenderTime;
 			
-			console.log("Completed route in "
+			//logs if debug
+			this.log("Completed route in "
 				+ (beforeRenderTime).toString().yellow
 				+ " ms; Rendered page in " 
 				+ (renderTime).toString().yellow
@@ -154,12 +173,25 @@ functions.renderLogger = function(req, res, next){
 	next();
 }
 
+/**
+ * Handles 404 errors
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
 functions.notFoundHandler = function(req, res, next) {
 	var err = new Error('Not Found');
 	err.status = 404;
 	next(err);
 };
 
+/**
+ * Handles other errors
+ * @param {} err 
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
 functions.errorHandler = function(err, req, res, next) {
 	// set locals, only providing error in development
 	res.locals.message = err.message;

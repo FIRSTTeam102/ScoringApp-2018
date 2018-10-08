@@ -1,5 +1,10 @@
+//-
+	Admin page for viewing or updating teams list for any event ID.
+	PARAM
+		teams	[Object Array]	from db.teams
+	CALLED FROM
+		externaldata '/admin/data/teams'
 extends layout
-
 block content
 	form#updateForEvent(name="updateForEvent" method="post" action="/admin/data/teams")
 		input#seteventid(type="text", name="eventId")

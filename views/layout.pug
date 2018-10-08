@@ -1,3 +1,18 @@
+//-
+	Main layout page.
+	All universal links and meta tags are here. Body includes nav and main at the top. Nav is outside of main. 
+	Content of pages are located within main.
+	PARAM
+		title		[String] Title of page; if doesn't exist, will be replaced by "Untitled Page"
+		alert		[String] (Optional) When page loads, create JS alert with message.
+	CALLED FROM
+		none
+	EXTENDED FROM
+		All pages
+	INCLUDES
+		nav
+		main
+	//
 doctype html
 html
 	head
@@ -7,12 +22,8 @@ html
 		meta(name="keywords" content="first robotics,frc,first robotics competition,somerville,new jersey,102,team 102,gearheads,gearheads 102,the gearheads,scoring,scoring app,standings,match standings,team 102 scoring app,scouting,gearheads scouting,team 102 scouting")
 		meta(name="theme-color" content="#333")
 		//link(rel="icon" sizes="192x192" href="favicon-192x.png")
-		link(rel="stylesheet" href="/lib/bootstrap/css/bootstrap.min.css")
-		link(rel="stylesheet" href="/lib/bootstrap/css/bootstrap-grid.min.css")
 		link(rel="stylesheet" href="/lib/w3.css")
-		link(rel="stylesheet" href="/css/scoringAppStyles.css")
 		link(rel="stylesheet" href="/css/style.css")
-		//our stylesheet(s?) must be last b/c it's most important
 		
 		script(src="/lib/w3.js")
 		script(src="/lib/jquery.min.js")

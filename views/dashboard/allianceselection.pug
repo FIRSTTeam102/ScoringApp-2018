@@ -1,0 +1,152 @@
+extends ../layout
+block content
+	//-
+		link(rel="stylesheet" href="/lib/jquery-ui.min.css")
+		script(src="/lib/jquery-ui.min.js")
+		script(src="/lib/jqueryui-touch-punch.min.js")
+	div(class="w3-mobile w3-center")
+		h6(class="gear-text-white w3-margin-bottom")
+			i Tap a team, then tap the empty slot [2] or [3] to move them up.
+		//-div(class="w3-section")
+			div(class="w3-btn gear-btn w3-cyan" id="undo") Undo Last Action
+		each alliance, i in alliances
+			- var allianceNum = i+1;
+			div(class="w3-quarter gear-dark-gray w3-mobile w3-margin-bottom")
+				h4
+					span(class="w3-margin-right" style="width: 40px")=allianceNum
+					span(id=`all${allianceNum}tm1` class="alliance-team")=alliance.team1.substring(3)
+					span(id=`all${allianceNum}tm2` class="alliance-team")=(alliance.team2) ? alliance.team2.substring(3) : "[2]"
+					span(id=`all${allianceNum}tm3` class="alliance-team")=(alliance.team3) ? alliance.team3.substring(3) : "[3]"
+		each team, i in rankings
+			- if(i >= 8 )
+				div( id=i+1 class="alliance-team unassigned-team w3-padding-large")=team.team_key.substring(3)
+		div(class="w3-section")
+			input(class="w3-check w3-margin-right" type="checkbox" id="showHideData")
+			label(for="showHideData") Show Team Data
+		div#data(style="display: none;")
+			include allianceselection-info
+	script.
+		window.onbeforeunload = function(){return "This page won't be saved."};
+		
+		$("#showHideData").click(function(e){
+			if(this.checked){
+				$("#data").show();
+			}else{
+				$("#data").hide();
+			}
+		})
+		
+		var allianceTeams = $('.alliance-team');
+		
+		var selected = null;
+		var undo = function(){}; //will be function
+		var undoElems = {};
+		var redo = function(){};
+		
+		for(var i = 0; i < allianceTeams.length; i++){
+			var team = allianceTeams[i];
+			
+			$(team).click(function(e){
+				if(!selected){
+					if(e.currentTarget.innerHTML[0] != "["){
+						selected = e.currentTarget;
+						selected.classList.add("gear-white");
+					}
+				}else{
+					if(e.currentTarget.innerHTML[0] == "[" ){
+						move(selected, e.currentTarget);	
+					}
+					selected.classList.remove("gear-white");
+					selected = null;
+				}
+			})
+		}
+		
+		function move(selected, target){
+			var selectedAlliance = selected.id.substring(3,4);
+			var selectedSlotNo = selected.id.substring(6);
+			
+			var targetAlliance = target.id.substring(3,4);
+			var targetSlotNo = target.id.substring(6);
+			
+			//RULES FOR TOURNEY :p
+			if(selectedAlliance){
+				
+				if( targetAlliance > selectedAlliance )
+					return;
+				if( targetAlliance == selectedAlliance )
+					return;
+				if( selectedSlotNo && selectedSlotNo > 1 )
+					return;
+				//if( selectedSlotNo && selectedSlotNo == 1 && ) if alliance isn't full, i'll add later
+			}
+			//do thingy
+			undoElems = {
+				selected: selected,
+				target: target,
+				selectedTeamNo: selected.innerHTML
+			}
+			
+			target.innerHTML = selected.innerHTML;
+			
+			undo = function(){
+				target.innerHTML = '[' + target.id.substring(6) + ']';
+				selected.innerHTML = undoElems.selectedTeamNo;
+			}
+			
+			if(!selectedAlliance){
+				$(selected).hide();
+				$('#rank'+selected.id).hide();
+				undo = function(){
+					target.innerHTML = '[' + target.id.substring(6) + ']';
+					$(undoElems.selected).show();
+					$('#rank'+undoElems.selected.id).show();
+				}
+			}
+			if( selectedSlotNo && selectedSlotNo == 1 )
+				moveAlliancesUp( selectedAlliance );
+				
+			//$("#undo").click(undo);
+		}
+		
+		function moveAlliancesUp(allianceThatMoved){
+			allianceThatMoved = parseInt(allianceThatMoved);
+			
+			if( allianceThatMoved <= 7 ){
+				
+				for(var i = allianceThatMoved; i <= 7; i++){
+					$("#all"+i+"tm1")[0].innerHTML = 
+						$("#all"+(i+1)+"tm1")[0].innerHTML;
+				}
+			}
+			var unassignedTeams = $(".unassigned-team");
+			for(var i = 0; i < unassignedTeams.length; i++){
+				if($(unassignedTeams[i]).css("display") == "none")
+					continue;
+				else{
+					console.log(unassignedTeams[i])
+					var nextCaptain = unassignedTeams[i].innerHTML;
+					$(unassignedTeams[i]).hide();
+					console.log(i+9);
+					$("#rank"+(i+9)).hide();
+					break;
+				}
+			}
+			
+			$("#all8tm1")[0].innerHTML = nextCaptain;
+		}
+		
+		function moveNextCaptainUp(){}
+	style.
+		.alliance-team{
+			display: inline-block;
+			width: 100px;
+			border: 1px solid white;
+			padding: 8px 0px;
+		}
+	//-div(class="w3-mobile w3-center")
+		each team, i in rankings
+			//- var j = i + 1;
+			- if(i =< 8)
+				div(class="w3-quarter gear-opacity")
+					h2=team.rank+" "+team.team_key.substring(3)

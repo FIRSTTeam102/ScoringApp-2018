@@ -2,75 +2,11 @@ var express = require('express');
 var router = express.Router();
 var bcrypt = require('bcrypt');
 
-router.get('/adduser', function(req, res){
-	
-	if( !require('./checkauthentication')(req, res, 'admin') ){
-		return null;
-	}
-	
-	res.render('./login/adduser', { 
-		title: "Create Admin User"
-	});
-	
-});
-
-router.get('/changepassword', function(req, res){
-	
-	if( !require('./checkauthentication')(req, res) ){
-		return console.log('authentication failed for /login/changepassword');
-	}
-	
-	res.render('./login/changepassword', {
-		title: "Change Password"
-	});
-});
-
-router.get('/resetpassword', function(req, res){
-	
-	if( !require('./checkauthentication')(req, res, 'admin') ){
-		return console.log('authentication failed for /login/changepassword');
-	}
-	
-	var teammembers = req.db.get("teammembers");
-	
-	//gets all users and spits them on dropdown
-	teammembers.find( {}, {sort:{ "name": 1 }}, function(e, users){
-		
-		if(e){
-			console.log(e);
-			return res.send(500);
-		}
-		return res.render('./login/resetpassword', { 
-			members: users,
-			title: "Reset Password for Any User"
-		});
-	});
-});
-
-router.post('/resetpassword', function(req, res){
-	
-	var userToReset = req.body.username;
-	
-	if(!userToReset || userToReset == ""){
-		return res.redirect('./resetpassword');
-	}
-	
-	var teammembers = req.db.get("teammembers");
-	
-	teammembers.update( { name: userToReset }, { 
-		$set: { password: 'default' } 
-	}, {}, function(e, result){
-		if(e)
-			return console.error(e);
-		
-		res.redirect('/?alert=Password successfully changed for user ' + userToReset);
-		
-		if(result)
-			return console.log(result);
-	});
-	
-});
-
+/**
+ * Regular user login.
+ * @url /login/scouter
+ * @view /login/login
+ */
 router.get('/scouter', function(req, res) {
 	
 	//If there's been a GET request, prepare an alert
@@ -84,7 +20,7 @@ router.get('/scouter', function(req, res) {
 		
 		if(e){
 			console.log(e);
-			return res.send(500);
+			return res.sendStatus(500);
 		}
 		return res.render('./login/login', { 
 			members: users,
@@ -108,7 +44,7 @@ router.get('/admin', function(req, res) {
 		
 		if(e){
 			console.log(e);
-			return res.send(500);
+			return res.sendStatus(500);
 		}
 		
 		return res.render('./login/login', { 
@@ -119,51 +55,152 @@ router.get('/admin', function(req, res) {
 	});  
 });
 
-router.post('/changepassword', function(req, res){
-	console.log('hi');
-	console.log(req.body);
+/**
+ * Admin page to add a new admin user.
+ * @url /login/adduser
+ * @view /login/adduser
+ */
+router.get('/adduser', function(req, res){
 	
+	if( !require('./checkauthentication')(req, res, 'admin') ){
+		return null;
+	}
+	
+	res.render('./login/adduser', { 
+		title: "Create Admin User"
+	});
+	
+});
+
+/**
+ * User page to change your own password.
+ * @url /login/changepassword
+ * @view /login/changepassword
+ */
+router.get('/changepassword', function(req, res){
+	
+	if( !require('./checkauthentication')(req, res) ){
+		return console.log('authentication failed for /login/changepassword');
+	}
+	
+	res.render('./login/changepassword', {
+		title: "Change Password"
+	});
+});
+
+/**
+ * Admin page to reset another user's password.
+ * @url /login/resetpassword
+ * @view /login/resetpassword
+ * @db teammembers
+ */
+router.get('/resetpassword', function(req, res){
+	
+	if( !require('./checkauthentication')(req, res, 'admin') ){
+		return console.log('authentication failed for /login/changepassword');
+	}
+	
+	var teammembers = req.db.get("teammembers");
+	
+	//gets all users and spits them on dropdown
+	teammembers.find( {}, {sort:{ "name": 1 }}, function(e, users){
+		if(e){
+			res.log(e);
+			return res.sendStatus(500);
+		}
+		
+		res.render('./login/resetpassword', { 
+			members: users,
+			title: "Reset Password for Any User"
+		});
+	});
+});
+
+/**
+ * POST: Admin page to reset another user's password.
+ * @url POST: /login/resetpassword
+ * @redirect /
+ */
+router.post('/resetpassword', function(req, res){
+	
+	var userToReset = req.body.username;
+	
+	if(!userToReset || userToReset == ""){
+		return res.redirect('./resetpassword');
+	}
+	
+	var teammembers = req.db.get("teammembers");
+	
+	teammembers.update( { name: userToReset }, { 
+		$set: { password: 'default' } 
+	}, {}, function(e, result){
+		if(e)
+			return console.error(e);
+		
+		res.redirect('/?alert=Password successfully changed for user ' + userToReset);
+		
+		if(result)
+			res.log(result);
+	});
+});
+
+/**
+ * POST: Admin page to change your own password.
+ * @url POST: /login/changepassword
+ * @redirect /
+ */
+router.post('/changepassword', function(req, res){
+	
+	//Grabs both passwords entered
 	var p1 = req.body.passwordOne;
 	var p2 = req.body.passwordTwo;
 	
-	
+	//checks if they were entered or not
 	if( !p1 || !p2 ){
 		return res.render('./login/changepassword', {
 			title: "Change Password",
 			alert: "Both password forms must be entered."
 		});
 	}
+	//checks if they are equal
 	if( p1 != p2 ){
 		return res.render('./login/changepassword', {
 			title: "Change Password",
 			alert: "Both password forms must be equal."
 		});
 	}
+	//just double checks if user is logged in
 	if(!req.user){
 		return console.error("User doesn't exist in /login/changepassword");
 	}
 	
 	var teammembers = req.db.get("teammembers");
 	
+	//Searches for user in db.
 	teammembers.find({ name: req.user.name },{}, function(e, result){
+		
+		//gets member
 		var member = result[0];
 		if(!member){
 			return res.send(500, "user don't exist");
 		}
 		else{
-			console.log(member);
-			console.log(member.password);
 			
-					const saltRounds = 10;
-		
+			res.log(member);
+			res.log(member.password);
+			
+			//Hashes new password
+			const saltRounds = 10;
+			
 			bcrypt.hash(p1, saltRounds, function(err, hash) {
 				
 				//if error, err out
 				if(err){
-					console.log(err);
-					return res.send(500);
+					res.log(err, true);
+					return res.sendStatus(500);
 				}
 				
+				//Updates teammembers collection w/ new password
 				teammembers.update({
 					name: req.user.name
 				},{
@@ -172,12 +209,11 @@ router.post('/changepassword', function(req, res){
 					}
 				},{}, function(e, data){
 					
-					res.redirect('/?alert=Password changed successfully.');
-					
 					if(e)
 						return console.error(e);
-					if(data)
-						return console.log(data);
+						
+					//redirects to home
+					res.redirect('/?alert=Password changed successfully.');
 				});
 			});
 
@@ -185,20 +221,26 @@ router.post('/changepassword', function(req, res){
 	});
 });
 
+/**
+ * POST method to login a scouter
+ * @url POST /login/scouter
+ * @redirect /dashboard
+ */
 router.post('/scouter', function(req, res) {
 	
 	//if form is empty, alert w/ plz login
 	if(!req.body.password || !req.body.username){
 		return res.redirect('./scouter?alert=Please select a name and enter a password.');
 	}
+	
 	//Request auth for user.
-	console.log("Requesting authentication for user: " + req.body.username || "error" );
+	res.log("Requesting authentication for user: " + req.body.username || "error" );
 	
 	req.passport.authenticate("local", function(err, user, info) {
             
 			// if any problems exist, error out
             if (err) {
-				res.send(500);
+				res.sendStatus(500);
 				console.log(err);
 				return err;
             }
@@ -220,32 +262,34 @@ router.post('/scouter', function(req, res) {
 				
             });
         })(req, res);
-	
 });
 
+/**
+ * POST: Admin login page
+ * @url POST /login/admin
+ * @redirect /admin
+ */
 router.post('/admin', function(req, res) {
 	
 	//if form is empty, alert w/ plz login
 	if(!req.body.password || !req.body.username){
 		return res.redirect('./admin?alert=Please select a name and enter a password.');
 	}
-	//Request auth for user.
-	console.log("Requesting authentication for user: " + req.body.username || "error" );
 	
+	//Request auth for user.
+	res.log("Requesting authentication for user: " + req.body.username || "error" );
 	req.passport.authenticate("local", function(err, user, info) {
             
 			// if any problems exist, error out
             if (err) {
 				res.send(500);
-				console.log(err);
-				return err;
+				return res.log(err);
             }
 			
 			//If user isn't passed, render login with the error message.
             if (!user) {
 				var alert = info != undefined ? info.alert || null : null;
-				
-                return res.redirect('./admin?alert='+alert);
+                return res.redirect('./?alert='+alert);
             }
 			
             // log in the user
@@ -266,15 +310,12 @@ router.post('/admin', function(req, res) {
         })(req, res);
 });
 
-router.get('/secret', function(req, res){
-	
-	//checks auth
-	if( !require('./checkauthentication')(req, res, 'admin') ){
-		return null;
-	}
-	res.send("you got into the secret");
-});
-
+/** 
+ * POST: Admin page to add an admin user
+ * @url POST /login/adduser
+ * @redirect none
+ * @view /login/adduser
+*/
 router.post('/adduser', function(req, res){
 	
 	//set all attributes that will go into the new user
@@ -296,6 +337,7 @@ router.post('/adduser', function(req, res){
 	
 	var teammembers = req.db.get("teammembers");
 	
+	//Searches to see if another user exists with same name
 	teammembers.findOne( { "name": name }, {}, function( e, user ){
 		
 		//if user already exists, reload w/ warning thingy
@@ -305,6 +347,8 @@ router.post('/adduser', function(req, res){
 				alert: "Error: User already exists."
 			});
 		}
+		
+		//hashes password
 		const saltRounds = 10;
 		
 		bcrypt.hash(txtPassword, saltRounds, function(err, hash) {
@@ -312,9 +356,10 @@ router.post('/adduser', function(req, res){
 			//if error, err out
 			if(err){
 				console.log(err);
-				return res.send(500);
+				return res.sendStatus(500);
 			}
-						
+			
+			//Inserts new user
 			teammembers.insert({
 				"name": name,
 				"subteam": subteam,
@@ -324,6 +369,7 @@ router.post('/adduser', function(req, res){
 				"password": hash
 			});
 			
+			//return to page
 			return res.render('./login/adduser', { 
 				title: "Create Admin User",
 				alert: "User" + name + " created successfully."

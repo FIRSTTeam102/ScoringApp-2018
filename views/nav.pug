@@ -1,3 +1,8 @@
+//-
+	Nav - Contains logo w/ link to index; and navbar at the top for logged in users, with useful links.
+	INCLUDED BY
+		layout
+	//
 div(style="font-size:1.1em;")
 	if user
 		nav(class="w3-bar gear-opacity w3-container gear-text-white w3-rest" style="position:relative;z-index:2;")
@@ -11,6 +16,7 @@ div(style="font-size:1.1em;")
 				a(href="/dashboard" class="w3-bar-item w3-button gear-clear w3-mobile") Dashboard
 				a(href="/dashboard/pits" class="w3-bar-item w3-button gear-clear w3-mobile") Pit scouting
 				a(href="/dashboard/matches" class="w3-bar-item w3-button gear-clear w3-mobile") Match scouting
+				a(href="/dashboard/allianceselection" class="w3-bar-item w3-button gear-clear w3-mobile") Alliance Selection
 				if user.subteam == "support" || user.subteam == "exec"
 				a(href="/admin" class="w3-bar-item w3-button gear-clear w3-mobile") Admin Index
 		if user.name != "[Dev]"
@@ -27,7 +33,7 @@ header(class="w3-center w3-container w3-content w3-padding-8")
 	div(style="max-width:300px" class="w3-content")
 		a(href="/") 
 			img(src="/images/powerup-header-glow-400px.png" class="w3-image")
-	h4(class="gear-text-white" style="margin:0px;padding:0px;")=tournament
+	h4(class="gear-text-white" style="margin:0px;padding:0px;")=eventName
 	br 
 	script.
 		function w3_open(elem, toggle) {

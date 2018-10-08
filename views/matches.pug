@@ -1,5 +1,12 @@
+//-
+	Admin matches page. Shows TBA details of each match and buttons to update matches.
+	PARAM
+		locals.matches	?????????
+		matches			[Object Array]	Pulled straight from db.matches.
+	CALLED BY
+		externaldata.js '/admin/current/matches'
+	//
 extends layout
-
 block content
 	form#updateForEvent(name="updateForEvent" method="post" action="/admin/data/matches")
 		input#seteventid(type="text", name="eventId")

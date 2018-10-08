@@ -28,7 +28,8 @@ block content
 				- redObj = match.score_breakdown.red;
 				- for (var property in blueObj) { if (blueObj.hasOwnProperty(property)) {
 				tr
-					td(class="w3-small") #{property}:
+					- var text = property; var result1 = text.replace( /([A-Z])/g, " $1" ); var result2 = result1.charAt(0).toUpperCase() + result1.slice(1)
+					td(class="w3-small") #{result2}:
 					td <b>#{blueObj[property]}</b>
 					td <b>#{redObj[property]}</b>
 				- } }

@@ -1,5 +1,11 @@
+//-
+	Admin page to create or delete pit/match scouting pairs.
+	PARAM
+		assigned(optional)	[Object Array] [{_id, member1, member2 (,member3)}] from db.assigned
+	CALLED FROM
+		scoutingpairs.js	'/admin/scoutingpairs'
+	//
 extends layout
-
 block content
 	table(class="w3-table")
 		th programming
@@ -47,6 +53,21 @@ block content
 	div( onclick="promptPass('WARNING: Erases existing SCORING data for current event.', '/admin/scoutingpairs/generatematchallocations');")
 		button(class="w3-btn w3-cyan" type="submit") (Re)Allocate teams@matches to MATCH SCORING members
 	br 
+	br 
+	div( onclick="promptPass('WARNING: Erases MATCH SCORING ASSIGNMENTS for current event.', '/admin/scoutingpairs/clearmatchallocations');")
+		button(class="w3-btn w3-cyan" type="submit") Clear all MATCH SCORING assignments
+	hr
+	h2 Team@Match Allocation v2.0
+	form(action="/admin/scoutingpairs/generatematchallocations2" method="post")
+		each member in available
+			div(class="w3-container" style="max-width:300px;margin:auto;")
+				div(class="w3-left w3-margin-left")
+					input(type="checkbox" class="w3-check" name=member.name id=member.name)
+					label(class="w3-text-white" for=member.name) &nbsp;#{member.name} (#{member.subteam})
+					br
+		br
+		button(type="submit" class="w3-btn w3-cyan") (Re)Allocate teams@matches to ASSIGNED + CHECKED
+	
 	script.
 		
 		function promptPass(message, url){

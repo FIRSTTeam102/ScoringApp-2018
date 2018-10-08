@@ -114,7 +114,8 @@ router.post("/addmember", function(req, res){
 	}
 	console.log(thisFuncName + 'seniority=' + seniority);
 	
-	collection.insert({"name": name, "subteam": subteam, "className": className, "years": years, "seniority": seniority, "password": "default"});
+	// 2018-04-05, M.O'C - Adding "assigned" as "false" so that the field has a value upon insert
+	collection.insert({"name": name, "subteam": subteam, "className": className, "years": years, "seniority": seniority, "password": "default", "assigned": "false"});
 	
 	res.redirect("./");
 });

@@ -14,6 +14,7 @@ router.get('/match*', function(req, res) {
 	var thisUserName = thisUser.name;
 
 	var matchKey = req.query.key;
+	var alliance = req.query.alliance;
 	if (!matchKey) {
 		res.redirect("/dashboard");
 		return;
@@ -28,7 +29,8 @@ router.get('/match*', function(req, res) {
 		res.render("./scouting/match", {
 			title: "Match Scouting",
 			layout: layout,
-			key: matchKey
+			key: matchKey,
+			alliance: alliance
 		});
 	});
 });
@@ -189,29 +191,15 @@ router.post('/pit/submit', function(req, res){
 
 	var db = req.db;
     var pitCol = db.get('scoutingdata');
-	var currentCol = db.get("current");
 
-	//
-	// Get the 'current' event from DB
-	//
-	currentCol.find({}, {}, function(e, docs) {
-		var noEventFound = 'No event defined';
-		var eventId = noEventFound;
-		if (docs)
-			if (docs.length > 0)
-				eventId = docs[0].event;
-		if (eventId === noEventFound) {
-			res.redirect('/adminindex');
-		}
-		var event_key = eventId;
+	var event_key = req.event.key;
 
-		//res.redirect("/dashboard");
-		
-		pitCol.update( { "event_key" : event_key, "team_key" : teamKey }, { $set: { "data" : pitData, "actual_scouter": thisUserName, useragent: req.shortagent } }, function(e, docs){
-			if(e)
-				return res.send({status: 500, message: e});
-			return res.send({message: "Submitted data successfully.", status: 200});
-		});
+	//res.redirect("/dashboard");
+	
+	pitCol.update( { "event_key" : event_key, "team_key" : teamKey }, { $set: { "data" : pitData, "actual_scouter": thisUserName, useragent: req.shortagent } }, function(e, docs){
+		if(e)
+			return res.send({status: 500, message: e});
+		return res.send({message: "Submitted data successfully.", status: 200});
 	});
 });
 
@@ -234,30 +222,10 @@ router.post('/submitpit', function(req, res) {
 
 	var db = req.db;
     var pitCol = db.get('scoutingdata');
-	var currentCol = db.get("current");
-
-	//
-	// Get the 'current' event from DB
-	//
-	currentCol.find({}, {}, function(e, docs) {
-		var noEventFound = 'No event defined';
-		var eventId = noEventFound;
-		if (docs)
-			if (docs.length > 0)
-				eventId = docs[0].event;
-		if (eventId === noEventFound) {
-			res.render('/adminindex', { 
-				title: 'Admin pages',
-				current: eventId
-			});
-		}
-		var event_key = eventId;
-
-		//res.redirect("/dashboard");
-		
-		pitCol.update( { "event_key" : event_key, "team_key" : teamKey }, { $set: { "data" : pitData, "actual_scouter": thisUserName } }, function(e, docs){
-			res.redirect("/dashboard");
-		});
+	var event_key = req.event.key;
+	
+	pitCol.update( { "event_key" : event_key, "team_key" : teamKey }, { $set: { "data" : pitData, "actual_scouter": thisUserName } }, function(e, docs){
+		res.redirect("/dashboard");
 	});
 });
 

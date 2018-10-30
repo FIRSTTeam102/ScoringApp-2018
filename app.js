@@ -91,6 +91,7 @@ var current = require("./routes/admin/current");
 var externaldata = require("./routes/admin/externaldata");
 var scoutingpairs = require('./routes/admin/scoutingpairs');
 var teammembers = require("./routes/admin/teammembers");
+var manualinput = require("./routes/manualinput");
 
 //CONNECT URLS TO ROUTES
 app.use('/', index);
@@ -105,6 +106,7 @@ app.use("/admin/teammembers", teammembers);
 app.use('/admin/data', externaldata);
 app.use('/admin/current', current);
 app.use('/admin/audit', scoutingaudit);
+app.use('/manualinput', manualinput);
 
 // catch 404 and forward to error handler
 app.use(useFunctions.notFoundHandler);

@@ -796,7 +796,6 @@ router.post("/generatematchallocations", function(req, res) {
 	var memberCol = db.get("teammembers");
 	var scoutDataCol = db.get("scoutingdata");
 	var scoreDataCol = db.get("scoringdata");
-	var matchDataCol = db.get("matches");
 
 	if(db._state == 'closed'){ //If database does not exist, send error
 		return res.render('./error',{
@@ -857,15 +856,9 @@ router.post("/generatematchallocations", function(req, res) {
 			// Read all matches
 			var url = "https://www.thebluealliance.com/api/v3/event/" + eventId + "/matches/simple";
 			console.log(thisFuncName + "url=" + url);
-
-			//// WARNING WARNING DANGER WILL ROBINSON - Manually editing for local DB access!
-			matchDataCol.find({"event_key": event_key}, function(e, docs) {
-				var matchArray = docs;
+			client.get(url, args, function (data, response) {
+				var matchArray = JSON.parse(data);
 				var matchLen = matchArray.length;
-
-//			client.get(url, args, function (data, response) {
-//				var matchArray = JSON.parse(data);
-//				var matchLen = matchArray.length;
 				if (matchLen == null)
 				{
 					console.log(thisFuncName + "Whoops, there was an error!");

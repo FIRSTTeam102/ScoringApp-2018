@@ -2,6 +2,9 @@ var express = require("express");
 var router = express.Router();
 
 router.get("/", function(req, res) {
+	if( !require('../checkauthentication')(req, res, 'admin') ){
+		return null;
+	}
 	var db = req.db;
 	
 	if(db._state == 'closed'){ //If database does not exist, send error
@@ -29,6 +32,9 @@ router.get("/", function(req, res) {
 });
 
 router.get("/present", function(req, res) {
+	if( !require('../checkauthentication')(req, res, 'admin') ){
+		return null;
+	}
 	var db = req.db;
 		
 	var collection = db.get("teammembers");
@@ -47,6 +53,9 @@ router.get("/present", function(req, res) {
 });
 
 router.post("/updatepresent", function(req, res){
+	if( !require('../checkauthentication')(req, res, 'admin') ){
+		return null;
+	}
 	var db = req.db;
 	
 	if(db._state == 'closed'){ //If database does not exist, send error
@@ -70,6 +79,9 @@ router.post("/updatepresent", function(req, res){
 });
 
 router.post("/addmember", function(req, res){
+	if( !require('../checkauthentication')(req, res, 'admin') ){
+		return null;
+	}
 	var thisFuncName = "teammembers.addmember[post]: ";
 	console.log(thisFuncName + 'ENTER')
 
@@ -121,6 +133,9 @@ router.post("/addmember", function(req, res){
 });
 
 router.post("/updatemember", function(req, res){
+	if( !require('../checkauthentication')(req, res, 'admin') ){
+		return null;
+	}
 	var thisFuncName = "teammembers.updatemember[post]: ";
 	console.log(thisFuncName + 'ENTER')
 	
@@ -174,6 +189,9 @@ router.post("/updatemember", function(req, res){
 });
 
 router.post("/deletemember",function(req, res){
+	if( !require('../checkauthentication')(req, res, 'admin') ){
+		return null;
+	}
 	var db = req.db;
 	
 	if (db._state == "closed"){

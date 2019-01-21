@@ -2,6 +2,11 @@ var express = require('express');
 var router = express.Router();
 
 router.get("/matches", function(req, res) {
+	
+	if( !require('../checkauthentication')(req, res, 'admin') ){
+		return null;
+	}
+
 	var thisFuncName = "current.matches[get]: ";
 	console.log(thisFuncName + 'ENTER')
 	
@@ -26,6 +31,9 @@ router.get("/matches", function(req, res) {
 });
 
 router.post("/resetmatches", function(req, res) {
+	if( !require('../checkauthentication')(req, res, 'admin') ){
+		return null;
+	}
 	var thisFuncName = "current.resetmatches[post]: ";
 	console.log(thisFuncName + 'ENTER')
 	
@@ -54,6 +62,9 @@ router.post("/resetmatches", function(req, res) {
 });
 
 router.post("/updatematch", function(req, res) {
+	if( !require('../checkauthentication')(req, res, 'admin') ){
+		return null;
+	}
 	var thisFuncName = "current.updatematch[post]: ";
 	console.log(thisFuncName + 'ENTER')
 	
@@ -125,6 +136,9 @@ router.post("/updatematch", function(req, res) {
 });
 
 router.post("/updatematches", function(req, res) {
+	if( !require('../checkauthentication')(req, res, 'admin') ){
+		return null;
+	}
 	var thisFuncName = "current.updatematches[post]: ";
 	console.log(thisFuncName + 'ENTER')
 	

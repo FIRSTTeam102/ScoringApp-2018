@@ -3,6 +3,9 @@ var router = express.Router();
 var bcrypt = require('bcrypt');
 
 router.get("/", function(req, res) {
+	if( !require('../checkauthentication')(req, res, 'admin') ){
+		return null;
+	}
 	var thisFuncName = "scoutingpairs root: ";
 	
 	// Log message so we can see on the server side when we enter this
@@ -83,6 +86,9 @@ router.get("/", function(req, res) {
 
 /* POST to Set scoutingPair Service */
 router.post('/setscoutingpair', function(req, res) {
+	if( !require('../checkauthentication')(req, res, 'admin') ){
+		return null;
+	}
 	var thisFuncName = "setscoutingpair: ";
 	
 	// Log message so we can see on the server side when we enter this
@@ -139,6 +145,9 @@ router.post('/setscoutingpair', function(req, res) {
 });
 
 router.post("/deletescoutingpair", function(req, res) {
+	if( !require('../checkauthentication')(req, res, 'admin') ){
+		return null;
+	}
 	var thisFuncName = "deletescoutingpair: ";
 	
 	// Log message so we can see on the server side when we enter this
@@ -188,6 +197,9 @@ router.post("/deletescoutingpair", function(req, res) {
 });
 
 router.post("/generateteamallocations", function(req, res) {
+	if( !require('../checkauthentication')(req, res, 'admin') ){
+		return null;
+	}
 	// HARDCODED
 	var activeTeamKey = 'frc102';
 	
@@ -410,6 +422,9 @@ router.post("/generateteamallocations", function(req, res) {
 //////////// Match allocating by batches of matches
 
 router.post("/generatematchallocations2", function(req, res) {
+	if( !require('../checkauthentication')(req, res, 'admin') ){
+		return null;
+	}
 	// HARDCODED
 	var activeTeamKey = 'frc102';
 	
@@ -668,6 +683,9 @@ router.post("/generatematchallocations2", function(req, res) {
 });
 
 router.post("/clearmatchallocations", function(req, res) {
+	if( !require('../checkauthentication')(req, res, 'admin') ){
+		return null;
+	}
 	var passCheckSuccess;
 	
 	if( !req.body.password || req.body.password == ""){
@@ -750,6 +768,9 @@ router.post("/clearmatchallocations", function(req, res) {
 //////////// Match allocating by team assignment
 
 router.post("/generatematchallocations", function(req, res) {
+	if( !require('../checkauthentication')(req, res, 'admin') ){
+		return null;
+	}
 	// HARDCODED
 	var activeTeamKey = 'frc102';
 	
@@ -980,6 +1001,9 @@ router.post("/generatematchallocations", function(req, res) {
 });
 
 router.get("/swapmembers", function(req, res) {
+	if( !require('../checkauthentication')(req, res, 'admin') ){
+		return null;
+	}
 	var thisFuncName = "scoutingpairs.swapmembers[get]: ";
 	
 	// Log message so we can see on the server side when we enter this
@@ -1042,6 +1066,9 @@ router.get("/swapmembers", function(req, res) {
 });
 
 router.post("/swapmembers", function(req, res) {
+	if( !require('../checkauthentication')(req, res, 'admin') ){
+		return null;
+	}
 	var thisFuncName = "scoutingpairs.swapmembers[post]: ";
 	
 	// Log message so we can see on the server side when we enter this

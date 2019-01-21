@@ -1,9 +1,13 @@
 h5=element.label
-select(class="w3-half w3-border-light-grey" style="float: none" type="text" name=element.id)
+select(class="w3-half w3-border-orange" style="float: none" type="text" name=element.id)
 	option
 	each option, i in element.options
 		if( answer == option )
 			option(value=option class="w3-bar-item" selected) #{option}
+		/*
+		elif(  )
+			option(value=option class="w3-bar-item" selected) #{Option from database}
+		*/
 		else
 			option(value=option class="w3-bar-item") #{option}
 br 

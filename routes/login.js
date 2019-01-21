@@ -289,7 +289,7 @@ router.post('/admin', function(req, res) {
 			//If user isn't passed, render login with the error message.
             if (!user) {
 				var alert = info != undefined ? info.alert || null : null;
-                return res.redirect('./?alert='+alert);
+                return res.redirect('./admin/?alert='+alert);
             }
 			
             // log in the user

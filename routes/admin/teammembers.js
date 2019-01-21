@@ -173,4 +173,35 @@ router.post("/updatemember", function(req, res){
 	res.redirect("./");
 });
 
+router.post("/deletemember",function(req, res){
+	var db = req.db;
+	
+	if (db._state == "closed"){
+		res.render("./error",{
+			message: "database error: offline",
+			error: {status: "if the database is running, try restarting the node server"}
+		});
+	}
+
+	var teammembers = db.get("teammembers");
+	
+	if(req.body.memberId){
+
+		var memberId = req.body.memberId;
+
+		res.log("Going to remove member with id: "+memberId, "white");
+
+		teammembers.remove({"_id": memberId}, {}, function(err){
+			res.log("callback", "red");
+			if(err){
+				res.log(err, "red");
+				return res.send(500);
+			}else{
+				return res.redirect('/admin/teammembers');
+			}
+		});
+	}
+	
+});
+
 module.exports = router;

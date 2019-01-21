@@ -1,4 +1,4 @@
-//require("colors");
+var colors = require("colors");
 
 var functions = module.exports = {};
 //View engine locals variables

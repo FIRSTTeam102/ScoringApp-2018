@@ -16,7 +16,8 @@ router.get('/', function(req, res) {
 	
 	var thisUser = req.user;
 	var thisUserName = thisUser.name;
-
+	
+	//gets collections
 	var db = req.db;
 	var scoutDataCol = db.get("scoutingdata");
 	var pairsDataCol = db.get("scoutingpairs");

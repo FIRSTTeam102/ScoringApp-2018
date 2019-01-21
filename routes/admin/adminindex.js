@@ -7,13 +7,31 @@ var router = express.Router();
  * @views /adminindex
  */
 router.get('/', function(req, res) {	
+	var thisFuncName = "adminindex.{root}[get]: ";
 	
 	if( !require('../checkauthentication')(req, res, 'admin') ){
 		return null;
 	}
 	
-	res.render('./adminindex', { 
-		title: 'Admin pages'
+    // Set our internal DB variable for initial load
+    var db = req.db;
+
+	var currentCol = db.get("current");
+	//imported from the manualinput.js page//
+	//
+	// Get the 'current' event from DB
+	//
+	currentCol.find({}, {}, function(e, docs) {
+		var noEventFound = 'No event defined';
+		var eventId = noEventFound;
+		if (docs)
+			if (docs.length > 0)
+				eventId = docs[0].event;
+		console.log(thisFuncName + 'eventId=' + eventId);
+		res.render('./adminindex', { 
+			title: 'Admin pages',
+			current: eventId
+		});
 	});
 });
 

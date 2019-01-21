@@ -208,6 +208,9 @@ router.get('/allianceselection', function(req, res){
 									thisAgg[thisLayout.id] = roundedVal;
 								}
 							}
+							if(!rankMap[thisAgg._id] || !rankMap[thisAgg._id].value){
+								//return res.send(500, "rankMap[thisAgg._id].rank or .value does not exist");
+							}
 							thisAgg['rank'] = rankMap[thisAgg._id].rank;
 							thisAgg['value'] = rankMap[thisAgg._id].value;
 							aggArray[aggIdx] = thisAgg;

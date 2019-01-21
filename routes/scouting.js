@@ -139,7 +139,8 @@ router.get('/pit*', function(req, res) {
 	//auth
 	if(!require('./checkauthentication')(req, res))
 		return null;
-	
+
+	//Add event key and pit data to get pit function
 	var thisFuncName = "scouting.pit*[get]: ";
 	console.log(thisFuncName + 'ENTER');
 	

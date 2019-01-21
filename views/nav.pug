@@ -1,8 +1,13 @@
 //-
 	Nav - Contains logo w/ link to index; and navbar at the top for logged in users, with useful links.
+		Includes one-off cookie message.
 	INCLUDED BY
 		layout
 	//
+div#cookieMessage(class="w3-block w3-dark-gray gear-text-white" style="position: fixed; bottom: 0; display: none; height: 32px;")
+	div(class="w3-show-block w3-mobile w3-left" style="font-size: 14px; padding: 9px 8px;") 
+		button#hideCookieMessage(class="w3-button w3-left" style="margin: 0; position: relative; top:-9px; right: 0px;") x
+		span(class="w3-padding") Cookies are used in this scouting application. By using this site, you agree to our use of cookies.
 div(style="font-size:1.1em;")
 	if user
 		nav(class="w3-bar gear-opacity w3-container gear-text-white w3-rest" style="position:relative;z-index:2;")
@@ -64,4 +69,14 @@ header(class="w3-center w3-container w3-content w3-padding-8")
 			if(window.innerWidth > 600){
 				w3_close( $('#userBar')[0], $("#userName")[0] );
 			}
+		});
+
+		if(!localStorage.getItem("didShowCookieMessage")){
+			//$("nav").css("top", "40px");
+			$("#cookieMessage").show();
+		}
+		$("#hideCookieMessage").click(function(){
+			//$("nav").css("top", "0px");
+			$("#cookieMessage").hide();
+			localStorage.setItem("didShowCookieMessage", true);
 		});

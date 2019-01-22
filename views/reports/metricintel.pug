@@ -3,7 +3,7 @@ extends ../layout
 block content
 	- var text = key; var result1 = text.replace( /([A-Z])/g, " $1" ); var result2 = result1.charAt(0).toUpperCase() + result1.slice(1)
 	h2(class="gear-text-white") Per-team <b>#{result2}</b> statistics
-	h6 <i>Click on column headers to sort</i>
+	h6 <i>Double-click on column headers to sort</i>
 	h6 <i>Click on team numbers to jump to team intel</i>
 	
 	if (aggdata)

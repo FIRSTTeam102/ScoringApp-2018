@@ -880,13 +880,13 @@ router.post("/generatematchallocations", function(req, res) {
 			console.log(thisFuncName + "url=" + url);
 
 			//// WARNING WARNING DANGER WILL ROBINSON - Manually editing for local DB access!
-			matchDataCol.find({"event_key": event_key}, function(e, docs) {
-				var matchArray = docs;
-				var matchLen = matchArray.length;
-
-//			client.get(url, args, function (data, response) {
-//				var matchArray = JSON.parse(data);
+//			matchDataCol.find({"event_key": event_key}, function(e, docs) {
+//				var matchArray = docs;
 //				var matchLen = matchArray.length;
+
+			client.get(url, args, function (data, response) {
+				var matchArray = JSON.parse(data);
+				var matchLen = matchArray.length;
 				if (matchLen == null)
 				{
 					console.log(thisFuncName + "Whoops, there was an error!");

@@ -91,7 +91,7 @@ var current = require("./routes/admin/current");
 var externaldata = require("./routes/admin/externaldata");
 var scoutingpairs = require('./routes/admin/scoutingpairs');
 var teammembers = require("./routes/admin/teammembers");
-var manualinput = require("./routes/manualinput");
+var manualinput = require("./routes/admin/manualinput");
 
 //CONNECT URLS TO ROUTES
 app.use('/', index);

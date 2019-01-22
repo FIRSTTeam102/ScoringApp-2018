@@ -7,12 +7,11 @@ var router = express.Router();
  * @view dashboard/dashboard-index
  */
 router.get('/', function(req, res) {
-	var thisFuncName = "dashboard.{root}[get]: ";
-	res.log(thisFuncName + 'ENTER');
-	
 	if( !require('./checkauthentication')(req, res, 'scouting') ){
 		return res.log(thisFuncName + 'returning null');
 	}
+	var thisFuncName = "dashboard.{root}[get]: ";
+	res.log(thisFuncName + 'ENTER');
 	
 	var thisUser = req.user;
 	var thisUserName = thisUser.name;
@@ -135,6 +134,9 @@ router.get('/', function(req, res) {
  * @view dashboard/unassigned
  */
 router.get('/unassigned', function(req, res) {
+	if( !require('./checkauthentication')(req, res, 'scouting') ){
+		return res.log(thisFuncName + 'returning null');
+	}
 	var thisFuncName = "dashboard.unassigned[get]: ";
 	res.log(thisFuncName + 'ENTER');
 	
@@ -149,6 +151,9 @@ router.get('/unassigned', function(req, res) {
  * @view dashboard/allianceselection
  */
 router.get('/allianceselection', function(req, res){
+	if( !require('./checkauthentication')(req, res, 'scouting') ){
+		return res.log(thisFuncName + 'returning null');
+	}
 	
 	var currentEventKey = req.event.key;
 	
@@ -173,8 +178,8 @@ router.get('/allianceselection', function(req, res){
 			}
 			
 			req.db.get('scoringlayout').find(
-				{}, {sort: {"order": 1}}, function(e, scorelayout){
-					if(e || !scorelayout[0])
+				{}, {sort: {"order": 1}}, function(e, scoreLayout){
+					if(e || !scoreLayout[0])
 						return console.error(e || "Couldn't find scoringlayout in allianceselection".red);
 					
 					var aggQuery = [];
@@ -183,16 +188,15 @@ router.get('/allianceselection', function(req, res){
 					// group teams for 1 row per team
 					groupClause["_id"] = "$team_key";
 
-					for (var scoreIdx = 0; scoreIdx < scorelayout.length; scoreIdx++) {
-						var thisLayout = scorelayout[scoreIdx];
+					for (var scoreIdx = 0; scoreIdx < scoreLayout.length; scoreIdx++) {
+						var thisLayout = scoreLayout[scoreIdx];
 						thisLayout.key = thisLayout.id;
-						scorelayout[scoreIdx] = thisLayout;
+						scoreLayout[scoreIdx] = thisLayout;
 						if (thisLayout.type == 'checkbox' || thisLayout.type == 'counter' || thisLayout.type == 'badcounter')
 							groupClause[thisLayout.id] = {$avg: "$data." + thisLayout.id};
 					}
 					aggQuery.push({ $group: groupClause });
 					aggQuery.push({ $sort: { rank: 1 } });
-					//res.log(thisFuncName + 'aggQuery=' + JSON.stringify(aggQuery));
 					
 					req.db.get('scoringdata').aggregate(aggQuery, function(e, aggArray){
 						if(e || !aggArray[0])
@@ -201,15 +205,15 @@ router.get('/allianceselection', function(req, res){
 						// Rewrite data into display-friendly values
 						for (var aggIdx = 0; aggIdx < aggArray.length; aggIdx++) {
 							var thisAgg = aggArray[aggIdx];
-							for (var scoreIdx = 0; scoreIdx < scorelayout.length; scoreIdx++) {
-								var thisLayout = scorelayout[scoreIdx];
+							for (var scoreIdx = 0; scoreIdx < scoreLayout.length; scoreIdx++) {
+								var thisLayout = scoreLayout[scoreIdx];
 								if (thisLayout.type == 'checkbox' || thisLayout.type == 'counter' || thisLayout.type == 'badcounter') {
 									var roundedVal = (Math.round(thisAgg[thisLayout.id] * 10)/10).toFixed(1);
 									thisAgg[thisLayout.id] = roundedVal;
 								}
 							}
 							if(!rankMap[thisAgg._id] || !rankMap[thisAgg._id].value){
-								//return res.send(500, "rankMap[thisAgg._id].rank or .value does not exist");
+								throw new Error("Make sure that team rankings have been pulled from TheBlueAlliance");
 							}
 							thisAgg['rank'] = rankMap[thisAgg._id].rank;
 							thisAgg['value'] = rankMap[thisAgg._id].value;
@@ -221,7 +225,7 @@ router.get('/allianceselection', function(req, res){
 							rankings: rankings,
 							alliances: alliances,
 							aggdata: aggArray,
-							layout: scorelayout
+							layout: scoreLayout
 						});
 					});
 				}
@@ -231,6 +235,9 @@ router.get('/allianceselection', function(req, res){
 });
 
 router.get('/pits', function(req, res) {
+	if( !require('./checkauthentication')(req, res, 'scouting') ){
+		return res.log(thisFuncName + 'returning null');
+	}
 	var thisFuncName = "dashboard.puts[get]: ";
 	res.log(thisFuncName + 'ENTER');
 
@@ -272,6 +279,9 @@ router.get('/pits', function(req, res) {
 });
 
 router.get('/matches', function(req, res) {
+	if( !require('./checkauthentication')(req, res, 'scouting') ){
+		return res.log(thisFuncName + 'returning null');
+	}
 	var thisFuncName = "dashboard.matches[get]: ";
 	res.log(thisFuncName + 'ENTER');
 

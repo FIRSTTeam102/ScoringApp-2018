@@ -7,22 +7,14 @@ var router = express.Router();
  * @view /admin/index, /admin/scoringaudit
  */
 router.get("/", function(req, res) {
-	if(!require('../checkauthentication')(req, res, 'admin'))
+	if(!require('../checkauthentication')(req, res, 'admin')){
 		return null;
-	
-	res.log("Scoring audit: enter");
-	
-	var db = req.db;
-	
-	if(db._state == 'closed'){ //If database does not exist, send error
-		res.render('./error',{
-			message: "Database error: Offline",
-			error: {status: "If the database is running, try restarting the Node server."}
-		});
 	}
 	
-	var scoreDataCol = db.get("scoringdata");
-	var matchCol = db.get("matches");
+	res.log("Scoring audit: enter");
+		
+	var scoreDataCol = req.db.get("scoringdata");
+	var matchCol = req.db.get("matches");
 	
 	var eventId = req.event.key;
 
@@ -42,7 +34,7 @@ router.get("/", function(req, res) {
 		// Get all the RESOLVED matches
 		scoreDataCol.find({"event_key": eventId, "time": { $lt: earliestTimestamp }}, { sort: {"assigned_scorer": 1, "time": 1, "alliance": 1, "team_key": 1} }, function (e, scoreData) {
 			if(!scoreData)
-				return console.error("mongo error at dashboard/matches");
+				throw new Error("mongo error at dashboard/matches");
 			
 			// Build per-team-member array
 			var memberArr = [];

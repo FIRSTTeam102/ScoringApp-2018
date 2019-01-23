@@ -156,15 +156,26 @@ router.get('/pit*', function(req, res) {
 	
 	var db = req.db;
 	var scoutCol = db.get("scoutinglayout");
+	var pitCol = req.db.get('scoutingdata'); //for pitcol.find()
+	
 	
 	scoutCol.find({}, {sort: {"order": 1}}, function(e, docs){
 		var layout = docs;
-		
-		//console.log(layout);
-		res.render("./scouting/pit", {
-			title: "Pit Scouting",
-			layout: layout,
-			key: teamKey
+
+		//pasted code
+		pitCol.find({ "event_key" : event_key, "team_key" : teamKey }, {}, function(e, docs){
+			var pitData = null;
+			if (docs && docs[0])
+				if (docs[0].data)
+					pitData = docs[0].data;
+
+			//console.log(layout);
+			res.render("./scouting/pit", {
+				title: "Pit Scouting",
+				layout: layout,
+				pitData: pitData, 
+				key: teamKey
+			});
 		});
 	});
 });

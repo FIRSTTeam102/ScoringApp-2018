@@ -269,6 +269,7 @@ router.get('/pits', function(req, res) {
 				//res.log(thisFuncName + 'teams[teamIdx]=' + JSON.stringify(teams[teamIdx]) + ', teamKeyMap[teams[teamIdx].team_key]=' + JSON.stringify(teamKeyMap[teams[teamIdx].team_key]));
 				teams[teamIdx].nickname = teamKeyMap[teams[teamIdx].team_key].nickname;
 			}
+			//Add a call to the database for populating menus in pit scouting
 			
 			res.render('./dashboard/pits', {
 				title: "Pit Scouting", 

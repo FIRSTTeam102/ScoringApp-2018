@@ -22,6 +22,8 @@ block content
 		div(style="text-align:center")
 			each element in layout
 				- var answer = ""
+				//- - if (pitData) answer = pitData[element]
+				//- ^Under construction^
 				case element.type
 					when "checkbox"
 						include templates/formCheckbox

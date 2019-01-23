@@ -158,6 +158,7 @@ router.get('/pit*', function(req, res) {
 	var scoutCol = db.get("scoutinglayout");
 	var pitCol = req.db.get('scoutingdata'); //for pitcol.find()
 	
+	
 	scoutCol.find({}, {sort: {"order": 1}}, function(e, docs){
 		var layout = docs;
 

@@ -141,6 +141,7 @@ router.get('/pit*', function(req, res) {
 		return null;
 
 	//Add event key and pit data to get pit function
+	var event_key = req.event.key;
 	var thisFuncName = "scouting.pit*[get]: ";
 	console.log(thisFuncName + 'ENTER');
 	
@@ -157,46 +158,24 @@ router.get('/pit*', function(req, res) {
 	var db = req.db;
 	var scoutCol = db.get("scoutinglayout");
 	var pitCol = req.db.get('scoutingdata'); //for pitcol.find()
-	var currentCol = db.get("current");
 	
-	//
-	// Get the 'current' event from DB-from reports.js
-	//
-	currentCol.find({}, {}, function(e, docs) {
-		var noEventFound = 'No event defined';
-		var eventId = noEventFound;
-		if (docs)
-			if (docs.length > 0)
-				eventId = docs[0].event;
-		if (eventId === noEventFound) {
-			res.render('/adminindex', { 
-				title: 'Admin pages',
-				current: eventId
-			});
-		}
-		// for later querying by event_key
-		var event_key = eventId;
-		console.log(thisFuncName + 'event_key=' + event_key);
-		
+	
+	scoutCol.find({}, {sort: {"order": 1}}, function(e, docs){
+		var layout = docs;
 
-		scoutCol.find({}, {sort: {"order": 1}}, function(e, docs){
-			var layout = docs;
+		//pasted code
+		pitCol.find({ "event_key" : event_key, "team_key" : teamKey }, {}, function(e, docs){
+			var pitData = null;
+			if (docs && docs[0])
+				if (docs[0].data)
+					pitData = docs[0].data;
 
-			//pasted code
-			pitCol.find({ "event_key" : event_key, "team_key" : teamKey }, {}, function(e, docs){
-				var pitData = null;
-				if (docs && docs[0])
-					if (docs[0].data)
-						pitData = docs[0].data;
-				console.log(thisFuncName+"pitData="+JSON.stringify(pitData));
-				
-				//console.log(layout);
-				res.render("./scouting/pit", {
-					title: "Pit Scouting",
-					layout: layout,
-					pitData: pitData, 
-					key: teamKey
-				});
+			//console.log(layout);
+			res.render("./scouting/pit", {
+				title: "Pit Scouting",
+				layout: layout,
+				pitData: pitData, 
+				key: teamKey
 			});
 		});
 	});

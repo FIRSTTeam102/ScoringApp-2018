@@ -24,7 +24,7 @@ block content
 			each element in layout
 				- var answer = ""
 				- if (pitData) answer = pitData[element.id]
-				- res.log("element.id, answer="+element.id+","+answer)
+				- console.log("element.id, answer="+element.id+","+answer)
 				
 				case element.type
 					when "checkbox"

@@ -235,7 +235,9 @@ router.post("/generateteamallocations", function(req, res) {
 	var thisFuncName = "scoutingpairs.generateTEAMallocations[post]: ";
 
 	// used when writing data to DB, for later querying by year
-	var year = (new Date()).getFullYear();
+	// 2019-01-23, M.O'C: YEARFIX Why did I think using THIS year was a good idea? What about doing things with *last* year's data? :-/
+	// Instead, let's use the 1st four characters of the 'currentevent' (always a year)
+	//var year = (new Date()).getFullYear();
 							
 	// Log message so we can see on the server side when we enter this
 	console.log(thisFuncName + "ENTER");
@@ -278,6 +280,9 @@ router.post("/generateteamallocations", function(req, res) {
 		}
 		// used when writing data to DB, for later querying by event_key
 		var event_key = eventId;
+
+		// 2019-01-23, M.O'C: See YEARFIX comment above
+		var year = parseInt(event_key.substring(0,4));
 		
 		//
 		// Get the current set of already-assigned pairs; make a map of {"id": {"prim", "seco", "tert"}}
@@ -340,7 +345,10 @@ router.post("/generateteamallocations", function(req, res) {
 					if (tbaTeamArrayLen == null) {
 						console.log(thisFuncName + "Whoops, there was an error!")
 						console.log(thisFuncName + "data=" + data);
-						year = (new Date()).getFullYear();
+						
+						//year = (new Date()).getFullYear();
+						// 2019-01-23, M.O'C: See YEARFIX comment above
+						var year = parseInt(event_key.substring(0,4));
 						
 						res.render('./adminindex', { 
 							title: 'Admin pages',
@@ -445,7 +453,8 @@ router.post("/generatematchallocations2", function(req, res) {
 	}
 
 	// used when writing data to DB, for later querying by year
-	var year = (new Date()).getFullYear();
+	// 2019-01-23, M.O'C: See YEARFIX comment above
+	//var year = (new Date()).getFullYear();
 							
 	var db = req.db;
 	var currentCol = db.get("current");
@@ -487,6 +496,9 @@ router.post("/generatematchallocations2", function(req, res) {
 		// used when writing data to DB, for later querying by event_key
 		var event_key = eventId;
 
+		// 2019-01-23, M.O'C: See YEARFIX comment above
+		var year = parseInt(event_key.substring(0,4));
+						
 		// { year, event_key, match_key, match_number, alliance, 'match_team_key', assigned_scorer, actual_scorer, scoring_data: {} }
 
 		//
@@ -718,7 +730,8 @@ router.post("/clearmatchallocations", function(req, res) {
 	var thisFuncName = "scoutingpairs.clearMATCHallocations[post]: ";
 
 	// used when writing data to DB, for later querying by year
-	var year = (new Date()).getFullYear();
+	// 2019-01-23, M.O'C: See YEARFIX comment above
+	//var year = (new Date()).getFullYear();
 							
 	// Log message so we can see on the server side when we enter this
 	console.log(thisFuncName + "ENTER");
@@ -751,6 +764,9 @@ router.post("/clearmatchallocations", function(req, res) {
 		}
 		var event_key = eventId;
 
+		// 2019-01-23, M.O'C: See YEARFIX comment above
+		var year = parseInt(event_key.substring(0,4));
+		
 		//
 		// Remove 'assigned_scorer' from all matching scoringdata elements
 		//
@@ -806,7 +822,8 @@ router.post("/generatematchallocations", function(req, res) {
 	var thisFuncName = "scoutingpairs.generateMATCHallocations[post]: ";
 
 	// used when writing data to DB, for later querying by year
-	var year = (new Date()).getFullYear();
+	// 2019-01-23, M.O'C: See YEARFIX comment above
+	//var year = (new Date()).getFullYear();
 							
 	// Log message so we can see on the server side when we enter this
 	console.log(thisFuncName + "ENTER");
@@ -850,6 +867,9 @@ router.post("/generatematchallocations", function(req, res) {
 		}
 		// used when writing data to DB, for later querying by event_key
 		var event_key = eventId;
+
+		// 2019-01-23, M.O'C: See YEARFIX comment above
+		var year = parseInt(event_key.substring(0,4));
 
 		// { year, event_key, match_key, match_number, alliance, 'match_team_key', assigned_scorer, actual_scorer, scoring_data: {} }
 

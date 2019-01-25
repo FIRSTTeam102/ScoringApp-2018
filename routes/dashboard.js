@@ -340,6 +340,7 @@ router.get('/matches', function(req, res) {
 
 				for(var i in scoreData)
 					scoreData[i].team_nickname = teamKeyMap[scoreData[i].team_key].nickname;
+				console.log(thisFuncName + 'scoreData.length=' + scoreData.length);
 				res.render('./dashboard/matches',{
 					title: "Match Scouting",
 					matches: scoreData

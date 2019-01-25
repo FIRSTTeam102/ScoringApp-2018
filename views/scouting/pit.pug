@@ -17,13 +17,15 @@ block content
 	script(src="/js/pit-client.js")
 	h3= key.replace('frc','Team #')
 	p
+	//- console.log("pit.pug, pitData="+JSON.stringify(pitData))
 	form#scoutform(name="scoutform")
 		input#teamkey(type="hidden", name="teamkey", value=`${key}`)
 		div(style="text-align:center")
 			each element in layout
 				- var answer = ""
-				//- - if (pitData) answer = pitData[element]
-				//- ^Under construction^
+				- if (pitData) answer = pitData[element.id]
+				- res.log("element.id, answer="+element.id+","+answer)
+				
 				case element.type
 					when "checkbox"
 						include templates/formCheckbox

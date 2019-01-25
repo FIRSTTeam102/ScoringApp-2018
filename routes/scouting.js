@@ -141,6 +141,7 @@ router.get('/pit*', function(req, res) {
 		return null;
 
 	//Add event key and pit data to get pit function
+	var event_key = req.event.key;
 	var thisFuncName = "scouting.pit*[get]: ";
 	console.log(thisFuncName + 'ENTER');
 	

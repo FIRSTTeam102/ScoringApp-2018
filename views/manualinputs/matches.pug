@@ -53,7 +53,7 @@ block content
 					td
 						input#seteventid(type="text", name="eventId", value=`${match.winning_alliance}`)
 					td
-						button(class="w3-button w3-green" onClick=`updateMatch('${match.key}')`) Update #{match.key}
+						button(class="w3-button theme-submit" onClick=`updateMatch('${match.key}')`) Update #{match.key}
 	br
 	form#updatematchdata(name="updatematchdata" method="post" action="/manualinput/matches")
 		input#matchId(type="hidden", name="matchId")

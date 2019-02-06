@@ -77,7 +77,7 @@ block content
 										a(href=`/reports/teamintel?team=frc${teamNo}` class="gear-hover-white teamNo w3-padding-large")
 											span(class="teamNo")=teamNo
 											span(class="rank gear-text-white") &nbsp[#{teamRanks['frc'+teamNo]}]
-						div(class="w3-mobile w3-show-block w3-content gear-red w3-text-white" style="min-width: 10px;")
+						div(class="w3-mobile w3-show-block w3-content theme-red w3-text-white" style="min-width: 10px;")
 							each teamNo, j in match.teams
 								- if (j >= 3)
 									- if (team == match.teams[j])

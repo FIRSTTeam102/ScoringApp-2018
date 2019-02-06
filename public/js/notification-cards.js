@@ -8,7 +8,7 @@ function createNotificationCard( text, type ){
 	
 	switch( type ){
 		case "bad": 
-			color = "gear-red";
+			color = "theme-red";
 			break;
 		case "warn":
 			color = "w3-amber";
@@ -17,7 +17,7 @@ function createNotificationCard( text, type ){
 			color = "gear-blue";
 			break;
 		case "102":
-			color = "gear-orange";
+			color = "theme-link";
 			break;
 		default:
 			color = "gear-white";

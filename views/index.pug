@@ -14,54 +14,54 @@ block content
 		h4(class="gear-text-white") Tournament Info
 		
 		a(href="/reports/rankings")
-			div(class="gear-btn gear-orange gear-hover-white w3-btn")
+			div(class="gear-btn theme-link gear-hover-white w3-btn")
 				span Current Rankings
 		br 
 		a(href="/reports/finishedmatches")
-			div(class="gear-btn gear-orange gear-hover-white w3-btn")
+			div(class="gear-btn theme-link gear-hover-white w3-btn")
 				span Completed Matches [All teams]
 		br 
 		a(href="/reports/metricsranked")
-			div(class="gear-btn gear-orange gear-hover-white w3-btn")
+			div(class="gear-btn theme-link gear-hover-white w3-btn")
 				span Statistics
 	div(class="w3-container w3-section")
 		h4(class="gear-text-white") Team Info
 		//teamSelect dropdown for intel and upcoming pages.
 		if( teamList && teamList[0] )
 			label(class="")
-				select#teamSelect(class="gear-btn gear-orange w3-btn")
+				select#teamSelect(class="gear-btn theme-link w3-btn")
 					option(value="") Team #
 					each team in teamList
 						option(value=team class="w3-bar-item") #{team}
 		//-
 			label(style="position:relative;top:8px")
-				input(class="w3-padding gear-orange w3-border-white w3-border w3-margin-right" style="border: none; width: 6.2em" type="number" placeholder="Team #" id="teamNo")
+				input(class="w3-padding theme-link w3-border-white w3-border w3-margin-right" style="border: none; width: 6.2em" type="number" placeholder="Team #" id="teamNo")
 			//
 		a
-			button(class="gear-btn gear-orange w3-btn w3-disabled" onclick="redIntel()" id="stats" disabled)
+			button(class="gear-btn theme-link w3-btn w3-disabled" onclick="redIntel()" id="stats" disabled)
 				span Stats
 		a
-			div(class="gear-btn gear-orange gear-hover-white w3-btn" onclick="redUpcoming()")
+			div(class="gear-btn theme-link gear-hover-white w3-btn" onclick="redUpcoming()")
 				span Upcoming Matches [Team or All]
 	//Login if not logged in
 	if( !user || (user && user.name == "[Dev]"))
 		div(class="w3-container w3-section")
 			h4(class="gear-text-white") Team 102 Log In
 			a(href="/login/scouter") 
-				div(class="gear-btn gear-orange gear-hover-white w3-btn")
+				div(class="gear-btn theme-link gear-hover-white w3-btn")
 					span Scouter Login
 			br 
 			a(href="/login/admin")
-				div(class="gear-btn gear-orange gear-hover-white w3-btn")
+				div(class="gear-btn theme-link gear-hover-white w3-btn")
 					span Admin Login
 	if user
 		div(class="w3-container w3-section")
 			h4(class="gear-text-white")=user.name
 			a(href="/dashboard")
-				div(class="gear-btn gear-orange gear-hover-white w3-btn") Dashboard
+				div(class="gear-btn theme-link gear-hover-white w3-btn") Dashboard
 			if( user.subteam == "support" || user.subteam == "exec" )
 				a(href="/admin")
-					div(class="gear-btn gear-orange gear-hover-white w3-btn") Admin Index
+					div(class="gear-btn theme-link gear-hover-white w3-btn") Admin Index
 	script.
 		//Checks if teamSelect/teamNo are filled, and if so, redirect the user to intel.
 		function redIntel(){

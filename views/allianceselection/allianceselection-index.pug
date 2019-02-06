@@ -21,11 +21,11 @@ block content
 			for row in aggdata
 				tr
 					td
-						button(class="w3-button w3-hover-red w3-red gear-counter w3-tiny w3-padding-small" onclick=`setValue('${row._id}', -1)` type="button") -
+						button(class="w3-button  theme-red gear-counter w3-tiny w3-padding-small" onclick=`setValue('${row._id}', -1)` type="button") -
 					td
 						button(class="w3-button w3-hover-dark-grey w3-dark-grey gear-counter w3-tiny w3-padding-small" onclick=`setValue('${row._id}', '')` type="button") &nbsp;
 					td
-						button(class="w3-button w3-hover-green w3-green gear-counter w3-tiny w3-padding-small" onclick=`setValue('${row._id}', 1)` type="button") +
+						button(class="w3-button w3-hover-green theme-submit gear-counter w3-tiny w3-padding-small" onclick=`setValue('${row._id}', 1)` type="button") +
 					td(class="w3-center")= row.value
 					if (row.value == -1)
 						td(class="w3-center")

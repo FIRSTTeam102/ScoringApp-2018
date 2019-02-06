@@ -10,7 +10,7 @@ block content
 	- if (team.country != 'USA') country = team.country;
 	h4(class="gear-text-white" style="font-style:italic") From: #{team.city}, #{team.state_prov} #{country}
 	h4(class="gear-text-white" style="font-style:italic") #{team.name}
-	a(class="gear-btn gear-orange gear-hover-white w3-btn" href=`/reports/upcoming?team=${team.key}`) Click here to see upcoming matches for Team #{team.key.substring(3)}
+	a(class="gear-btn theme-link gear-hover-white w3-btn" href=`/reports/upcoming?team=${team.key}`) Click here to see upcoming matches for Team #{team.key.substring(3)}
 	br
 	i
 		a(class="gear-btn gear-blue gear-hover-white w3-btn" href=`/reports/teamintelhistory?team=${team.key}`) Click here to see all data for Team #{team.key.substring(3)} from this year
@@ -119,7 +119,7 @@ block content
 					tr
 						- var text = agg.key; var result1 = text.replace( /([A-Z])/g, " $1" ); var result2 = result1.charAt(0).toUpperCase() + result1.slice(1)
 						td(class="w3-text-light-gray w3-small")
-							a(class="gear-btn gear-orange gear-hover-white w3-btn" href=`/reports/metricintel?key=${agg.key}`)= result2
+							a(class="gear-btn theme-link gear-hover-white w3-btn" href=`/reports/metricintel?key=${agg.key}`)= result2
 						- var minCol = 'w3-right-align w3-text-white'
 						- if (agg.min == 0) minCol = 'w3-right-align w3-text-gray'
 						td(class=`${minCol}`)= agg.min
@@ -187,7 +187,7 @@ block content
 								- var teamStyleRed = "";
 								- if (teamkey == team.key) teamStyleRed = "font-weight:800";
 								a(href=`/reports/teammatchintel?key=${match.key}_${teamkey}`)
-									div(class="gear-red gear-hover-white w3-btn w3-block" style=`${teamStyleRed}`)
+									div(class="theme-red gear-hover-white w3-btn w3-block" style=`${teamStyleRed}`)
 										span= teamkey.substring(3)
 					div(class="w3-col s4 m2")
 						- var divClassRed = 'w3-dark-grey w3-btn w3-block w3-border';

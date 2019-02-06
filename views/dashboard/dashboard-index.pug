@@ -16,7 +16,7 @@ block content
 							span= team.team_key.substring(3)
 				else
 					a(href=`/scouting/pit?team=${team.team_key}`) 
-						div(class="gear-btn gear-orange gear-hover-white w3-btn w3-section gear-margin-sides")
+						div(class="gear-btn theme-link gear-hover-white w3-btn w3-section gear-margin-sides")
 							span= team.team_key.substring(3)
 			hr
 		if backupTeams.length > 0
@@ -27,14 +27,14 @@ block content
 						span= team.team_key.substring(3)
 				else
 					a(href=`/scouting/pit?team=${team.team_key}`) 
-						div(class="gear-btn gear-orange gear-hover-white w3-btn w3-section gear-margin-sides")
+						div(class="gear-btn theme-link gear-hover-white w3-btn w3-section gear-margin-sides")
 							span= team.team_key.substring(3)
 			hr
 		if scoringMatches.length > 0
 			h3(class="gear-text-white") Upcoming matches to be scored
 			each match in scoringMatches
 				- match.alliance = (match.alliance == "red") ? "Red" : "Blue";
-				- var btnColor = (match.alliance == "Red") ? "gear-red" : "gear-blue"
+				- var btnColor = (match.alliance == "Red") ? "theme-red" : "gear-blue"
 				
 				- //gets date crap
 				- var date = new Date( match.time * 1000 )
@@ -57,8 +57,8 @@ block content
 			hr
 		div(class="w3-container w3-padding-16")
 			a(href="/dashboard/pits") 
-				div(class="gear-btn gear-orange gear-hover-white w3-btn w3-section gear-margin-sides")
+				div(class="gear-btn theme-link gear-hover-white w3-btn w3-section gear-margin-sides")
 					span One-off Pit Scouting
 			a(href="/dashboard/matches") 
-				div(class="gear-btn gear-orange gear-hover-white w3-btn w3-section gear-margin-sides")
+				div(class="gear-btn theme-link gear-hover-white w3-btn w3-section gear-margin-sides")
 					span One-off Match Scouting

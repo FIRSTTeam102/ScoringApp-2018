@@ -71,7 +71,7 @@ a{
 .gear-border-black,.gear-border-hover-black:hover{border-color:#1E1E23!important}
 .gear-border-orange,.gear-border-hover-orange:hover{border-color:#FF5F0B!important}
 
-.gear-no-border{border:none!important}
+.w3-no-border{border:none!important}
 
 .gear-btn{ 
 	min-width:100px; 

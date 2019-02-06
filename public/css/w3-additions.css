@@ -1,0 +1,31 @@
+
+@media (min-width: 601px){
+	.gear-label,.w3-label{
+		text-align: right;
+		padding-right: 8px;
+	}
+	.w3-show-small{display:none!important}
+	#navBar{ display: inline!important; }
+}
+
+@media (max-width: 600px){
+	.gear-resp90,.w3-resp90{
+		width: 90%!important;
+	}
+	.gear-resp50,.w3-resp90{
+		width: 50%!important;
+	}
+}
+
+.w3-btn{box-shadow: none!important;}
+
+.w3-no-border{border:none!important}
+
+.gear-btn{ 
+	min-width:100px; 
+	margin: 15px 8px 0px 8px;
+}
+
+.gear-counter,.w3-counter{
+	font-weight:bold;box-sizing:content-box;width:20px;height:20px;padding:8px;
+}

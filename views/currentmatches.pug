@@ -8,7 +8,7 @@ extends layout
 block content
 	style html{overflow-x: visible;}
 	form#updatematches(name="updatematches" method="post" action="/admin/current/updatematches")
-		button#btnSubmit(type="submit" class="w3-button gear-hover-white gear-orange w3-text-white") Update all matches
+		button#btnSubmit(type="submit" class="w3-button gear-hover-white theme-submit w3-text-white") Update all matches
 	br
 	if locals.matches
 		table(class="w3-table")
@@ -44,12 +44,13 @@ block content
 						td
 					td= match.winning_alliance
 					td
-						button(class="w3-button w3-green" onClick=`updateMatch('${match.key}')`) Update
+						button(class="w3-button theme-submit" onClick=`updateMatch('${match.key}')`) Update
 	br
 	form#resetmatches(name="resetmatches" method="post" action="/admin/current/resetmatches")
-		button#btnSubmit(type="submit" class="w3-button gear-hover-white gear-orange w3-text-white") RESET ALL MATCHES
+		button#btnSubmit(type="submit" class="w3-button theme-red theme-strong w3-text-white") RESET ALL MATCHES
 	form#updatematchdata(name="updatematchdata" method="post" action="/admin/current/updatematch")
 		input#matchId(type="hidden", name="matchId")
+	br 
 	script.
 		function updateMatch(matchId)
 		{

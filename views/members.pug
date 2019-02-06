@@ -20,15 +20,15 @@ block content
 				form(id=`deleteMember${member._id}` action="/admin/teammembers/deletemember" method="post")
 					input(type="hidden" name="memberId" value=member._id)
 				div(class="w3-col m1 w3-padding-small")
-					button(class="w3-btn w3-red w3-block" onclick=`confirmDelete('${member.name}', '${member._id}')`) Delete
+					button(class="w3-btn theme-red w3-block" onclick=`confirmDelete('${member.name}', '${member._id}')`) Delete
 				form(id="updateMember" action="/admin/teammembers/updatemember" method="post")
 					input(type="hidden" name="memberId" value=member._id)
 					div(class="w3-col m2 w3-padding-small")
-						button(class="w3-btn w3-green w3-block" type="submit") Update
+						button(class="w3-btn theme-submit w3-block" type="submit") Update
 					div(class="w3-col m3 w3-padding-small")
-						input(type="text" value=member.name name="name" class="w3-input w3-dark-gray gear-no-border gear-input-height")
+						input(type="text" value=member.name name="name" class="w3-input theme-input w3-no-border gear-inline-padding")
 					div(class="w3-col m2 w3-padding-small")
-						select(class="w3-select w3-dark-gray gear-no-border" name="subteam")
+						select(class="w3-select theme-input w3-no-border" name="subteam")
 							- options = ["mech", "elec", "prog", "exec", "lead", "driv", "support"];
 							each option in options
 								- if (member.subteam == option)
@@ -36,7 +36,7 @@ block content
 								- else
 									option(value=option)= option
 					div(class="w3-col m2 w3-padding-small")
-						select(class="w3-select w3-dark-gray gear-no-border" name="className")
+						select(class="w3-select theme-input w3-no-border" name="className")
 							- classNames = ["freshman", "sophomore", "junior", "senior", "middleschool", "mentor", "parent" ];
 							each option in classNames
 								- if (member.className == option)
@@ -44,25 +44,25 @@ block content
 								- else
 									option(value=option)= option
 					div(class="w3-col m2 w3-padding-small")
-						input(type="text" value=member.years name="years" class="w3-input w3-dark-gray gear-no-border gear-input-height")
+						input(type="text" value=member.years name="years" class="w3-input theme-input w3-no-border gear-inline-padding")
 		div(class="w3-row")
 			form(action="/admin/teammembers/addmember" method="post")
 				div(class="w3-col m2 w3-padding-small")
-					button(type="submit" class="w3-btn w3-cyan w3-block") Add
+					button(type="submit" class="w3-btn theme-submit w3-block") Add
 				div(class="w3-col m3 w3-padding-small")
-					input(type="text" class="w3-input w3-dark-gray w3-block gear-no-border gear-input-height" name="name" placeholder="name")
+					input(type="text" class="w3-input theme-input w3-block w3-no-border gear-inline-padding" name="name" placeholder="name")
 				div(class="w3-col m2 w3-padding-small")
-					select(name="subteam" class="w3-select w3-dark-gray gear-no-border")
+					select(name="subteam" class="w3-select theme-input w3-no-border")
 						- options = ["mech", "elec", "prog", "driv", "lead", "exec", "support"];
 						each option in options
 							option(value=option)= option
 				div(class="w3-col m3 w3-padding-small")
-					select(name="className" class="w3-select w3-dark-gray gear-no-border")
+					select(name="className" class="w3-select theme-input w3-no-border")
 						- options = ["freshman", "sophomore", "junior", "senior", "middleschool", "mentor", "parent" ];
 						each option in options
 							option(value=option)= option
 				div(class="w3-col m2 w3-padding-small")
-					input(class="w3-input w3-dark-gray gear-no-border gear-input-height" name="years" type="text" placeholder="years on team")
+					input(class="w3-input theme-input w3-no-border gear-inline-padding" name="years" type="text" placeholder="years on team")
 	script.
 		function confirmDelete(memberName, memberId){
 			if(confirm('Delete member: "' + memberName + '"?')){

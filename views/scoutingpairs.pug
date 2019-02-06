@@ -15,47 +15,47 @@ block content
 			td
 				ul(class="w3-ul w3-card")
 					each member, i in prog
-						li(class="gear-no-border")
-							button(class='w3-btn w3-block gear-light-gray' chosenstate='false' id=member.name onclick=`toggle("${member.name}")`)= member.name
+						li(class="w3-no-border")
+							button(class='w3-btn w3-block w3-dark-gray' chosenstate='false' id=member.name onclick=`toggle("${member.name}")`)= member.name
 			td
 				ul(class="w3-ul")
 					each member, i in mech
-						li(class="gear-no-border")
-							button(class='w3-btn w3-block gear-light-gray' chosenstate='false' id=member.name onclick=`toggle("${member.name}")`)= member.name
+						li(class="w3-no-border")
+							button(class='w3-btn w3-block w3-dark-gray' chosenstate='false' id=member.name onclick=`toggle("${member.name}")`)= member.name
 			td
 				ul(class="w3-ul")
 					each member, i in elec
-						li(class="gear-no-border")
-							button(class='w3-btn w3-block gear-light-gray' chosenstate='false' id=member.name onclick=`toggle("${member.name}")`)= member.name
+						li(class="w3-no-border")
+							button(class='w3-btn w3-block w3-dark-gray' chosenstate='false' id=member.name onclick=`toggle("${member.name}")`)= member.name
 	form#setmemberpair(name="setmemberpair" method="post" action="/admin/scoutingpairs/setscoutingpair")
 		input#setmemberpairdata(type="hidden", name="data")
-	button(class="w3-btn w3-block w3-cyan" onclick="submitPair()") Submit selected members as a new scouting group
+	button(class="w3-btn w3-block theme-submit" onclick="submitPair()") Submit selected members as a new scouting group
 
 	if assigned.length > 0
 		hr
 		h2 Scouting pairs
 	ul(class="w3-ul w3-left-align")
 		each pair in assigned
-			li(class="gear-no-border")
+			li(class="w3-no-border")
 				- var selectedArray = [];
 				- var pairId;
 				- for (var key in pair) if (key != "_id") selectedArray.push(" "+pair[key]);
 				- for (var key in pair) if (key == "_id") pairId=pair[key];
 				- thisButtonLabel = selectedArray.toString();
-				button(onclick=`deletePair("${pairId}")` class="w3-btn w3-red") Delete pair
+				button(onclick=`deletePair("${pairId}")` class="w3-btn theme-red") Delete pair
 				|    #{thisButtonLabel}
 	form(method="post" action="/admin/scoutingpairs/deletescoutingpair" id="deletememberpair")
 		input(id="deletememberpairinput" name="data" type="hidden")
 	hr
 	div( onclick="promptPass('WARNING: Erases existing SCOUTING data for current event.', '/admin/scoutingpairs/generateteamallocations');")
-		button(class="w3-btn w3-cyan" type="submit") (Re)Allocate teams to PIT SCOUTING members
+		button(class="w3-btn theme-submit" type="submit") (Re)Allocate teams to PIT SCOUTING members
 	br
 	div( onclick="promptPass('WARNING: Erases existing SCORING data for current event.', '/admin/scoutingpairs/generatematchallocations');")
-		button(class="w3-btn w3-cyan" type="submit") (Re)Allocate teams@matches to MATCH SCORING members
+		button(class="w3-btn theme-submit" type="submit") (Re)Allocate teams@matches to MATCH SCORING members
 	br 
 	br 
 	div( onclick="promptPass('WARNING: Erases MATCH SCORING ASSIGNMENTS for current event.', '/admin/scoutingpairs/clearmatchallocations');")
-		button(class="w3-btn w3-cyan" type="submit") Clear all MATCH SCORING assignments
+		button(class="w3-btn theme-red theme-strong" type="submit") Clear all MATCH SCORING assignments
 	hr
 	h2 Team@Match Allocation v2.0
 	form(action="/admin/scoutingpairs/generatematchallocations2" method="post")
@@ -66,7 +66,7 @@ block content
 					label(class="w3-text-white" for=member.name) &nbsp;#{member.name} (#{member.subteam})
 					br
 		br
-		button(type="submit" class="w3-btn w3-cyan") (Re)Allocate teams@matches to ASSIGNED + CHECKED
+		button(type="submit" class="w3-btn theme-submit") (Re)Allocate teams@matches to ASSIGNED + CHECKED
 	
 	script.
 		
@@ -100,7 +100,7 @@ block content
 				if (selected >= 3)
 					return;
 				
-				document.getElementById(id).className = "w3-btn w3-green w3-block";
+				document.getElementById(id).className = "w3-btn w3-light-gray w3-block";
 				document.getElementById(id).setAttribute("chosenstate", "true");
 				
 				if( selectedDict.member1 && selectedDict.member2 )
@@ -122,7 +122,7 @@ block content
 			}
 			else
 			{
-				document.getElementById(id).className = "gear-light-gray w3-btn w3-block";
+				document.getElementById(id).className = "w3-dark-gray w3-btn w3-block";
 				document.getElementById(id).setAttribute("chosenstate", "false");
 				
 				//shuffles selectedDict down to make sure we always have member1 and 2

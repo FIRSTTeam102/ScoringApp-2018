@@ -71,7 +71,7 @@ a{
 .gear-border-black,.gear-border-hover-black:hover{border-color:#1E1E23!important}
 .gear-border-orange,.gear-border-hover-orange:hover{border-color:#FF5F0B!important}
 
-.gear-no-border{border:none!important}
+.w3-no-border{border:none!important}
 
 .gear-btn{ 
 	min-width:100px; 
@@ -82,7 +82,7 @@ a{
 	font-weight:bold;box-sizing:content-box;width:20px;height:20px;padding:8px;
 }
 
-.gear-input-height {min-height:18px;padding:9px}
+.gear-inline-padding {min-height:18px;padding:9px}
 
 @media (min-width: 601px){
 	.gear-label{

@@ -17,8 +17,8 @@ block content
 			hr
 			h4= row.member
 			each item in row.record
-				- var itemClass = "w3-button gear-hover-white w3-green gear-counter"
-				- if (item == 'N') itemClass = "w3-button gear-hover-white w3-red gear-counter"
+				- var itemClass = "w3-button gear-hover-white theme-submit gear-counter"
+				- if (item == 'N') itemClass = "w3-button gear-hover-white theme-red gear-counter"
 				- if (item == 'C') itemClass = "w3-button gear-hover-white w3-yellow gear-counter"
 				- if (item == 'P') itemClass = "w3-button gear-hover-white w3-purple gear-counter"
 				div(class=`${itemClass}`)

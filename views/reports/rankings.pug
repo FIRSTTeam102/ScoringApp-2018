@@ -16,7 +16,7 @@ block content
 				tr
 					td(class="gear-text-white w3-center")= team.rank
 					td(class="w3-text-light-gray w3-center")
-						a(class="gear-btn gear-orange gear-hover-white w3-btn" href=`/reports/teamintel?team=${team.team_key}`)= team.team_key.substring(3)
+						a(class="gear-btn theme-link gear-hover-white w3-btn" href=`/reports/teamintel?team=${team.team_key}`)= team.team_key.substring(3)
 					td(class="w3-text-light-gray w3-center")= team.record.wins+'-'+team.record.losses+'-'+team.record.ties
 					td(class="w3-text-light-gray w3-center")= team.dq
 					td(class="w3-text-light-gray w3-center")= team.matches_played

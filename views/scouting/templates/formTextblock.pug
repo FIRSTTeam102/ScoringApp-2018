@@ -1,3 +1,5 @@
+var pitCol = req.db.get('scoutingdata');
+var aggCol = req.db.get('scoringdata');
+var db = req.db;
 div  #{element.label} 
-textarea(name=`${element.id}` rows="4" cols="30")
-p
+textarea(name=`${element.id}` rows="4" cols="30")=pitData

@@ -6,7 +6,7 @@ If you actually are interested about using the app for yourselves, contact us fo
 
 INSTALLATION
 
-do `npm instal1`
+do `npm install`
 
 RUN
 

@@ -139,6 +139,10 @@ block content
 		span Show 
 		span Previous Matches
 	div#PreviousMatchesSection(class="w3-container w3-hide")
+		style.
+			.previousmatches-container{ height: 108px; }
+			.previousmatches-team{ height: 20px; }
+			.previousmatches-team-container{ height: 36px; }
 		h2(class="gear-text-white") Previous matches
 		
 		if (matches && matches.length > 0)		
@@ -158,17 +162,18 @@ block content
 								span #{matchPrefix.toUpperCase()}Match #{match.match_number}: #{outcome}
 					div(class="w3-col m1") &nbsp;
 					div(class="w3-col s8 m2")
-						div(class="w3-col w3-border")
+						div(class="w3-col w3-border alliance-blue previousmatches-container")
 							each teamkey in match.alliances.blue.team_keys
-								- var teamStyleBlue = "";
-								- if (teamkey == team.key) teamStyleBlue = "font-weight:800";
+								- var teamStyleBlue = "height: 36px;";
+								- if (teamkey == team.key) teamStyleBlue += "font-weight:800;";
 								a(href=`/reports/teammatchintel?key=${match.key}_${teamkey}`)
-									div(class="gear-blue gear-hover-white w3-btn w3-block" style=`${teamStyleBlue}`)
-										span= teamkey.substring(3)
+									div(class="w3-btn w3-block previousmatches-team-container alliance-hover-blue" style=`${teamStyleBlue}`)
+										span(class="previousmatches-team")= teamkey.substring(3)
 					div(class="w3-col s4 m2")
-						- var divClassBlue = 'w3-dark-grey w3-btn w3-block w3-border';
-						- if (match.winning_alliance == 'blue') divClassBlue = 'w3-white w3-btn w3-block w3-border';
-						div(class=`${divClassBlue}` style="height:110px")
+						- var divClassBlue = 'w3-btn w3-block w3-border previousmatches-container ';
+						- if (match.winning_alliance == 'blue') divClassBlue += 'w3-white';
+						- else divClassBlue += 'theme-gray';
+						div(class=`${divClassBlue}`)
 							if (match.alliances.blue.score > -1)
 								span Score:
 								br
@@ -182,17 +187,18 @@ block content
 								span &nbsp;
 					div(class="w3-col m1") &nbsp;
 					div(class="w3-col s8 m2")
-						div(class="w3-col w3-border")
+						div(class="w3-col w3-border alliance-red previousmatches-container")
 							each teamkey in match.alliances.red.team_keys
-								- var teamStyleRed = "";
-								- if (teamkey == team.key) teamStyleRed = "font-weight:800";
+								- var teamStyleRed = "height: 36px;";
+								- if (teamkey == team.key) teamStyleRed += "font-weight:800";
 								a(href=`/reports/teammatchintel?key=${match.key}_${teamkey}`)
-									div(class="theme-red gear-hover-white w3-btn w3-block" style=`${teamStyleRed}`)
-										span= teamkey.substring(3)
+									div(class="w3-btn w3-block alliance-hover-red" style=`${teamStyleRed}`)
+										span(class="previousmatches-team")= teamkey.substring(3)
 					div(class="w3-col s4 m2")
-						- var divClassRed = 'w3-dark-grey w3-btn w3-block w3-border';
-						- if (match.winning_alliance == 'red') divClassRed = 'w3-white w3-btn w3-block w3-border';
-						div(class=`${divClassRed}` style="height:110px")
+						- var divClassRed = 'w3-btn w3-block w3-border previousmatches-container ';
+						- if (match.winning_alliance == 'red') divClassRed += 'w3-white';
+						- else divClassRed += 'theme-gray';
+						div(class=`${divClassRed}`)
 							if (match.alliances.red.score > -1)
 								span Score:
 								br

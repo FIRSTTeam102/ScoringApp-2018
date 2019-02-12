@@ -197,7 +197,6 @@ router.get("/teamintel", function(req, res){
 				});
 			}
 			var team = docs[0];
-			//console.log(thisFuncName + 'team=' + JSON.stringify(team));
 
 			// Extract the current team ranking, etc.
 			rankCol.find({team_key: teamKey}, {sort: {rank: 1}}, function(e, docs) {

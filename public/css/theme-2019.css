@@ -1,15 +1,16 @@
 .theme-link:hover{color:rgb(22, 21, 20)!important;background-color:#f3dfd4!important}
 .theme-link{color:#ffffff!important;background-color:#cf5615!important}
 .theme-input{color:#fff!important;background-color:#585868!important}
+.theme-gray{color:#fff!important;background-color:#585868!important}
 .theme-red{color:#fff!important;background-color:#be0020!important}
 .theme-hover-red:hover{color:#fff!important;background-color:#ff6d85!important}
 .theme-submit{color:#fff!important;background-color:hsl(240, 62%, 58%)!important}
 .theme-submit:hover{color:#fff!important;background-color:hsl(240, 60%, 62%)!important}
 
 .alliance-red{color:#fff!important;background-color:#EC0D00!important}
-.alliance-red:hover{color:rgb(43, 16, 16)!important;background-color:rgb(255, 171, 167)!important}
+.alliance-hover-red:hover{color:rgb(43, 16, 16)!important;background-color:rgb(255, 171, 167)!important}
 .alliance-blue{color:#fff!important;background-color:#2623B8!important}
-.alliance-blue:hover{color:rgb(14, 13, 32)!important;background-color:rgb(134, 132, 235)!important}
+.alliance-hover-blue:hover{color:rgb(14, 13, 32)!important;background-color:rgb(134, 132, 235)!important}
 
 .theme-text{color:#C8C8DC!important;}
 .theme-text-dark{color:#1E1E23!important;}

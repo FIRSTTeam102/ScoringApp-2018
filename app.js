@@ -51,7 +51,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //Session
 app.use(session({
-	secret: 'keyboard cat',
+	secret: 'marcus night',
 	resave: false,
 	saveUninitialized: true
 }));

@@ -6,8 +6,11 @@ functions.userViewVars = function(req, res, next){
 	
 	if(req.user)
 		res.locals.user = req.user;
+		
 	else if(req.app.isDev == true){
-		res.locals.user = {name: '[Dev]', subteam: 'support'};
+		
+		req.user = {name: '[Dev]', subteam: 'support'};
+		res.locals.user = req.user;
 	}
 	next();
 }

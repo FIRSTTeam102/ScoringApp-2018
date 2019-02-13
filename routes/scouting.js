@@ -153,8 +153,7 @@ router.get('/pit*', function(req, res) {
 		res.redirect("/dashboard");
 		return;
 	}
-	console.log(thisFuncName + 'teamKey=' + teamKey + ' ~ thisUserName=' + thisUserName);
-	
+
 	var db = req.db;
 	var scoutCol = db.get("scoutinglayout");
 	var pitCol = req.db.get('scoutingdata'); //for pitcol.find()
@@ -250,54 +249,4 @@ router.get('/', function(req, res){
 	res.redirect('/dashboard/pits');
 });
 
-/*
-router.get('/', function(req, res){
-	
-	var teams = req.db.get('teams');
-	var scoutingresults = req.db.get('scoutingresults');
-	
-	teams.find({},{ sort: {team_number: 1} },function(e,teams){
-		
-		scoutingresults.find({},{},function(e,teamResults){
-			
-			//sets all thingies as empty
-			for(var i = 0; i < teams.length; i++){
-				
-				teams[i].complete = false;
-				teams[i].assigned = null;
-				teams[i].answers = {};
-				
-			}
-			
-			for(var i = 0; i < teamResults.length; i++){
-				
-				var teamNum = teamResults[i].team_number;
-				var complete = teamResults[i].complete;
-				var assigned = teamResults[i].assigned;
-				var answers = teamResults[i].answers;
-				
-				for(var j = 0; j < teams.length; j++){
-					
-					if(teams[j].team_number == teamNum){
-						var team = teams[j];
-						
-						team.complete = complete;
-						team.assigned = assigned;
-						team.answers = answers;
-						
-					}
-				}
-			}
-			
-			res.render('./scouting/scouting-index',{
-				title: "Teams to be Scouted",
-				teams: teams,
-				teamResults: teamResults
-			});	
-		});		
-	});
-	
-	
-});
-*/
 module.exports = router;

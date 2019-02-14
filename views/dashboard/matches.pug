@@ -3,14 +3,17 @@ extends ../layout
 block content
 	if matches.length > 0
 		h3(class="gear-text-white w3-margin-bottom") Match Scouting
-		table(style="margin-right: auto; margin-left:auto")#matchTable
-			tr(class="")
-				//th(onclick="w3.sortHTML('#matchTable','.item', 'td:nth-child(1)')" style="cursor:pointer") Match
+		table(class="theme-contains-spacer w3-content" style="")#matchTable
+			tr#title
 				th(onclick="w3.sortHTML('#matchTable','.item', 'td:nth-child(3)')" style="cursor:pointer") Assigned
 				th Team
 				th Team Name
 			each match, i in matches
 				- if (i%6==0)
+					tr
+						td(class="theme-spacer")
+						td(class="theme-spacer")
+						td(class="theme-spacer")
 					- //gets date crap
 					- var date = new Date( match.time * 1000 )
 					- if (match.predicted_time) date = new Date( match.predicted_time * 1000 );
@@ -20,10 +23,10 @@ block content
 					- var minute = date.getMinutes();
 					- //makes minute crap 2 digits
 					- minute = (minute.toString().length==1) ? "0".concat(minute.toString()) : minute;
-					tr(class="w3-border-top")
-						td  
+					tr
+						td 
 						th(class="w3-right w3-margin-top") 
-							span( style="position:relative;left: 20%;") Match #{match.match_number} <br/> #{day} @ #{hour}:#{minute}
+							span Match #{match.match_number} <br/> #{day} @ #{hour}:#{minute}
 						td  
 				tr(class="item")
 					- match.alliance = (match.alliance == "red") ? "Red" : "Blue";

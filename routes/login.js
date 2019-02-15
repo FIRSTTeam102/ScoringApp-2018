@@ -80,7 +80,7 @@ router.get('/adduser', function(req, res){
 router.get('/changepassword', function(req, res){
 	
 	if( !require('./checkauthentication')(req, res) ){
-		return console.log('authentication failed for /login/changepassword');
+		return res.log('authentication failed for /login/changepassword');
 	}
 	
 	res.render('./login/changepassword', {
@@ -97,7 +97,7 @@ router.get('/changepassword', function(req, res){
 router.get('/resetpassword', function(req, res){
 	
 	if( !require('./checkauthentication')(req, res, 'admin') ){
-		return console.log('authentication failed for /login/changepassword');
+		return res.log('authentication failed for /login/changepassword');
 	}
 	
 	var teammembers = req.db.get("teammembers");

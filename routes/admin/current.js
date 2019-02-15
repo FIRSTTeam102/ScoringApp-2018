@@ -8,7 +8,7 @@ router.get("/matches", function(req, res) {
 	}
 
 	var thisFuncName = "current.matches[get]: ";
-	console.log(thisFuncName + 'ENTER')
+	res.log(thisFuncName + 'ENTER')
 	
     // Set our internal DB variable
     var db = req.db;
@@ -19,7 +19,7 @@ router.get("/matches", function(req, res) {
 	matchCol.find({"event_key": eventId},{sort: {"time": 1}}, function(e, docs){
 		
 		if(e){ //if error, log to console
-			console.log(e);
+			res.log(e);
 		}
 		matches = docs;
 		
@@ -30,12 +30,56 @@ router.get("/matches", function(req, res) {
 	});
 });
 
+router.get("/getcurrentteams", function(req, res){
+	if( !require('../checkauthentication')(req, res, 'admin') ){
+		return null;
+	}
+	
+	//set up db collections
+	var db = req.db;
+	var passwordsCol = db.get("passwords");
+	var currentTeamsCol = db.get("currentteams");
+	
+	//get TBA key from db
+	passwordsCol.find({ name:"thebluealliance-args" }, function(e, args){
+		if(e || !args[0]){
+			return res.status(500).send("couldn't find TBA args in db");
+		}
+		args = args[0];
+		
+		//set up tba call
+		var Client = require('node-rest-client').Client;
+		var client = new Client();
+		var eventId = req.event.key;
+		var teamsUrl = `https://www.thebluealliance.com/api/v3/event/${eventId}/teams`;
+		
+		//get teams from tba
+		client.get(teamsUrl, args, function (data, response) {
+			
+			var currentTeams = JSON.parse(data);
+			
+			if(!currentTeams){
+				return res.status(500).send("didn't get teams list");
+			}
+			
+			//delete contents of currentteams
+			currentTeamsCol.remove({},function(){
+				
+				//insert teams into currentteams
+				currentTeamsCol.insert(currentTeams, function(){
+					res.redirect('/admin?alert=Updated current teams successfully.');
+				});
+			})
+		});
+	});
+})
+
 router.post("/resetmatches", function(req, res) {
 	if( !require('../checkauthentication')(req, res, 'admin') ){
 		return null;
 	}
 	var thisFuncName = "current.resetmatches[post]: ";
-	console.log(thisFuncName + 'ENTER')
+	res.log(thisFuncName + 'ENTER');
 	
     // Set our internal DB variable
     var db = req.db;
@@ -49,7 +93,7 @@ router.post("/resetmatches", function(req, res) {
 		matchCol.find({"event_key": eventId},{sort: {"time": 1}}, function(e, docs){
 		
 			if(e){ //if error, log to console
-				console.log(e);
+				res.log(e);
 			}
 			matches = docs;
 			
@@ -66,7 +110,7 @@ router.post("/updatematch", function(req, res) {
 		return null;
 	}
 	var thisFuncName = "current.updatematch[post]: ";
-	console.log(thisFuncName + 'ENTER')
+	res.log(thisFuncName + 'ENTER')
 	
 	var matchId = req.body.matchId;
 
@@ -92,14 +136,14 @@ router.post("/updatematch", function(req, res) {
 	rankCol.remove({}, function(e, docs) {
 		// Reload the rankings from TBA
 		var rankingUrl = "https://www.thebluealliance.com/api/v3/event/" + eventId + "/rankings";
-		console.log(thisFuncName + "rankingUrl=" + rankingUrl);
+		res.log(thisFuncName + "rankingUrl=" + rankingUrl);
 	
 		client.get(rankingUrl, args, function (data, response) {
 			var rankinfo = JSON.parse(data);
 			var rankArr = [];
 			if (rankinfo)
 				rankArr = rankinfo.rankings;
-			//console.log(thisFuncName + 'rankArr=' + JSON.stringify(rankArr));
+			//res.log(thisFuncName + 'rankArr=' + JSON.stringify(rankArr));
 
 			// Insert into DB
 			rankCol.insert(rankArr, function(e, docs) {
@@ -108,7 +152,7 @@ router.post("/updatematch", function(req, res) {
 				matchCol.remove({"key": matchId}, function(e, docs) {
 					// Reload the match data from TBA
 					var url = "https://www.thebluealliance.com/api/v3/match/" + matchId;
-					console.log(thisFuncName + "url=" + url);
+					res.log(thisFuncName + "url=" + url);
 				
 					client.get(url, args, function (data, response) {
 						var match = JSON.parse(data);
@@ -140,7 +184,7 @@ router.post("/updatematches", function(req, res) {
 		return null;
 	}
 	var thisFuncName = "current.updatematches[post]: ";
-	console.log(thisFuncName + 'ENTER')
+	res.log(thisFuncName + 'ENTER')
 	
     // Set our internal DB variable
     var db = req.db;
@@ -165,27 +209,27 @@ router.post("/updatematches", function(req, res) {
 	rankCol.remove({}, function(e, docs) {
 		// Reload the rankings from TBA
 		var rankingUrl = "https://www.thebluealliance.com/api/v3/event/" + eventId + "/rankings";
-		console.log(thisFuncName + "rankingUrl=" + rankingUrl);
+		res.log(thisFuncName + "rankingUrl=" + rankingUrl);
 	
 		client.get(rankingUrl, args, function (data, response) {
 			var rankinfo = JSON.parse(data);
 			var rankArr = [];
 			if (rankinfo)
 				rankArr = rankinfo.rankings;
-			//console.log(thisFuncName + 'rankArr=' + JSON.stringify(rankArr));
+			//res.log(thisFuncName + 'rankArr=' + JSON.stringify(rankArr));
 
 			// Insert into DB
 			rankCol.insert(rankArr, function(e, docs) {
 				// Get matches data from TBA
 				var url = "https://www.thebluealliance.com/api/v3/event/" + eventId + "/matches";
-				console.log(thisFuncName + "url=" + url);
+				res.log(thisFuncName + "url=" + url);
 				client.get(url, args, function (data, response) {
 					var array = JSON.parse(data);
 					var arrayLength = array.length;
 					if (arrayLength == null)
 					{
-						console.log(thisFuncName + "Whoops, there was an error!")
-						console.log(thisFuncName + "data=" + data);
+						res.log(thisFuncName + "Whoops, there was an error!")
+						res.log(thisFuncName + "data=" + data);
 						
 						res.render('./adminindex', { 
 							title: 'Admin pages',
@@ -194,7 +238,7 @@ router.post("/updatematches", function(req, res) {
 					}
 					else
 					{
-						console.log(thisFuncName + 'Found ' + arrayLength + ' data for event ' + eventId);
+						res.log(thisFuncName + 'Found ' + arrayLength + ' data for event ' + eventId);
 						
 						// First delete existing match data for the given event
 						matchCol.remove({"event_key": eventId}, function(e, docs) {

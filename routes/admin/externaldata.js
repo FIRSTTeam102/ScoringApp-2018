@@ -1,16 +1,17 @@
 var express = require("express");
 var router = express.Router();
 
-////////////////////////
-// Events by year
-////////////////////////
-
+/**
+ * Admin page to show a list of events by any given year.
+ * @url /admin/data/events
+ * @view /events
+ */
 router.get("/events", function(req, res) {
 	if(!require('../checkauthentication')(req, res, 'admin'))
 		return null;
 	
 	var thisFuncName = "externaldata.events[get]: ";
-	console.log(thisFuncName + 'ENTER')
+	res.log(thisFuncName + 'ENTER')
 	
 	var events = {};
 	
@@ -22,16 +23,16 @@ router.get("/events", function(req, res) {
 	if (!year)
 	{
 		year = (new Date()).getFullYear();
-		console.log(thisFuncName + 'No year specified, defaulting to ' + year);
+		res.log(thisFuncName + 'No year specified, defaulting to ' + year);
 	}
-	console.log(thisFuncName + 'Year: ' + year);
+	res.log(thisFuncName + 'Year: ' + year);
 
 	// Read events from DB for specified year
 	var eventCol = db.get("events");
 	eventCol.find({"year": parseInt(year)},{sort: {"start_date": 1, "end_date": 1, "name": 1}}, function(e, docs){
 		
 		if(e){ //if error, log to console
-			console.log(e);
+			res.log(e);
 		}
 		events = docs;
 		
@@ -39,7 +40,7 @@ router.get("/events", function(req, res) {
 		var uniqueYears;
 		eventCol.distinct("year", function(e, docs) {
 			uniqueYears = docs.sort();
-			console.log(thisFuncName + "uniqueYears=" + uniqueYears);
+			res.log(thisFuncName + "uniqueYears=" + uniqueYears);
 			
 			res.render("./events", {
 				title: "Events",
@@ -54,12 +55,17 @@ router.get("/events", function(req, res) {
 	//res.render("./events?year=" + year);
 });
 
+/**
+ * POST: Admin page to update all events for a given year.
+ * @url POST: /admin/data/events
+ * @view /events
+ */
 router.post("/events", function(req, res) {
 	if(!require('../checkauthentication')(req, res, 'admin'))
 		return null;
 	
 	var thisFuncName = "externaldata.events[post]: ";
-	console.log(thisFuncName + 'ENTER')
+	res.log(thisFuncName + 'ENTER')
 	
     // Set our internal DB variable
     var db = req.db;
@@ -68,7 +74,7 @@ router.post("/events", function(req, res) {
     // Get our form value(s)
     var year = req.body.year;
 
-	console.log(thisFuncName + 'year=' + year);
+	res.log(thisFuncName + 'year=' + year);
 	
 	// nodeclient from earlier?
 	var Client = require('node-rest-client').Client;
@@ -79,7 +85,7 @@ router.post("/events", function(req, res) {
 		headers: { "accept": "application/json", "X-TBA-Auth-Key": "iSpbq2JH2g27Jx2CI5yujDsoKYeC8pGuMw94YeK3gXFU6lili7S2ByYZYZOYI3ew" }
 	}
 	var url = "https://www.thebluealliance.com/api/v3/events/" + year + "/simple";
-	console.log(thisFuncName + "url=" + url);
+	res.log(thisFuncName + "url=" + url);
 	
 	// Read unique list of years in DB
 	var uniqueYears;
@@ -91,8 +97,8 @@ router.post("/events", function(req, res) {
 			var arrayLength = array.length;
 			if (arrayLength == null)
 			{
-				console.log(thisFuncName + "Whoops, there was an error!")
-				console.log(thisFuncName + "data=" + data);
+				res.log(thisFuncName + "Whoops, there was an error!")
+				res.log(thisFuncName + "data=" + data);
 				year = (new Date()).getFullYear();
 				
 				res.render("./events", {
@@ -103,8 +109,8 @@ router.post("/events", function(req, res) {
 			}
 			else
 			{
-				console.log(thisFuncName + 'Found ' + arrayLength + ' data for year ' + year);
-				//console.log(thisFuncName + 'Stringify array: ' + JSON.stringify(array));
+				res.log(thisFuncName + 'Found ' + arrayLength + ' data for year ' + year);
+				//res.log(thisFuncName + 'Stringify array: ' + JSON.stringify(array));
 				
 				// First delete existing event data for the given year
 				eventCol.remove({"year": parseInt(year)}, function(e, docs) {
@@ -133,16 +139,18 @@ router.post("/events", function(req, res) {
 	});
 });
 
-////////////////////////
-// Matches by event
-////////////////////////
 
+/**
+ * Admin page to display matches of a specified event id.
+ * @url /
+ * @view /index
+ */
 router.get("/matches", function(req, res) {
 	if(!require('../checkauthentication')(req, res, 'admin'))
 		return null;
 	
 	var thisFuncName = "externaldata.matches[get]: ";
-	console.log(thisFuncName + 'ENTER')
+	res.log(thisFuncName + 'ENTER')
 	
 	var matches = {};
 	
@@ -153,17 +161,17 @@ router.get("/matches", function(req, res) {
     var eventId = req.query.eventId;
 	if (!eventId)
 	{
-		console.log(thisFuncName + 'No event specified');
+		res.log(thisFuncName + 'No event specified');
 		res.redirect("./events");
 	}
-	console.log(thisFuncName + 'eventId=' + eventId);
+	res.log(thisFuncName + 'eventId=' + eventId);
 
 	// Read matches from DB for specified event
 	var matchCol = db.get("matches");
 	matchCol.find({"event_key": eventId},{sort: {"time": 1}}, function(e, docs){
 		
 		if(e){ //if error, log to console
-			console.log(e);
+			res.log(e);
 		}
 		matches = docs;
 		
@@ -179,7 +187,7 @@ router.post("/matches", function(req, res) {
 		return null;
 	
 	var thisFuncName = "externaldata.matches[post]: ";
-	console.log(thisFuncName + 'ENTER')
+	res.log(thisFuncName + 'ENTER')
 	
     // Set our internal DB variable
     var db = req.db;
@@ -189,7 +197,7 @@ router.post("/matches", function(req, res) {
     // Get our form value(s)
     var eventId = req.body.eventId;
 
-	console.log(thisFuncName + 'eventId=' + eventId);
+	res.log(thisFuncName + 'eventId=' + eventId);
 	
 	// nodeclient from earlier?
 	var Client = require('node-rest-client').Client;
@@ -200,7 +208,7 @@ router.post("/matches", function(req, res) {
 	}
 
 	var url = "https://www.thebluealliance.com/api/v3/event/" + eventId + "/matches";
-	console.log(thisFuncName + "url=" + url);
+	res.log(thisFuncName + "url=" + url);
 	
 	// Read unique list of years in DB (for redirect)
 	var uniqueYears;
@@ -212,8 +220,8 @@ router.post("/matches", function(req, res) {
 			var arrayLength = array.length;
 			if (arrayLength == null)
 			{
-				console.log(thisFuncName + "Whoops, there was an error!")
-				console.log(thisFuncName + "data=" + data);
+				res.log(thisFuncName + "Whoops, there was an error!")
+				res.log(thisFuncName + "data=" + data);
 				year = (new Date()).getFullYear();
 				
 				res.render("./events", {
@@ -224,8 +232,8 @@ router.post("/matches", function(req, res) {
 			}
 			else
 			{
-				console.log(thisFuncName + 'Found ' + arrayLength + ' data for event ' + eventId);
-				//console.log(thisFuncName + 'Stringify array: ' + JSON.stringify(array));
+				res.log(thisFuncName + 'Found ' + arrayLength + ' data for event ' + eventId);
+				//res.log(thisFuncName + 'Stringify array: ' + JSON.stringify(array));
 				
 				// First delete existing match data for the given event
 				matchCol.remove({"event_key": eventId}, function(e, docs) {
@@ -256,7 +264,7 @@ router.get("/teams", function(req, res) {
 		return null;
 	
 	var thisFuncName = "externaldata.teams[get]: ";
-	console.log(thisFuncName + 'ENTER')
+	res.log(thisFuncName + 'ENTER')
 	
 	var matches = {};
 	
@@ -268,10 +276,10 @@ router.get("/teams", function(req, res) {
     var eventId = req.query.eventId;
 	if (!eventId)
 	{
-		console.log(thisFuncName + 'No event specified');
+		res.log(thisFuncName + 'No event specified');
 		res.redirect("./events");
 	}
-	console.log(thisFuncName + 'eventId=' + eventId);
+	res.log(thisFuncName + 'eventId=' + eventId);
 	*/
 	
 	// Read all teams from DB
@@ -279,7 +287,7 @@ router.get("/teams", function(req, res) {
 	teamCol.find({},{sort: {"key": 1}}, function(e, docs){
 		
 		if(e){ //if error, log to console
-			console.log(e);
+			res.log(e);
 		}
 		teams = docs;
 		
@@ -295,7 +303,7 @@ router.post("/teams", function(req, res) {
 		return null;
 	
 	var thisFuncName = "externaldata.teams[post]: ";
-	console.log(thisFuncName + 'ENTER')
+	res.log(thisFuncName + 'ENTER')
 	
     // Set our internal DB variable
     var db = req.db;
@@ -305,7 +313,7 @@ router.post("/teams", function(req, res) {
     // Get our form value(s)
     var eventId = req.body.eventId;
 
-	console.log(thisFuncName + 'eventId=' + eventId);
+	res.log(thisFuncName + 'eventId=' + eventId);
 
 	// nodeclient from earlier?
 	var Client = require('node-rest-client').Client;
@@ -317,7 +325,7 @@ router.post("/teams", function(req, res) {
 
 	// Read teams from TBA
 	var url = "https://www.thebluealliance.com/api/v3/event/" + eventId + "/teams/simple";
-	console.log(thisFuncName + "url=" + url);
+	res.log(thisFuncName + "url=" + url);
 	
 	// Read unique list of years in DB (for redirect)
 	var uniqueYears;
@@ -329,8 +337,8 @@ router.post("/teams", function(req, res) {
 			var arrayLength = array.length;
 			if (arrayLength == null)
 			{
-				console.log(thisFuncName + "Whoops, there was an error!")
-				console.log(thisFuncName + "data=" + data);
+				res.log(thisFuncName + "Whoops, there was an error!")
+				res.log(thisFuncName + "data=" + data);
 				year = (new Date()).getFullYear();
 				
 				res.render("./events", {
@@ -342,20 +350,20 @@ router.post("/teams", function(req, res) {
 			else
 			{
 				var tbaTeams = array;
-				//console.log(thisFuncName + "tbaTeamArray=" + JSON.stringify(tbaTeamArray));
-				console.log(thisFuncName + 'Found ' + tbaTeams.length + ' teams from TBA for event ' + eventId);
-				//for (let team of tbaTeams) { console.log(thisFuncName + 'tbaTeam.key=' + team.key); }
+				//res.log(thisFuncName + "tbaTeamArray=" + JSON.stringify(tbaTeamArray));
+				res.log(thisFuncName + 'Found ' + tbaTeams.length + ' teams from TBA for event ' + eventId);
+				//for (let team of tbaTeams) { res.log(thisFuncName + 'tbaTeam.key=' + team.key); }
 				
 				// Read teams from DB
 				teamCol.find({},{sort: {"key": 1}}, function(e, docs){
 					
 					if(e){ //if error, log to console
-						console.log(e);
+						res.log(e);
 					}
 					var dbTeams = docs;
-					//console.log(thisFuncName + "dbTeams=" + JSON.stringify(dbTeams));
-					console.log(thisFuncName + 'Found ' + dbTeams.length + ' teams in DB');
-					//for (let team of dbTeams) { console.log(thisFuncName + 'dbTeam.key=' + team.key); }
+					//res.log(thisFuncName + "dbTeams=" + JSON.stringify(dbTeams));
+					res.log(thisFuncName + 'Found ' + dbTeams.length + ' teams in DB');
+					//for (let team of dbTeams) { res.log(thisFuncName + 'dbTeam.key=' + team.key); }
 
 					// collect which teams are already in DB
 					var dbTeamLookup = {};
@@ -367,18 +375,18 @@ router.post("/teams", function(req, res) {
 					var tbaTeamsInsert = [];
 					for (let team of tbaTeams)
 					{
-						//console.log(thisFuncName + 'tbaTeam.key=' + team.key + '; in dbTeamLookup?=' + dbTeamLookup[team.key]);
+						//res.log(thisFuncName + 'tbaTeam.key=' + team.key + '; in dbTeamLookup?=' + dbTeamLookup[team.key]);
 						if (!dbTeamLookup[team.key])
 						{
-							//console.log(thisFuncName + '...adding ' + team.key);
+							//res.log(thisFuncName + '...adding ' + team.key);
 							tbaTeamsInsert.push(team);
 						}
 					}
-					console.log(thisFuncName + 'Found ' + tbaTeamsInsert.length + ' teams to add to DB');
+					res.log(thisFuncName + 'Found ' + tbaTeamsInsert.length + ' teams to add to DB');
 					/*
 					for (let team of tbaTeamsInsert)
 					{
-						console.log(thisFuncName + 'tbaTeamsInsert contains ' + team.key);
+						res.log(thisFuncName + 'tbaTeamsInsert contains ' + team.key);
 					}
 					*/
 

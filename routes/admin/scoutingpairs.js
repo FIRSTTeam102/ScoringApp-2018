@@ -9,7 +9,7 @@ router.get("/", function(req, res) {
 	var thisFuncName = "scoutingpairs root: ";
 	
 	// Log message so we can see on the server side when we enter this
-	console.log(thisFuncName + "ENTER");
+	res.log(thisFuncName + "ENTER");
 	
 	var db = req.db;
 	
@@ -33,19 +33,19 @@ router.get("/", function(req, res) {
 	collection.find({"subteam":"prog","present":"true","assigned":"false"}, {sort: {"name": 1}}, function(e, docs){
 		
 		if(e){ //if error, log to console
-			console.log(thisFuncName + e);
+			res.log(thisFuncName + e);
 		}
 		progTeam = docs;
 		
 		collection.find({"subteam":"mech","present":"true","assigned":"false"}, {sort: {"name": 1}}, function(e, docs){
 			if(e){ //if error, log to console
-				console.log(thisFuncName + e);
+				res.log(thisFuncName + e);
 			}
 			mechTeam = docs;
 			
 			collection.find({"subteam":"elec","present":"true","assigned":"false"}, {sort: {"name": 1}}, function(e, docs){
 				if(e){ //if error, log to console
-					console.log(thisFuncName + e);
+					res.log(thisFuncName + e);
 				}
 				elecTeam = docs;
 				
@@ -53,19 +53,19 @@ router.get("/", function(req, res) {
 				var collection2 = db.get("scoutingpairs");
 				collection2.find({}, {}, function (e, docs) {;
 					if(e){ //if error, log to console
-						console.log(thisFuncName + e);
+						res.log(thisFuncName + e);
 					}
 					assigned = docs;
 
 					// 2018-04-03, M.O'C - Adding in set of "present but not assigned" people
 					collection.find({"assigned": "false", "present": "true"}, {sort: {"name": 1}}, function(e, docs) {
 						if(e){ //if error, log to console
-							console.log(thisFuncName + e);
+							res.log(thisFuncName + e);
 						}
 						available = docs;
 					
 						//Renders page through Jade.
-						console.log(thisFuncName + "RENDERING");
+						res.log(thisFuncName + "RENDERING");
 						
 						res.render("./scoutingpairs", {
 							title: "Scouting Pairs",
@@ -81,7 +81,7 @@ router.get("/", function(req, res) {
 		});
 	});
 	
-	console.log(thisFuncName + "DONE");
+	res.log(thisFuncName + "DONE");
 });
 
 /* POST to Set scoutingPair Service */
@@ -92,7 +92,7 @@ router.post('/setscoutingpair', function(req, res) {
 	var thisFuncName = "setscoutingpair: ";
 	
 	// Log message so we can see on the server side when we enter this
-	console.log(thisFuncName + "ENTER");
+	res.log(thisFuncName + "ENTER");
 
     // Set our internal DB variable
     var db = req.db;
@@ -106,11 +106,11 @@ router.post('/setscoutingpair', function(req, res) {
 	
     // Get our form values. These rely on the "name" attributes of form elements (e.g., named 'data' in the form)
     var data = req.body.data;
-    //console.log(thisFuncName + data);
+    //res.log(thisFuncName + data);
 	
 	// The javascript Object was JSON.stringify() on the client end; we need to re-hydrate it with JSON.parse()
 	var selectedMembers = JSON.parse(data);
-	console.log(selectedMembers);
+	res.log(selectedMembers);
 	//var insertArray = [];
 	//insertArray["pair"] = selectedMembers;
 
@@ -131,17 +131,17 @@ router.post('/setscoutingpair', function(req, res) {
     // Submit to the DB
 	for (var member in selectedMembers)
 	{
-		console.log(selectedMembers[member]);
+		res.log(selectedMembers[member]);
 		collection.update(
 			{ "name" : selectedMembers[member] },
 			{ $set: { "assigned" : "true" } }
 		)
 	}
 	
-	console.log(thisFuncName + "REDIRECT");
+	res.log(thisFuncName + "REDIRECT");
 	res.redirect("./");
 	
-	console.log(thisFuncName + "DONE");
+	res.log(thisFuncName + "DONE");
 });
 
 router.post("/deletescoutingpair", function(req, res) {
@@ -151,7 +151,7 @@ router.post("/deletescoutingpair", function(req, res) {
 	var thisFuncName = "deletescoutingpair: ";
 	
 	// Log message so we can see on the server side when we enter this
-	console.log(thisFuncName + "ENTER");
+	res.log(thisFuncName + "ENTER");
 	
 	var db = req.db;
 	
@@ -169,10 +169,10 @@ router.post("/deletescoutingpair", function(req, res) {
 	scoutCol.find({"_id": data}, {}, function(e, docs){
 		
 		if(e){ //if error, log to console
-			console.log(thisFuncName + e);
+			res.log(thisFuncName + e);
 		}
 		thisPair = docs[0];
-		console.log("thisPair=" + JSON.stringify(thisPair));
+		res.log("thisPair=" + JSON.stringify(thisPair));
 
 		var teamCol = db.get('teammembers');
 
@@ -183,17 +183,17 @@ router.post("/deletescoutingpair", function(req, res) {
 			nameList.push(thisPair.member2);
 		if (thisPair.member3)
 			nameList.push(thisPair.member3);
-		console.log("nameList=" + JSON.stringify(nameList));
+		res.log("nameList=" + JSON.stringify(nameList));
 
 		teamCol.bulkWrite([{updateMany:{filter:{ "name": {$in: nameList }}, update:{ $set: { "assigned" : "false" } }}}], function(e, docs){
 			scoutCol.remove({"_id": data}, function(e, docs) {
-				console.log(thisFuncName + "REDIRECT");
+				res.log(thisFuncName + "REDIRECT");
 				res.redirect("./");	
 			});
 		});
 	});
 	
-	console.log(thisFuncName + "DONE");
+	res.log(thisFuncName + "DONE");
 });
 
 router.post("/generateteamallocations", function(req, res) {
@@ -209,7 +209,7 @@ router.post("/generateteamallocations", function(req, res) {
 		return res.send({status: 401, alert: "No password entered."});
 	}
 	if( !require('../checkauthentication')(req, res, 'admin') )
-		return console.log('admin not logged in on generateteamallocations');
+		return res.log('admin not logged in on generateteamallocations');
 	
 	var teammembers = req.db.get('teammembers');
 	
@@ -240,7 +240,7 @@ router.post("/generateteamallocations", function(req, res) {
 	//var year = (new Date()).getFullYear();
 							
 	// Log message so we can see on the server side when we enter this
-	console.log(thisFuncName + "ENTER");
+	res.log(thisFuncName + "ENTER");
 	
 	var db = req.db;
 	var currentCol = db.get("current");
@@ -289,7 +289,7 @@ router.post("/generateteamallocations", function(req, res) {
 		//
 		scoutPairCol.find({}, {}, function (e, docs) {
 			if(e){ //if error, log to console
-				console.log(thisFuncName + e);
+				res.log(thisFuncName + e);
 			}
 			var scoutingpairs = docs;
 
@@ -317,34 +317,34 @@ router.post("/generateteamallocations", function(req, res) {
 					scoutingAssignedArray.push(set1.primary);
 				}
 			}
-			//console.log(thisFuncName + "primaryAndBackupMap=" + JSON.stringify(primaryAndBackupMap));
+			//res.log(thisFuncName + "primaryAndBackupMap=" + JSON.stringify(primaryAndBackupMap));
 
 			//
 			// Read all present members, ordered by 'seniority' ~ have an array ordered by seniority
 			//
 			memberCol.find({ "name": {$in: scoutingAssignedArray }}, { sort: {"seniority": 1, "subteam": 1, "name": 1} }, function(e, docs) {
-				console.log(thisFuncName + "inside memberCol.find()");
+				res.log(thisFuncName + "inside memberCol.find()");
 				if(e){ //if error, log to console
-					console.log(thisFuncName + e);
+					res.log(thisFuncName + e);
 				}
 				var teammembers = docs;
 				var teammembersLen = teammembers.length;
 				/*
 				for (var i = 0; i < teammembersLen; i++)
-					console.log(thisFuncName + "member["+i+"=" + JSON.stringify(teammembers[i]));
+					res.log(thisFuncName + "member["+i+"=" + JSON.stringify(teammembers[i]));
 				*/
 
 				//
 				// Get all the teams for the 'current' event
 				//
 				var url = "https://www.thebluealliance.com/api/v3/event/" + eventId + "/teams/simple";
-				console.log(thisFuncName + "url=" + url);
+				res.log(thisFuncName + "url=" + url);
 				client.get(url, args, function (data, response) {
 					var tbaTeamArray = JSON.parse(data);
 					var tbaTeamArrayLen = tbaTeamArray.length;
 					if (tbaTeamArrayLen == null) {
-						console.log(thisFuncName + "Whoops, there was an error!")
-						console.log(thisFuncName + "data=" + data);
+						res.log(thisFuncName + "Whoops, there was an error!")
+						res.log(thisFuncName + "data=" + data);
 						
 						//year = (new Date()).getFullYear();
 						// 2019-01-23, M.O'C: See YEARFIX comment above
@@ -368,10 +368,10 @@ router.post("/generateteamallocations", function(req, res) {
 						var thisTeammemberName = teammembers[assigneePointer].name;
 						var thisPrimaryAndBackup = primaryAndBackupMap[thisTeammemberName];
 						/*
-						console.log(thisFuncName + "i=" + i + "; assigneePointer=" + assigneePointer);
-						console.log(thisFuncName + "thisTbaTeam=" + JSON.stringify(thisTbaTeam));
-						console.log(thisFuncName + "thisTeammemberName=" + thisTeammemberName);
-						console.log(thisFuncName + "thisPrimaryAndBackup=" + JSON.stringify(thisPrimaryAndBackup));
+						res.log(thisFuncName + "i=" + i + "; assigneePointer=" + assigneePointer);
+						res.log(thisFuncName + "thisTbaTeam=" + JSON.stringify(thisTbaTeam));
+						res.log(thisFuncName + "thisTeammemberName=" + thisTeammemberName);
+						res.log(thisFuncName + "thisPrimaryAndBackup=" + JSON.stringify(thisPrimaryAndBackup));
 						*/
 						
 						// { year, event_key, team_key, primary, secondary, tertiary, actual, scouting_data: {} }
@@ -394,7 +394,7 @@ router.post("/generateteamallocations", function(req, res) {
 							if (assigneePointer >= teammembersLen)
 								assigneePointer = 0;
 						} else {
-							console.log(thisFuncName + "Skipping team " + thisTbaTeam.key);
+							res.log(thisFuncName + "Skipping team " + thisTbaTeam.key);
 						}
 							
 						
@@ -403,9 +403,9 @@ router.post("/generateteamallocations", function(req, res) {
 						// Map of assignments by team so we can lookup by team later during match assigning
 						teamassignmentsByTeam[thisTbaTeam.key] = thisAssignment;
 					}
-					console.log(thisFuncName + "****** New/updated teamassignments:");
+					res.log(thisFuncName + "****** New/updated teamassignments:");
 					for (var i = 0; i < tbaTeamArrayLen; i++)
-						console.log(thisFuncName + "team,primary,secondary,tertiary=" + teamassignments[i].team_key + " ~> " + teamassignments[i].primary + "," + teamassignments[i].secondary + ","  + teamassignments[i].tertiary);
+						res.log(thisFuncName + "team,primary,secondary,tertiary=" + teamassignments[i].team_key + " ~> " + teamassignments[i].primary + "," + teamassignments[i].secondary + ","  + teamassignments[i].tertiary);
 					
 					// Delete ALL the old elements first for the 'current' event
 					scoutDataCol.remove({"event_key": event_key}, function(e, docs) {
@@ -443,12 +443,12 @@ router.post("/generatematchallocations2", function(req, res) {
 	
 	var thisFuncName = "scoutingpairs.generateMATCHallocations2[post]: ";
 	// Log message so we can see on the server side when we enter this
-	console.log(thisFuncName + "ENTER");
+	res.log(thisFuncName + "ENTER");
 
 	var availableArray = [];
-	console.log(thisFuncName + '*** Tagged as available:');
+	res.log(thisFuncName + '*** Tagged as available:');
 	for(var i in req.body) {
-		console.log(thisFuncName + i);
+		res.log(thisFuncName + i);
 		availableArray.push(i);
 	}
 
@@ -506,7 +506,7 @@ router.post("/generatematchallocations2", function(req, res) {
 		//
 		scoutDataCol.find({"event_key": event_key}, function(e, docs) {
 			if(e){ //if error, log to console
-				console.log(thisFuncName + e);
+				res.log(thisFuncName + e);
 			}
 			var scoutDataArray = docs;
 			
@@ -515,7 +515,7 @@ router.post("/generatematchallocations2", function(req, res) {
 			var scoutDataLen = scoutDataArray.length;
 			for (var i = 0; i < scoutDataLen; i++) {
 				scoutDataByTeam[scoutDataArray[i].team_key] = scoutDataArray[i];
-				//console.log(thisFuncName + "Scout data: For team " + scoutDataArray[i].team_key + ", array is " + JSON.stringify(scoutDataArray[i]));
+				//res.log(thisFuncName + "Scout data: For team " + scoutDataArray[i].team_key + ", array is " + JSON.stringify(scoutDataArray[i]));
 			}
 
 			//
@@ -523,14 +523,14 @@ router.post("/generatematchallocations2", function(req, res) {
 			//
 			memberCol.find({$or: [{"name": {$in: availableArray}}, {"assigned": "true"}]}, { sort: {"seniority": 1, "subteam": 1, "name": 1} }, function(e, docs) {
 				if(e){ //if error, log to console
-					console.log(thisFuncName + e);
+					res.log(thisFuncName + e);
 				}
 				// - matchscouts is the "queue"; need a pointer to indicate where we are
 				var matchScouts = docs;
 				var matchScoutsLen = matchScouts.length;
-				console.log(thisFuncName + "*** Assigned + available, by seniority:");
+				res.log(thisFuncName + "*** Assigned + available, by seniority:");
 				for (var i = 0; i < matchScoutsLen; i++)
-					console.log(thisFuncName + "member["+i+"] = " + matchScouts[i].name);
+					res.log(thisFuncName + "member["+i+"] = " + matchScouts[i].name);
 
 				// who is "first" in line in the 'queue'
 				var nextMatchScout = 0;
@@ -578,7 +578,7 @@ router.post("/generatematchallocations2", function(req, res) {
 										if (scoutPointer >= matchScoutsLen)
 											scoutPointer = 0;
 									}
-									console.log(thisFuncName + "Updated current scouts: " + JSON.stringify(scoutArray));
+									res.log(thisFuncName + "Updated current scouts: " + JSON.stringify(scoutArray));
 									
 									matchBlockCounter = 0;
 								}
@@ -593,11 +593,11 @@ router.post("/generatematchallocations2", function(req, res) {
 								var matchGap = comingMatches[matchesIdx].time - lastMatchTimestamp;
 								// Iterate until a "break" is found (or otherwise, if the loop is exhausted)
 								if (matchGap > matchGapBreakThreshold) {
-									console.log(thisFuncName + "matchGap=" + matchGap + "... found a break");
+									res.log(thisFuncName + "matchGap=" + matchGap + "... found a break");
 									break;
 								}
 								
-								//console.log(thisFuncName + "comingMatch[" + matchesIdx + "]: matchGap=" + (matchGap) + ", redteams=" + JSON.stringify(comingMatches[matchesIdx].alliances.red.team_keys) + ", blueteams=" + JSON.stringify(comingMatches[matchesIdx].alliances.blue.team_keys));
+								//res.log(thisFuncName + "comingMatch[" + matchesIdx + "]: matchGap=" + (matchGap) + ", redteams=" + JSON.stringify(comingMatches[matchesIdx].alliances.red.team_keys) + ", blueteams=" + JSON.stringify(comingMatches[matchesIdx].alliances.blue.team_keys));
 								var teamArray = [];
 								var teamScoutMatchMap = {};
 								if (redBlueToggle == 0)
@@ -610,7 +610,7 @@ router.post("/generatematchallocations2", function(req, res) {
 										teamArray.push(comingMatches[matchesIdx].alliances.blue.team_keys[i]);
 										teamArray.push(comingMatches[matchesIdx].alliances.red.team_keys[i]);
 									}
-								console.log(thisFuncName + "comingMatch[" + matchesIdx + "]: matchGap=" + (matchGap) + ", teamArray=" + JSON.stringify(teamArray));
+								res.log(thisFuncName + "comingMatch[" + matchesIdx + "]: matchGap=" + (matchGap) + ", teamArray=" + JSON.stringify(teamArray));
 								
 								// -- In each match, assign 6 scouts to 6 teams in 'scoringdata'
 								// *** PUZZLE: How to do team preferential assignment?
@@ -632,12 +632,12 @@ router.post("/generatematchallocations2", function(req, res) {
 											// Who is assigned to this team?
 											var thisScoutData = scoutDataByTeam[thisTeamKey];
 											var thisPossibleAssignee = thisScoutData[thisRole];
-											//console.log(thisFuncName + ">> Comparing: " + thisTeamKey + ", for role " + thisRole + " is " + thisPossibleAssignee);
+											//res.log(thisFuncName + ">> Comparing: " + thisTeamKey + ", for role " + thisRole + " is " + thisPossibleAssignee);
 											
 											// Are they available?
 											if (thisPossibleAssignee != null && scoutAvailableMap[thisPossibleAssignee] != null) {
 												// Assign them!
-												//console.log(thisFuncName + "** Assigning " + thisPossibleAssignee + " to " + thisTeamKey);
+												//res.log(thisFuncName + "** Assigning " + thisPossibleAssignee + " to " + thisTeamKey);
 												teamScoutMap[thisTeamKey] = thisPossibleAssignee;
 												// Take assignee out of available
 												delete scoutAvailableMap[thisPossibleAssignee];
@@ -651,7 +651,7 @@ router.post("/generatematchallocations2", function(req, res) {
 								for (var property in scoutAvailableMap)
 									if (scoutAvailableMap.hasOwnProperty(property))
 										leftoverScouts.push(scoutAvailableMap[property]);
-								//console.log(thisFuncName + "leftover scouts are " + JSON.stringify(leftoverScouts));
+								//res.log(thisFuncName + "leftover scouts are " + JSON.stringify(leftoverScouts));
 
 								// cycle through teams, find the ones without assignees
 								var leftoverPointer = 0;
@@ -676,7 +676,7 @@ router.post("/generatematchallocations2", function(req, res) {
 											{ "match_team_key" : thisMatchTeamKey },
 											{ $set: { "assigned_scorer" : thisScout } }
 										)
-										//console.log(thisFuncName + "Assigned " + thisMatchTeamKey + " to " + thisScout);
+										//res.log(thisFuncName + "Assigned " + thisMatchTeamKey + " to " + thisScout);
 									}
 								}									
 								
@@ -704,7 +704,7 @@ router.post("/clearmatchallocations", function(req, res) {
 		return res.send({status: 401, alert: "No password entered."});
 	}
 	if( !require('../checkauthentication')(req, res, 'admin') )
-		return console.log('admin not logged in on generateteamallocations');
+		return res.log('admin not logged in on generateteamallocations');
 	
 	var teammembers = req.db.get('teammembers');
 	
@@ -734,7 +734,7 @@ router.post("/clearmatchallocations", function(req, res) {
 	//var year = (new Date()).getFullYear();
 							
 	// Log message so we can see on the server side when we enter this
-	console.log(thisFuncName + "ENTER");
+	res.log(thisFuncName + "ENTER");
 	
 	var db = req.db;
 	var currentCol = db.get("current");
@@ -796,7 +796,7 @@ router.post("/generatematchallocations", function(req, res) {
 		return res.send({status: 401, alert: "No password entered."});
 	}
 	if( !require('../checkauthentication')(req, res, 'admin') )
-		return console.log('admin not logged in on generateteamallocations');
+		return res.log('admin not logged in on generateteamallocations');
 	
 	var teammembers = req.db.get('teammembers');
 	
@@ -826,7 +826,7 @@ router.post("/generatematchallocations", function(req, res) {
 	//var year = (new Date()).getFullYear();
 							
 	// Log message so we can see on the server side when we enter this
-	console.log(thisFuncName + "ENTER");
+	res.log(thisFuncName + "ENTER");
 	
 	var db = req.db;
 	var currentCol = db.get("current");
@@ -885,7 +885,7 @@ router.post("/generatematchallocations", function(req, res) {
 		// Need map of team IDs to scouts (scoutingdata)
 		scoutDataCol.find({"event_key": event_key}, function(e, docs) {
 			if(e){ //if error, log to console
-				console.log(thisFuncName + e);
+				res.log(thisFuncName + e);
 			}
 			var scoutDataArray = docs;
 			
@@ -897,7 +897,7 @@ router.post("/generatematchallocations", function(req, res) {
 			
 			// Read all matches
 			var url = "https://www.thebluealliance.com/api/v3/event/" + eventId + "/matches/simple";
-			console.log(thisFuncName + "url=" + url);
+			res.log(thisFuncName + "url=" + url);
 
 			//// WARNING WARNING DANGER WILL ROBINSON - Manually editing for local DB access!
 //			matchDataCol.find({"event_key": event_key}, function(e, docs) {
@@ -909,8 +909,8 @@ router.post("/generatematchallocations", function(req, res) {
 				var matchLen = matchArray.length;
 				if (matchLen == null)
 				{
-					console.log(thisFuncName + "Whoops, there was an error!");
-					console.log(thisFuncName + "matchArray=" + matchArray);
+					res.log(thisFuncName + "Whoops, there was an error!");
+					res.log(thisFuncName + "matchArray=" + matchArray);
 					
 					res.render('./adminindex', { 
 						title: 'Admin pages',
@@ -918,14 +918,14 @@ router.post("/generatematchallocations", function(req, res) {
 					});
 					return;
 				}
-				console.log(thisFuncName + 'Found ' + matchLen + ' matches for event ' + eventId);
+				res.log(thisFuncName + 'Found ' + matchLen + ' matches for event ' + eventId);
 
 				// Build up the scoringdata array
 				var scoringDataArray = [];
 				// Loop through each match
 				for (var matchIdx = 0; matchIdx < matchLen; matchIdx++) {
 					var thisMatch = matchArray[matchIdx];
-					//console.log(thisFuncName + "*** thisMatch=" + thisMatch.key);
+					//res.log(thisFuncName + "*** thisMatch=" + thisMatch.key);
 					
 					// Build unassigned match-team data elements
 					var thisMatchDataArray = [];
@@ -949,13 +949,13 @@ router.post("/generatematchallocations", function(req, res) {
 							thisScoreData["team_key"] = thisMatch.alliances[allianceArray[allianceIdx]].team_keys[teamIdx];
 							thisScoreData["match_team_key"] = thisMatch.key + "_" + thisScoreData["team_key"];
 
-							//console.log(thisFuncName + "thisScoreData=" + JSON.stringify(thisScoreData));
+							//res.log(thisFuncName + "thisScoreData=" + JSON.stringify(thisScoreData));
 							
 							thisMatchDataArray.push(thisScoreData);
 						}
 					}
 					var thisMatchLen = thisMatchDataArray.length;
-					//console.log(thisFuncName + "thisMatchDataArray=" + JSON.stringify(thisMatchDataArray));
+					//res.log(thisFuncName + "thisMatchDataArray=" + JSON.stringify(thisMatchDataArray));
 					
 					// Keep track of who we've assigned - can't assign someone twice!
 					var assignedMembers = {};
@@ -967,12 +967,12 @@ router.post("/generatematchallocations", function(req, res) {
 						// Cycle through the scoring data, looking for blank assignees
 						for (var thisMatchIdx = 0; thisMatchIdx < thisMatchLen; thisMatchIdx++) {
 							var thisScoreData = thisMatchDataArray[thisMatchIdx];
-							//console.log(thisFuncName + "thisScoreData=" + thisScoreData);
+							//res.log(thisFuncName + "thisScoreData=" + thisScoreData);
 							// Not yet assigned?
 							if (!(thisScoreData.assigned_scorer)) {
 								// Which team is this?
 								var thisTeamKey = thisScoreData.team_key;
-								//console.log(thisFuncName + 'thisTeamKey=' + thisTeamKey);
+								//res.log(thisFuncName + 'thisTeamKey=' + thisTeamKey);
 								
 								// 2018-03-15, M.O'C: Skip assigning if this teams is the "active" team (currently hardcoding to 'frc102')
 								if (activeTeamKey != thisTeamKey)
@@ -995,9 +995,9 @@ router.post("/generatematchallocations", function(req, res) {
 						}
 					}
 					
-					console.log(thisFuncName + "*** thisMatch=" + thisMatch.key);
+					res.log(thisFuncName + "*** thisMatch=" + thisMatch.key);
 					for (var thisMatchDataIdx = 0; thisMatchDataIdx < thisMatchLen; thisMatchDataIdx++) {
-						console.log(thisFuncName + "team,assigned=" + thisMatchDataArray[thisMatchDataIdx].team_key + " ~> " + thisMatchDataArray[thisMatchDataIdx].assigned_scorer);
+						res.log(thisFuncName + "team,assigned=" + thisMatchDataArray[thisMatchDataIdx].team_key + " ~> " + thisMatchDataArray[thisMatchDataIdx].assigned_scorer);
 						// add to the overall array of match assignments
 						scoringDataArray.push(thisMatchDataArray[thisMatchDataIdx]);
 					}
@@ -1027,7 +1027,7 @@ router.get("/swapmembers", function(req, res) {
 	var thisFuncName = "scoutingpairs.swapmembers[get]: ";
 	
 	// Log message so we can see on the server side when we enter this
-	console.log(thisFuncName + "ENTER");
+	res.log(thisFuncName + "ENTER");
 
 	var db = req.db;
 	var currentCol = db.get("current");
@@ -1067,7 +1067,7 @@ router.get("/swapmembers", function(req, res) {
 			// Get the distinct list of scorers from the unresolved matches
 			scoreDataCol.distinct("assigned_scorer", {"event_key": eventId, "time": { $gte: earliestTimestamp }}, function (e, docs) {
 				var scorers = docs;
-				console.log(thisFuncName + 'distinct assigned_scorers: ' + JSON.stringify(scorers));
+				res.log(thisFuncName + 'distinct assigned_scorers: ' + JSON.stringify(scorers));
 		
 				// Get list of all users
 				teammembers.find( {}, {sort:{ "name": 1 }}, function(e, docs){
@@ -1092,12 +1092,12 @@ router.post("/swapmembers", function(req, res) {
 	var thisFuncName = "scoutingpairs.swapmembers[post]: ";
 	
 	// Log message so we can see on the server side when we enter this
-	console.log(thisFuncName + "ENTER");
+	res.log(thisFuncName + "ENTER");
 	
 	// Extract 'from' & 'to' from req
 	var swapout = req.body.swapout;
 	var swapin = req.body.swapin;
-	console.log(thisFuncName + 'swap out ' + swapin + ', swap in ' + swapout);
+	res.log(thisFuncName + 'swap out ' + swapin + ', swap in ' + swapout);
 
 	var db = req.db;
 	var currentCol = db.get("current");

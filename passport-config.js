@@ -112,7 +112,7 @@ passport.deserializeUser(function(id, done) {
 	teammembers.findOne( { "_id": mid }, {}, function(err, user){
 		
 		if(!user || err)
-			console.log( err || "User not found in db: deserializeUser " + id);
+			console.error( err || "User not found in db: deserializeUser " + id);
 		else
 			done(null, user);
 	});

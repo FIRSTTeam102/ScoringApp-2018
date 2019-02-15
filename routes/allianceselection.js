@@ -3,7 +3,7 @@ var router = express.Router();
 
 router.get("/", function(req, res){
 	var thisFuncName = "allianceselection{root}[get]: ";
-	console.log(thisFuncName + 'ENTER');
+	res.log(thisFuncName + 'ENTER');
 	
 	var db = req.db;
 	var aggCol = req.db.get('scoringdata');
@@ -12,7 +12,7 @@ router.get("/", function(req, res){
 	
 	// for later querying by event_key
 	var event_key = req.event.key;
-	console.log(thisFuncName + 'event_key=' + event_key);
+	res.log(thisFuncName + 'event_key=' + event_key);
 	
 	// get the current rankings
 	rankCol.find({}, {}, function (e, docs) {
@@ -21,10 +21,10 @@ router.get("/", function(req, res){
 			rankings = docs;
 		var rankMap = {};
 		for (var rankIdx = 0; rankIdx < rankings.length; rankIdx++) {
-			//console.log(thisFuncName + 'rankIdx=' + rankIdx + ', team_key=' + rankings[rankIdx].team_key + ', rank=' + rankings[rankIdx].rank);
+			//res.log(thisFuncName + 'rankIdx=' + rankIdx + ', team_key=' + rankings[rankIdx].team_key + ', rank=' + rankings[rankIdx].rank);
 			rankMap[rankings[rankIdx].team_key] = rankings[rankIdx];
 		}
-		//console.log(thisFuncName + 'rankMap=' + JSON.stringify(rankMap));
+		//res.log(thisFuncName + 'rankMap=' + JSON.stringify(rankMap));
 
 		// Match data layout - use to build dynamic Mongo aggregation query  --- Comboing twice, on two sets of team keys: red alliance & blue alliance
 		// db.scoringdata.aggregate( [ 
@@ -52,7 +52,7 @@ router.get("/", function(req, res){
 			}
 			aggQuery.push({ $group: groupClause });
 			aggQuery.push({ $sort: { _id: 1 } });
-			//console.log(thisFuncName + 'aggQuery=' + JSON.stringify(aggQuery));
+			//res.log(thisFuncName + 'aggQuery=' + JSON.stringify(aggQuery));
 			
 			aggCol.aggregate(aggQuery, function(e, docs){
 				var aggArray = [];
@@ -73,7 +73,7 @@ router.get("/", function(req, res){
 					thisAgg['value'] = rankMap[thisAgg._id].value;
 					aggArray[aggIdx] = thisAgg;
 				}
-				//console.log(thisFuncName + 'aggArray=' + JSON.stringify(aggArray));
+				//res.log(thisFuncName + 'aggArray=' + JSON.stringify(aggArray));
 
 				res.render("./allianceselection/allianceselection-index", {
 					title: "Alliance Selection",
@@ -87,7 +87,7 @@ router.get("/", function(req, res){
 
 router.post("/updateteamvalue", function(req, res){
 	var thisFuncName = "allianceselection.updateteamvalue[post]: ";
-	console.log(thisFuncName + 'ENTER')
+	res.log(thisFuncName + 'ENTER')
 
 	var db = req.db;
 	

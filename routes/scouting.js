@@ -8,7 +8,7 @@ router.get('/match*', function(req, res) {
 		return null;
 	
 	var thisFuncName = "scouting.match*[get]: ";
-	console.log(thisFuncName + 'ENTER');
+	res.log(thisFuncName + 'ENTER');
 	
 	var thisUser = req.user;
 	var thisUserName = thisUser.name;
@@ -19,13 +19,13 @@ router.get('/match*', function(req, res) {
 		res.redirect("/dashboard");
 		return;
 	}
-	console.log(thisFuncName + 'matchKey=' + matchKey + ' ~ thisUserName=' + thisUserName);
+	res.log(thisFuncName + 'matchKey=' + matchKey + ' ~ thisUserName=' + thisUserName);
 	
 	var db = req.db;
 	var collection = db.get("scoringlayout");
 	collection.find({}, {sort: {"order": 1}}, function(e, docs){
 		var layout = docs;
-		//console.log(layout);
+		//res.log(layout);
 		res.render("./scouting/match", {
 			title: "Match Scouting",
 			layout: layout,
@@ -43,7 +43,7 @@ router.post('/match/submit', function(req, res){
 		return null;
 	*/
 	var thisFuncName = "scouting.match[post]: ";
-	console.log(thisFuncName + 'ENTER');
+	res.log(thisFuncName + 'ENTER');
 	
 	if(req.user && req.user.name){
 		var thisUser = req.user;
@@ -57,21 +57,21 @@ router.post('/match/submit', function(req, res){
 		return res.send({status: 500, message: "No data was sent to /scouting/match/submit."});
 	
 	var matchKey = matchData.matchkey;
-	console.log(thisFuncName + "matchKey=" + matchKey + " ~ thisUserName=" + thisUserName);
+	res.log(thisFuncName + "matchKey=" + matchKey + " ~ thisUserName=" + thisUserName);
 	delete matchData.matchkey;
-	console.log(thisFuncName + "matchData(pre-modified)=" + JSON.stringify(matchData));
-	//console.log(thisFuncName + 'matchKey=' + matchKey + ' ~ thisUserName=' + thisUserName);
-	//console.log(thisFuncName + 'matchData=' + JSON.stringify(matchData));
+	res.log(thisFuncName + "matchData(pre-modified)=" + JSON.stringify(matchData));
+	//res.log(thisFuncName + 'matchKey=' + matchKey + ' ~ thisUserName=' + thisUserName);
+	//res.log(thisFuncName + 'matchData=' + JSON.stringify(matchData));
 
 	// Get the 'layout' so we know types of data elements
 	var scoreCol = req.db.get("scoringlayout");
 	scoreCol.find({}, {sort: {"order": 1}}, function(e, docs){
 		var layout = docs;
 		var layoutTypeById = {};
-		//console.log(thisFuncName + "layout=" + JSON.stringify(layout));
+		//res.log(thisFuncName + "layout=" + JSON.stringify(layout));
 		for (var property in layout) {
 			if (layout.hasOwnProperty(property)) {
-				//console.log(thisFuncName + layout[property].id + " is a " + layout[property].type);
+				//res.log(thisFuncName + layout[property].id + " is a " + layout[property].type);
 				layoutTypeById[layout[property].id] = layout[property].type;
 			}
 		}
@@ -79,9 +79,9 @@ router.post('/match/submit', function(req, res){
 		// Process input data, convert to numeric values
 		for (var property in matchData) {
 			var thisType = layoutTypeById[property];
-			//console.log(thisFuncName + property + " :: " + matchData[property] + " ~ is a " + thisType);
+			//res.log(thisFuncName + property + " :: " + matchData[property] + " ~ is a " + thisType);
 			if ('counter' == thisType || 'badcounter' == thisType) {
-				//console.log(thisFuncName + "...converting " + matchData[property] + " to a number");
+				//res.log(thisFuncName + "...converting " + matchData[property] + " to a number");
 				var newVal = -1;
 				if (matchData[property]) {
 					var parseVal = parseInt(matchData[property]);
@@ -91,12 +91,12 @@ router.post('/match/submit', function(req, res){
 				matchData[property] = newVal;
 			}
 			if ('checkbox' == thisType) {
-				//console.log(thisFuncName + "...converting " + matchData[property] + " to a boolean 1/0 number");
+				//res.log(thisFuncName + "...converting " + matchData[property] + " to a boolean 1/0 number");
 				var newVal = (matchData[property] == "true" || matchData[property] == true) ? 1 : 0;
 				matchData[property] = newVal;
 			}
 		}
-		console.log(thisFuncName + "matchData(UPDATED)=" + JSON.stringify(matchData));
+		res.log(thisFuncName + "matchData(UPDATED)=" + JSON.stringify(matchData));
 	
 		// Post modified data to DB
 		var matchCol = req.db.get('scoringdata');
@@ -113,19 +113,19 @@ router.post('/submitmatch', function(req, res) {
 	//LEGACY CODE
 	
 	var thisFuncName = "scouting.submitmatch[post]: ";
-	console.log(thisFuncName + 'ENTER');
+	res.log(thisFuncName + 'ENTER');
 	
 	var thisUser = req.user;
 	var thisUserName = thisUser.name;
 	
-	//console.log(thisFuncName + 'req.body=' + JSON.stringify(req.body));
+	//res.log(thisFuncName + 'req.body=' + JSON.stringify(req.body));
 	
 	var matchData = req.body;
 	
 	var matchKey = matchData.matchkey;
 	delete matchData.matchkey;
-	console.log(thisFuncName + 'matchKey=' + matchKey + ' ~ thisUserName=' + thisUserName);
-	console.log(thisFuncName + 'matchData=' + JSON.stringify(matchData));
+	res.log(thisFuncName + 'matchKey=' + matchKey + ' ~ thisUserName=' + thisUserName);
+	res.log(thisFuncName + 'matchData=' + JSON.stringify(matchData));
 
 	var db = req.db;
     var matchCol = db.get('scoringdata');
@@ -143,7 +143,7 @@ router.get('/pit*', function(req, res) {
 	//Add event key and pit data to get pit function
 	var event_key = req.event.key;
 	var thisFuncName = "scouting.pit*[get]: ";
-	console.log(thisFuncName + 'ENTER');
+	res.log(thisFuncName + 'ENTER');
 	
 	var thisUser = req.user;
 	var thisUserName = thisUser.name;
@@ -169,7 +169,7 @@ router.get('/pit*', function(req, res) {
 				if (docs[0].data)
 					pitData = docs[0].data;
 
-			//console.log(layout);
+			//res.log(layout);
 			res.render("./scouting/pit", {
 				title: "Pit Scouting",
 				layout: layout,
@@ -187,19 +187,19 @@ router.post('/pit/submit', function(req, res){
 		return null;
 	*/
 	var thisFuncName = "scouting.submitpit[post]: ";
-	console.log(thisFuncName + 'ENTER');
+	res.log(thisFuncName + 'ENTER');
 	
 	var thisUser = req.user;
 	var thisUserName = thisUser.name;
 	
-	//console.log(thisFuncName + 'req.body=' + JSON.stringify(req.body));
+	//res.log(thisFuncName + 'req.body=' + JSON.stringify(req.body));
 	
 	var pitData = req.body;
-	console.log(req.body);
+	res.log(req.body);
 	var teamKey = pitData.teamkey;
 	delete pitData.teamkey;
-	console.log(thisFuncName + 'teamKey=' + teamKey + ' ~ thisUserName=' + thisUserName);
-	console.log(thisFuncName + 'pitData=' + JSON.stringify(pitData));
+	res.log(thisFuncName + 'teamKey=' + teamKey + ' ~ thisUserName=' + thisUserName);
+	res.log(thisFuncName + 'pitData=' + JSON.stringify(pitData));
 
 	var db = req.db;
     var pitCol = db.get('scoutingdata');
@@ -218,19 +218,19 @@ router.post('/pit/submit', function(req, res){
 router.post('/submitpit', function(req, res) {
 	//LEGACY CODE
 	var thisFuncName = "scouting.submitpit[post]: ";
-	console.log(thisFuncName + 'ENTER');
+	res.log(thisFuncName + 'ENTER');
 	
 	var thisUser = req.user;
 	var thisUserName = thisUser.name;
 	
-	//console.log(thisFuncName + 'req.body=' + JSON.stringify(req.body));
+	//res.log(thisFuncName + 'req.body=' + JSON.stringify(req.body));
 	
 	var pitData = req.body;
 	
 	var teamKey = pitData.teamkey;
 	delete pitData.teamkey;
-	console.log(thisFuncName + 'teamKey=' + teamKey + ' ~ thisUserName=' + thisUserName);
-	console.log(thisFuncName + 'pitData=' + JSON.stringify(pitData));
+	res.log(thisFuncName + 'teamKey=' + teamKey + ' ~ thisUserName=' + thisUserName);
+	res.log(thisFuncName + 'pitData=' + JSON.stringify(pitData));
 
 	var db = req.db;
     var pitCol = db.get('scoutingdata');

@@ -20,7 +20,7 @@ router.get("/", function(req, res) {
 	collection.find({},{sort: {"name": 1}}, function(e, docs){
 		
 		if(e){ //if error, log to console
-			console.log(e);
+			res.log(e);
 		}
 		teamMembers = docs;
 		
@@ -41,7 +41,7 @@ router.get("/present", function(req, res) {
 	
 	collection.find({}, {sort: {"name": 1}}, function(e, docs) {
 		if(e)
-			console.log(e);
+			res.log(e);
 		
 		teammembers = docs;
 		
@@ -69,7 +69,7 @@ router.post("/updatepresent", function(req, res){
 	
 	collection.bulkWrite([{updateMany:{filter:{}, update:{ $set: { "present" : "false" } }}}], function(e, docs){
 		for(var i in req.body){
-			console.log(i);
+			res.log(i);
 			collection.update({"_id": i}, {$set: {"present": "true"}});
 		}
 		
@@ -83,7 +83,7 @@ router.post("/addmember", function(req, res){
 		return null;
 	}
 	var thisFuncName = "teammembers.addmember[post]: ";
-	console.log(thisFuncName + 'ENTER')
+	res.log(thisFuncName + 'ENTER')
 
 	var db = req.db;
 	
@@ -124,7 +124,7 @@ router.post("/addmember", function(req, res){
 		default:
 			seniority += ".0";
 	}
-	console.log(thisFuncName + 'seniority=' + seniority);
+	res.log(thisFuncName + 'seniority=' + seniority);
 	
 	// 2018-04-05, M.O'C - Adding "assigned" as "false" so that the field has a value upon insert
 	collection.insert({"name": name, "subteam": subteam, "className": className, "years": years, "seniority": seniority, "password": "default", "assigned": "false"});
@@ -137,7 +137,7 @@ router.post("/updatemember", function(req, res){
 		return null;
 	}
 	var thisFuncName = "teammembers.updatemember[post]: ";
-	console.log(thisFuncName + 'ENTER')
+	res.log(thisFuncName + 'ENTER')
 	
 	var db = req.db;
 	
@@ -179,9 +179,9 @@ router.post("/updatemember", function(req, res){
 		default:
 			seniority += ".0";
 	}
-	console.log(thisFuncName + 'seniority=' + seniority);
+	res.log(thisFuncName + 'seniority=' + seniority);
 	
-	console.log({memberId, name, subteam, className, years});
+	res.log({memberId, name, subteam, className, years});
 	
 	collection.update({"_id": memberId}, {$set: {"name": name, "subteam": subteam, "className": className, "years": years, "seniority": seniority}});
 	

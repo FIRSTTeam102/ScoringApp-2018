@@ -19,7 +19,7 @@ router.get('/scouter', function(req, res) {
 	teammembers.find( {}, {sort:{ "name": 1 }}, function(e, users){
 		
 		if(e){
-			console.log(e);
+			res.log(e);
 			return res.sendStatus(500);
 		}
 		return res.render('./login/login', { 
@@ -43,7 +43,7 @@ router.get('/admin', function(req, res) {
 	teammembers.find( {subteam: {$in: ["exec", "support"]} }, {sort: { password: -1, name: 1}}, function(e, users){
 		
 		if(e){
-			console.log(e);
+			res.log(e);
 			return res.sendStatus(500);
 		}
 		
@@ -241,7 +241,7 @@ router.post('/scouter', function(req, res) {
 			// if any problems exist, error out
             if (err) {
 				res.sendStatus(500);
-				console.log(err);
+				res.log(err);
 				return err;
             }
 			
@@ -355,7 +355,7 @@ router.post('/adduser', function(req, res){
 			
 			//if error, err out
 			if(err){
-				console.log(err);
+				res.log(err);
 				return res.sendStatus(500);
 			}
 			

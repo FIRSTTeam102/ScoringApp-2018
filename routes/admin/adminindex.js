@@ -10,12 +10,15 @@ router.get('/', function(req, res) {
 	if( !require('../checkauthentication')(req, res, 'admin') ){
 		return null;
 	}
-
-	res.log(req.event)
-
+	
+	//Prepare an alert. (Used w/ url /?alert=(alert))
+	if(req.query)
+		var alert = req.query.alert || null;
+	
 	res.render('./adminindex', { 
 		title: 'Admin pages',
-		current: req.event.key
+		current: req.event.key,
+		alert: alert
 	});
 });
 
@@ -40,7 +43,7 @@ router.post('/setcurrent', function(req, res) {
 		
 		// Now, insert the new data
 		currentCol.insert({"event": eventId}, function(e, docs) {
-			res.redirect('/admin');
+			res.redirect(`/admin?alert=Set current event ${eventId} successfully. IMPORTANT: You must now make sure currentTeams are correct.`);
 		});
 	});
 });

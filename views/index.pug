@@ -29,7 +29,7 @@ block content
 		//teamSelect dropdown for intel and upcoming pages.
 		if( teamList && teamList[0] )
 			label(class="")
-				select#teamSelect(class="gear-btn theme-link w3-btn")
+				select#teamSelect(class="gear-btn theme-input w3-btn")
 					option(value="") Team #
 					each team in teamList
 						option(value=team class="w3-bar-item") #{team}

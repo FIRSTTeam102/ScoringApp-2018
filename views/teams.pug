@@ -6,9 +6,12 @@
 		externaldata '/admin/data/teams'
 extends layout
 block content
-	form#updateForEvent(name="updateForEvent" method="post" action="/admin/data/teams")
-		input#seteventid(type="text", name="eventId")
-		button#btnSubmit(type="submit") Update DB for specified event ID
+	form#updateForEvent(name="updateForEvent" method="get" action="/admin/data/teams")
+		div(class="w3-show-inline-block w3-padding-small")
+			input#seteventid(class="theme-input w3-no-border theme-inline-padding" type="text", name="eventId")
+		div(class="w3-show-inline-block w3-padding-small")
+			button#btnSubmit(class="theme-submit w3-no-border w3-btn" type="submit") Show teams for specified event ID
+	br 
 	if locals.teams
 		table(class="w3-table")
 			tr
@@ -26,5 +29,5 @@ block content
 					td= team.state_prov
 					td= team.country
 					td
-						button #{team.key}
+						button(class="w3-btn theme-submit" style="min-width: 90px") #{team.key}
 	

@@ -19,7 +19,7 @@ block content
 						- else
 							option(value=year)= year
 		div(class="w3-show-inline-block w3-padding-small")
-			input#setyear(class="theme-input w3-no-border theme-inline-padding" type="text", name="year")
+			input#setyear(class="theme-input w3-no-border theme-inline-padding" placeholder="Enter year to update" type="text", name="year")
 		div(class="w3-show-inline-block w3-padding-small")
 			button#btnSubmit(class="theme-submit w3-no-border w3-btn" type="submit") Update DB for specified year
 	br 
@@ -48,10 +48,10 @@ block content
 						button(class="w3-btn theme-submit" onClick=`getMatchesForEvent('${event.key}')`) Matches
 					td
 						button(class="w3-btn theme-submit" onClick=`getTeamsForEvent('${event.key}')`) Teams
-	form#getmatchdata(name="getmatchdata" method="post" action="/admin/data/matches")
+	form#getmatchdata(name="getmatchdata" method="get" action="/admin/data/matches")
 		input#matcheventId(type="hidden", name="eventId")
-	form#getteamdata(name="getteamdata" method="post" action="/admin/data/teams")
-		input#teameventId(type="hidden", name="eventId")
+	form#getteamdata(name="getteamdata" method="get" action="/admin/data/teams")
+		input#teamEventId(type="hidden", name="eventId")
 	script.
 		function submitForYear()
 		{
@@ -70,6 +70,6 @@ block content
 		function getTeamsForEvent(eventId)
 		{
 			console.log('eventId='+eventId);
-			document.getElementById("teameventId").value = eventId;
+			document.getElementById("teamEventId").value = eventId;
 			document.getElementById("getteamdata").submit();
 		}

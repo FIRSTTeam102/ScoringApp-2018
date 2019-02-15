@@ -99,7 +99,7 @@ functions.logger = function(req, res, next){
 	}
 		
 	//Sets variables accessible to any page from req (request) object
-	req.requestTime = Date.now();
+	//req.requestTime = Date.now(); req.requestTime IS NOW SET INSIDE APP.JS
 	
 	//formatted request time for logging
 	let d = new Date(req.requestTime),
@@ -176,6 +176,35 @@ functions.renderLogger = function(req, res, next){
 	next();
 }
 
+/**
+ * Sets up node rest client
+ * @param {*} req
+ * @param {*} res 
+ * @param {*} next 
+ */
+functions.setupNodeRestClient = function(req, res, next){
+	
+	var passwordsCol = req.db.get("passwords");
+	
+	//Get thebluealliance API key from db
+	passwordsCol.find({ name:"thebluealliance-args" }, function(e, args){
+		if(e || !args[0]){
+			return res.status(500).send("couldn't find TBA args in db");
+		}
+		args = args[0];
+		
+		//set up node rest client
+		var Client = require('node-rest-client').Client;
+		var client = new Client();
+		
+		//adds client func and args to req
+		req.client = client;
+		req.tbaRequestArgs = args;
+		
+		next();
+	});
+};
+ 
 /**
  * Handles 404 errors
  * @param {*} req 

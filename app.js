@@ -64,8 +64,13 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(function(req, res, next){
+	//For logging
+	req.requestTime = Date.now();
+	//For database
 	req.db = db;
+	//For user login
 	req.passport = passport;
+	
 	next();
 });
 //sets view engine vars for user
@@ -76,6 +81,8 @@ app.use(useFunctions.getEventInfo);
 app.use(useFunctions.logger);
 //adds logging to res.render function
 app.use(useFunctions.renderLogger);
+//adds TBA API key to req
+app.use(useFunctions.setupNodeRestClient);
 
 //USER ROUTES
 var index = require('./routes/index');

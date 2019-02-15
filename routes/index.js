@@ -12,36 +12,29 @@ router.get('/', function(req, res) {
 	if(req.query)
 		var alert = req.query.alert || null;
 	
-	//Searches through rankings to provide team num. dropdown
-	req.db.get('currentrankings').find({},{},function(e, rankings){
-		var teamList = [];
+	req.db.get("currentteams").find({},{sort:{team_number: 1}},function(e, teams){
 		
-		//If error or no rankings, render home w/o list
-		if(e || !rankings || !rankings[0]){
-			res.log(e || "No current rankings");
+		//If no current teams, then render page without team list.
+		if(!teams || !teams[0]){
+			res.log(e || "No teams listed yet");
 			return res.render('./index', { 
 				title: 'Home',
 				alert: alert
 			});
 		}
-		//Goes through rankings list and picks out team numbers from team_key
-		for(var i = 0; i < rankings.length; i++){
-			teamList[i] = parseInt(rankings[i].team_key.substring(3));
+		
+		//get list of just team numbers
+		var teamNumbers = [];
+		
+		for(var i in teams){
+			teamNumbers[i] = teams[i].team_number;
 		}
-		//Sorts team list by number (originally by rank)
-		teamList.sort(function(a,b){
-			if(a < b)
-				return -1;
-			if(a > b)
-				return 1;
-			// a must be equal to b
-			return 0;
-		})
-		//Renders page w/ team list
+		
+		//Render page w/ team list
 		res.render('./index', { 
-				title: 'Home',
-				teamList: teamList,
-				alert: alert
+			title: 'Home',
+			teamList: teamNumbers,
+			alert: alert
 		});
 	});
 });

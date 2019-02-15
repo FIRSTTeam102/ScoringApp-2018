@@ -34,7 +34,7 @@ router.get("/", function(req, res) {
 		// Get all the RESOLVED matches
 		scoreDataCol.find({"event_key": eventId, "time": { $lt: earliestTimestamp }}, { sort: {"assigned_scorer": 1, "time": 1, "alliance": 1, "team_key": 1} }, function (e, scoreData) {
 			if(!scoreData)
-				throw new Error("mongo error at dashboard/matches");
+				return res.redirect("/?alert=mongo error at dashboard/matches");
 			
 			// Build per-team-member array
 			var memberArr = [];

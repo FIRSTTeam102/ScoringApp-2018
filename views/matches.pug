@@ -9,8 +9,11 @@
 extends layout
 block content
 	form#updateForEvent(name="updateForEvent" method="post" action="/admin/data/matches")
-		input#seteventid(type="text", name="eventId")
-		button#btnSubmit(type="submit" class="w3-button theme-submit") Update DB for specified event ID
+		div(class="w3-show-inline-block w3-padding-small")
+			input#seteventid(class="theme-input w3-no-border theme-inline-padding" type="text", name="eventId")
+		div(class="w3-show-inline-block w3-padding-small")
+			button#btnSubmit(class="theme-submit w3-btn w3-no-border" type="submit") Update DB for specified event ID
+	br 
 	if locals.matches
 		table(class="w3-table")
 			tr

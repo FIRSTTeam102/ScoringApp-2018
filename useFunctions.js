@@ -39,14 +39,19 @@ functions.getEventInfo = function(req, res, next) {
 		
 		//sets locals to no event defined just in case we don't find thing and we can just do next();
 		var eventId = 'No event defined';
+		var eventYear = 'No year defined';
 		res.locals.eventName = eventId;
 		
 		//if exist
 		if (current && current[0]){
+			
 			eventId = current[0].event;
+			eventYear = parseInt(eventId)
 			//set event key
 			req.event.key = eventId;
+			req.event.year = eventYear;
 			res.locals.event_key = req.event.key;
+			res.locals.event_year = req.event.year;
 			
 			//find data for current event
 			events.find({ key: eventId }, {}, function(e, event){

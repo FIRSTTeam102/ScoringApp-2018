@@ -26,23 +26,19 @@ block content
 				span Statistics
 	div(class="w3-container w3-section")
 		h4(class="gear-text-white") Team Info
-		//teamSelect dropdown for intel and upcoming pages.
+		//-teamSelect dropdown for intel and upcoming pages.
 		if( teamList && teamList[0] )
 			label(class="")
 				select#teamSelect(class="gear-btn theme-input w3-btn")
 					option(value="") Team #
 					each team in teamList
 						option(value=team class="w3-bar-item") #{team}
-		//-
-			label(style="position:relative;top:8px")
-				input(class="w3-padding theme-link w3-border-white w3-border w3-margin-right" style="border: none; width: 6.2em" type="number" placeholder="Team #" id="teamNo")
-			//
 		a
 			button(class="gear-btn theme-link w3-btn w3-disabled" onclick="redIntel()" id="stats" disabled)
 				span Stats
 		a
 			div(class="gear-btn theme-link gear-hover-white w3-btn" onclick="redUpcoming()")
-				span Upcoming Matches [Team or All]
+				span#upcomingMatches Upcoming Matches: All Teams
 	//Login if not logged in
 	if( !user || (user && user.name == "[Dev]"))
 		div(class="w3-container w3-section")
@@ -84,9 +80,12 @@ block content
 		}
 		//Checks if teamSelect/teamNo are filled; and if so, redirect user to upcoming page.
 		function redUpcoming(){
-			if( !$("#teamNo").val() && !$("#teamSelect").val() ){
+			//if teamselect value is empty then redirect to upcoming matches page for all teams
+			if( !$("#teamSelect").val() ){
 				window.location.href = "/reports/upcoming";
-			}else{
+			}
+			//if a team is selected then redirect to upcoming for that team
+			else{
 				if(!!$("#teamSelect").val){
 					var key = "frc".concat($("#teamSelect").val());
 					window.location.href = "/reports/upcoming?team="+key;
@@ -96,28 +95,27 @@ block content
 				}
 			}
 		}
-		$("#teamNo").keyup(function(e){
-			setTimeout( isTeamFilled(this), 1);
-			if(e.keyCode == 13){
-				redIntel();
-			}
-		});
-		$("#teamNo").click(function(e){
-			setTimeout( isTeamFilled(this), 1);
-		});
 		$("#teamSelect").on("change", function(e){
-			setTimeout( isTeamFilled(this), 1);
+			setTimeout( doTeamDropdownChange(this), 1);
 		});
-		function isTeamFilled(teamNo){
-			//console.log(teamNo);
-			console.log(teamNo.value);
+		function doTeamDropdownChange(teamNo){
+			console.log(`Selected team: ${teamNo.value}`);
+			
+			//if a team is selected
 			if( teamNo.value != ""){
+				//enable statistics button
 				$("#stats").addClass("gear-hover-white");
 				$("#stats").removeClass("w3-disabled");
 				$("#stats").prop("disabled", false);
-			}else{
+				//change "upcoming matches" button to team #
+				$("#upcomingMatches").text(`Upcoming Matches: Team ${teamNo.value}`);
+			}
+			//if a team isn't selected
+			else{
 				$("#stats").removeClass("gear-hover-white");
 				$("#stats").addClass("w3-disabled");
 				$("#stats").prop("disabled", true);
+				//change "upcoming matches" button to all teams
+				$("#upcomingMatches").text("Upcoming Matches: All teams");
 			}
 		}

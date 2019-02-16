@@ -50,5 +50,7 @@ block content
 				span Load/Update events
 		hr
 		form#setCurrentEvent(name="setCurrentEvent" method="post" action="/admin/setcurrent")
-			input#setEvent(type="text", name="eventId")
-			button#btnSubmit(type="submit") Set current eventId
+			div(class="w3-padding-small w3-show-inline-block")
+				input#setEvent(class="theme-input w3-no-border theme-inline-padding" placeholder="Event ID" type="text", name="eventId")
+			div(class="w3-padding-small w3-show-inline-block")
+				button#btnSubmit(class="theme-submit w3-btn" type="submit") Set current eventId

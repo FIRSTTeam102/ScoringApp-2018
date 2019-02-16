@@ -36,6 +36,9 @@ input:focus,select:focus{outline: 2px solid rgb(118, 118, 151)!important}
         linear-gradient(160deg,rgba(30,30,30,1) 30%,rgba(50,30,60,1) 90%);
 }
 
+/* To avoid white flashes when loading pages */
+html{ background-color: rgb(32, 24, 36); }
+
 .star{
     position: fixed;
     background-color: white;

@@ -1,33 +1,33 @@
-{"order":"1000","type":"h2","label":"Autonomous","id":"autolabel"}
-{"order":"1010","type":"checkbox","label":"Attempted to move?","id":"autoTriedMove"}
-{"order":"1020","type":"checkbox","label":"Crossed line?","id":"autoCrossedLine"}
-{"order":"1025","type":"spacer"}
-{"order":"1030","type":"checkbox","label":"Tried to score switch?","id":"autoTriedSwitch"}
-{"order":"1040","type":"counter","label":"Auto scored switch","id":"autoScoredSwitch"}
-{"order":"1045","type":"spacer"}
-{"order":"1050","type":"checkbox","label":"Tried to score scale?","id":"autoTriedScale"}
-{"order":"1060","type":"counter","label":"Auto scored scale","id":"autoScoredScale"}
-{"order":"1065","type":"spacer"}
-{"order":"2000","type":"h2","label":"Teleop","id":"telelabel"}
-{"order":"2010","type":"counter","label":"Vault","id":"teleVault"}
-{"order":"2015","type":"spacer"}
-{"order":"2020","type":"counter","label":"Switch","id":"teleSwitch"}
-{"order":"2025","type":"counter","label":"Position changed","id":"teleSwitchTipped"}
-{"order":"2027","type":"spacer"}
-{"order":"2030","type":"counter","label":"Scale","id":"teleScale"}
-{"order":"2032","type":"counter","label":"Position changed","id":"teleScaleTipped"}
-{"order":"2033","type":"spacer"}
-{"order":"2035","type":"counter","label":"Opposing switch","id":"teleOppSwitch"}
-{"order":"2037","type":"counter","label":"Position changed","id":"teleOppSwitchTipped"}
-{"order":"2038","type":"spacer"}
-{"order":"2040","type":"badcounter","label":"Fouls","id":"teleFouls"}
-{"order":"2050","type":"spacer"}
-{"order":"2060","type":"checkbox","label":"Did they break down?","id":"teleBrokeDown"}
-{"order":"2070","type":"spacer"}
-{"order":"3000","type":"h2","label":"Endgame","id":"endlabel"}
-{"order":"3010","type":"checkbox","label":"Parked?","id":"endParked"}
-{"order":"3020","type":"checkbox","label":"Climbed?","id":"endClimbed"}
-{"order":"3025","type":"spacer"}
-{"order":"3030","type":"checkbox","label":"Assisted other(s)?","id":"endAssisted"}
-{"order":"4000","type":"spacer"}
-{"order":"4010","type":"textblock","label":"Other comments and notes:","id":"otherNotes"}
+{"year" : 2018, "order":"1000","type":"h2","label":"Autonomous","id":"autolabel"}
+{"year" : 2018, "order":"1010","type":"checkbox","label":"Attempted to move?","id":"autoTriedMove"}
+{"year" : 2018, "order":"1020","type":"checkbox","label":"Crossed line?","id":"autoCrossedLine"}
+{"year" : 2018, "order":"1025","type":"spacer"}
+{"year" : 2018, "order":"1030","type":"checkbox","label":"Tried to score switch?","id":"autoTriedSwitch"}
+{"year" : 2018, "order":"1040","type":"counter","label":"Auto scored switch","id":"autoScoredSwitch"}
+{"year" : 2018, "order":"1045","type":"spacer"}
+{"year" : 2018, "order":"1050","type":"checkbox","label":"Tried to score scale?","id":"autoTriedScale"}
+{"year" : 2018, "order":"1060","type":"counter","label":"Auto scored scale","id":"autoScoredScale"}
+{"year" : 2018, "order":"1065","type":"spacer"}
+{"year" : 2018, "order":"2000","type":"h2","label":"Teleop","id":"telelabel"}
+{"year" : 2018, "order":"2010","type":"counter","label":"Vault","id":"teleVault"}
+{"year" : 2018, "order":"2015","type":"spacer"}
+{"year" : 2018, "order":"2020","type":"counter","label":"Switch","id":"teleSwitch"}
+{"year" : 2018, "order":"2025","type":"counter","label":"Position changed","id":"teleSwitchTipped"}
+{"year" : 2018, "order":"2027","type":"spacer"}
+{"year" : 2018, "order":"2030","type":"counter","label":"Scale","id":"teleScale"}
+{"year" : 2018, "order":"2032","type":"counter","label":"Position changed","id":"teleScaleTipped"}
+{"year" : 2018, "order":"2033","type":"spacer"}
+{"year" : 2018, "order":"2035","type":"counter","label":"Opposing switch","id":"teleOppSwitch"}
+{"year" : 2018, "order":"2037","type":"counter","label":"Position changed","id":"teleOppSwitchTipped"}
+{"year" : 2018, "order":"2038","type":"spacer"}
+{"year" : 2018, "order":"2040","type":"badcounter","label":"Fouls","id":"teleFouls"}
+{"year" : 2018, "order":"2050","type":"spacer"}
+{"year" : 2018, "order":"2060","type":"checkbox","label":"Did they break down?","id":"teleBrokeDown"}
+{"year" : 2018, "order":"2070","type":"spacer"}
+{"year" : 2018, "order":"3000","type":"h2","label":"Endgame","id":"endlabel"}
+{"year" : 2018, "order":"3010","type":"checkbox","label":"Parked?","id":"endParked"}
+{"year" : 2018, "order":"3020","type":"checkbox","label":"Climbed?","id":"endClimbed"}
+{"year" : 2018, "order":"3025","type":"spacer"}
+{"year" : 2018, "order":"3030","type":"checkbox","label":"Assisted other(s)?","id":"endAssisted"}
+{"year" : 2018, "order":"4000","type":"spacer"}
+{"year" : 2018, "order":"4010","type":"textblock","label":"Other comments and notes:","id":"otherNotes"}

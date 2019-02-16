@@ -1,61 +1,26 @@
 extends ../layout
 
 block content
-	h2(class="gear-text-white")= team.key.replace('frc','Team ')
-	p
-	h2 #{team.nickname}
+	h2(class="theme-text-white") Team #{team.team_number}: #{team.nickname.replace(new RegExp(' ', 'g'), '\xa0')}
 	if (ranking)
 		h4(class="gear-text-white") Currently ranked ##{ranking.rank} </br> #{ranking.record.wins+'-'+ranking.record.losses+'-'+ranking.record.ties} record with #{ranking.extra_stats[0]} RP
 	- var country = '';
 	- if (team.country != 'USA') country = team.country;
-	h4(class="gear-text-white" style="font-style:italic") From: #{team.city}, #{team.state_prov} #{country}
-	h4(class="gear-text-white" style="font-style:italic") #{team.name}
-	a(class="gear-btn theme-link gear-hover-white w3-btn" href=`/reports/upcoming?team=${team.key}`) Click here to see upcoming matches for Team #{team.key.substring(3)}
-	br
-	i
-		a(class="gear-btn gear-blue gear-hover-white w3-btn" href=`/reports/teamintelhistory?team=${team.key}`) Click here to see all data for Team #{team.key.substring(3)} from this year
-	p
+	h4(class="gear-text-white w3-tooltip" style="font-style:italic") From: #{team.city}, #{team.state_prov} #{country}
+		span(class="w3-tooltiptext w3-block" style="font-style:italic") #{team.name}
+	div(class="w3-padding")
+		a(class="theme-link w3-btn" href=`/reports/upcoming?team=${team.key}`) Upcoming matches for team #{team.key.substring(3)}
+	div(class="w3-padding")
+		a(class="theme-link w3-btn" href=`/reports/teamintelhistory?team=${team.key}`) All data for Team #{team.key.substring(3)} from this year
+	br 
 
-	script.
-		/*
-			function showHide(id) {
-				var x = document.getElementById(id + 'Section');
-				if (x.className.indexOf("w3-show") == -1)
-					x.className += " w3-show";
-				else
-					x.className = x.className.replace(" w3-show", "");
-					
-				var y = document.getElementById(id + 'Button');
-				if (y.textContent.indexOf("▼ Show") == -1)
-					y.textContent = y.textContent.replace("▲ Hide", "▼ Show");
-				else
-					y.textContent = y.textContent.replace("▼ Show", "▲ Hide");
-			}
-		*/
-		function toggle(sectionId, elem){
-			//hide/show
-			var x = document.getElementById(sectionId);
-			if (x.className.indexOf("w3-show") == -1)
-				x.className += " w3-show";
-			else
-				x.className = x.className.replace(" w3-show", "");
-			
-			//change text thingy
-			var caret = elem.firstElementChild;//is span w/ caret
-			var text = caret.nextElementSibling; //is main text
-			
-			text.innerText = (caret.innerText[0] == "▼") ? "Hide " : "Show ";
-			caret.innerText = (caret.innerText[0] == "▼") ? "▲\xa0" : "▼\xa0";
-			
-		}
-		
 	button#PitScoutingButton(onClick="toggle('PitScoutingSection', this)" class="w3-block w3-btn  w3-left-align w3-border-gray w3-border-bottom") 
 		span(class="w3-left") &#9660;&nbsp;
 		span Show 
 		span Pit Scouting
 	div#PitScoutingSection(class="w3-container w3-hide")
 		if (data)
-			h1 Current Day Pit Scouting Info
+			h1 Pit Scouting Info
 			- var changeCount = -0.5;
 			each element in layout
 				case element.type
@@ -66,38 +31,22 @@ block content
 					when "textblock"
 						if (data[element.id] != 0 && data[element.id] != '' && data[element.id] != null)
 							- changeCount++;
-							h4(class="gear-text-white") #{element.label} <strong>#{data[element.id]}</strong>
+							h4(class="") #{element.label} <strong>#{data[element.id]}</strong>
 					when "h2"
 						if (changeCount == 0)
-							h4(class="gear-text-white") <i>(no change)</i>
+							h4(class="") <i>(no change)</i>
 						- changeCount = 0;
-						h2 #{element.label}
+						br 
+						div(class="theme-spacer")
+						h2(class="theme-text-white") #{element.label}
 					when "spacer"
-						p
+						br 
 			if (changeCount == 0)
 				h4(class="gear-text-white") (no change)
 			if (inTable)
 				| </table>
 		else
-			h6 No current day pit scouting data yet - check back later
-		if (data1)
-			hr
-			h2 Prior Day Pit Scouting Info
-			each element in layout
-				case element.type
-					when "checkbox"
-					when "counter"
-					when "badcounter"
-					when "multiselect"
-					when "textblock"
-						h5(class="gear-text-white") #{element.label} <strong>#{data1[element.id]}</strong>
-					when "h2"
-						h3 #{element.label}
-					when "spacer"
-						p
-		else
-			hr
-			h6 No prior day pit scouting data yet - check back later
+			h6 pit scouting data yet - check back later
 
 	p
 	button#StatisticsButton(onClick="toggle('StatisticsSection', this)" class="w3-block w3-btn  w3-left-align w3-border-gray w3-border-bottom w3-large") 
@@ -218,5 +167,22 @@ block content
 									h5(class="gear-text-white") #{element.label} <strong>#{match.scoringdata[element.id]}</strong>
 		else
 			h6 No previous matches yet - check back later
+	script.
+		function toggle(sectionId, elem){
+			//hide/show
+			var x = document.getElementById(sectionId);
+			if (x.className.indexOf("w3-show") == -1)
+				x.className += " w3-show";
+			else
+				x.className = x.className.replace(" w3-show", "");
+			
+			//change text thingy
+			var caret = elem.firstElementChild;//is span w/ caret
+			var text = caret.nextElementSibling; //is main text
+			
+			text.innerText = (caret.innerText[0] == "▼") ? "Hide " : "Show ";
+			caret.innerText = (caret.innerText[0] == "▼") ? "▲\xa0" : "▼\xa0";
+			
+		}
 
 					

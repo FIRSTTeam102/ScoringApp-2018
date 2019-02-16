@@ -1,3 +1,61 @@
+.w3-btn{box-shadow: none!important;}
+
+.w3-no-border{border:none!important}
+
+.gear-btn{ 
+	min-width:100px; 
+	margin: 15px 8px 0px 8px;
+}
+
+.gear-counter,.w3-counter{
+	font-weight:bold;box-sizing:content-box;width:20px;height:20px;padding:8px;
+}
+/* Tooltip container */
+.tooltip {
+	position: relative;
+	display: inline-block;
+	border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+  }
+  
+  /* Tooltip text */
+  .w3-tooltip .w3-tooltiptext {
+	visibility: hidden;
+	width: 360px;
+	background-color: #555;
+	color: #fff;
+	text-align: center;
+	padding: 5px 0;
+	border-radius: 6px;
+  
+	/* Position the tooltip text */
+	position: absolute;
+	z-index: 1;
+	bottom: 125%;
+	left: 50%;
+	margin-left: -180px;
+  
+	/* Fade in tooltip */
+	opacity: 0;
+	transition: opacity 0.3s;
+  }
+  
+  /* Tooltip arrow */
+  .w3-tooltip .w3-tooltiptext::after {
+	content: "";
+	position: absolute;
+	top: 100%;
+	left: 50%;
+	margin-left: -5px;
+	border-width: 5px;
+	border-style: solid;
+	border-color: #555 transparent transparent transparent;
+  }
+  
+  /* Show the tooltip text when you mouse over the tooltip container */
+  .w3-tooltip:hover .w3-tooltiptext {
+	visibility: visible;
+	opacity: 1;
+  }
 
 @media (min-width: 601px){
 	.gear-label,.w3-label{
@@ -15,17 +73,10 @@
 	.gear-resp50,.w3-resp90{
 		width: 50%!important;
 	}
-}
-
-.w3-btn{box-shadow: none!important;}
-
-.w3-no-border{border:none!important}
-
-.gear-btn{ 
-	min-width:100px; 
-	margin: 15px 8px 0px 8px;
-}
-
-.gear-counter,.w3-counter{
-	font-weight:bold;box-sizing:content-box;width:20px;height:20px;padding:8px;
+	/* Tooltip */
+	.w3-tooltip .w3-tooltiptext{
+		width: 100%;
+		margin-left: 0px;
+		left: 0px; 
+	}
 }

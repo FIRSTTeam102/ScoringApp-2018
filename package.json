@@ -1,6 +1,6 @@
 {
   "name": "gearheads-scouting-app",
-  "version": "1.0.0",
+  "version": "2019",
   "private": true,
   "scripts": {
     "start": "node ./www"

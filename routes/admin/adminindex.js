@@ -58,7 +58,6 @@ router.post('/setcurrent', function(req, res) {
 				//set up tba call
 				var Client = require('node-rest-client').Client;
 				var client = new Client();
-				var eventId = req.event.key;
 				var teamsUrl = `https://www.thebluealliance.com/api/v3/event/${eventId}/teams`;
 				
 				//get teams from tba

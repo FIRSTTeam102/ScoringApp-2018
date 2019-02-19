@@ -206,6 +206,7 @@ router.post("/generateteamallocations", function(req, res) {
 	var passCheckSuccess;
 	
 	if( !req.body.password || req.body.password == ""){
+		
 		return res.send({status: 401, alert: "No password entered."});
 	}
 	if( !require('../checkauthentication')(req, res, 'admin') )
@@ -244,6 +245,7 @@ router.post("/generateteamallocations", function(req, res) {
 	
 	var db = req.db;
 	var currentCol = db.get("current");
+	var currentTeamsCol = db.get("currentteams");
 	var scoutPairCol = db.get("scoutingpairs");
 	var memberCol = db.get("teammembers");
 	var scoutDataCol = db.get("scoutingdata");
@@ -257,163 +259,117 @@ router.post("/generateteamallocations", function(req, res) {
 	}
 
 	// nodeclient
-	var Client = require('node-rest-client').Client;
-	var client = new Client();
-	var args = {
-		headers: { "accept": "application/json", "X-TBA-Auth-Key": "iSpbq2JH2g27Jx2CI5yujDsoKYeC8pGuMw94YeK3gXFU6lili7S2ByYZYZOYI3ew" }
-	}
-		
+	var client = req.client;
+	var args = req.tbaRequestArgs;
+	
+	var event_key = req.event.key;
+	var year = req.event.year;
+	
 	//
-	// Get the 'current' event from DB
+	// Get the current set of already-assigned pairs; make a map of {"id": {"prim", "seco", "tert"}}
 	//
-	currentCol.find({}, {}, function(e, docs) {
-		var noEventFound = 'No event defined';
-		var eventId = noEventFound;
-		if (docs)
-			if (docs.length > 0)
-				eventId = docs[0].event;
-		if (eventId === noEventFound) {
-			res.render('./adminindex', { 
-				title: 'Admin pages',
-				current: eventId
-			});
+	scoutPairCol.find({}, {}, function (e, docs) {
+		if(e){ //if error, log to console
+			res.log(thisFuncName + e);
 		}
-		// used when writing data to DB, for later querying by event_key
-		var event_key = eventId;
+		var scoutingpairs = docs;
 
-		// 2019-01-23, M.O'C: See YEARFIX comment above
-		var year = parseInt(event_key.substring(0,4));
+		// Iterate through scoutingpairs; create {1st: 2nd: 3rd:} and add to 'dict' keying off 1st <1, or 1/2 2/1, or 1/2/3 2/3/1 3/1/2>
+		var primaryAndBackupMap = {};
+		var scoutingAssignedArray = [];
 		
+		var pairsLen = scoutingpairs.length;
+		for (var i = 0; i < pairsLen; i++) {
+			var thisPair = scoutingpairs[i];
+			if (thisPair.member3) {
+				var set1 = {}; set1.primary = thisPair.member1; set1.secondary = thisPair.member2; set1.tertiary = thisPair.member3; primaryAndBackupMap[set1.primary] = set1;
+				scoutingAssignedArray.push(set1.primary);
+				var set2 = {}; set2.primary = thisPair.member2; set2.secondary = thisPair.member3; set2.tertiary = thisPair.member1; primaryAndBackupMap[set2.primary] = set2;
+				scoutingAssignedArray.push(set2.primary);
+				var set3 = {}; set3.primary = thisPair.member3; set3.secondary = thisPair.member1; set3.tertiary = thisPair.member2; primaryAndBackupMap[set3.primary] = set3;
+				scoutingAssignedArray.push(set3.primary);
+			} else if (thisPair.member2) {
+				var set1 = {}; set1.primary = thisPair.member1; set1.secondary = thisPair.member2; primaryAndBackupMap[set1.primary] = set1;
+				scoutingAssignedArray.push(set1.primary);
+				var set2 = {}; set2.primary = thisPair.member2; set2.secondary = thisPair.member1; primaryAndBackupMap[set2.primary] = set2;
+				scoutingAssignedArray.push(set2.primary);
+			} else {
+				var set1 = {}; set1.primary = thisPair.member1; primaryAndBackupMap[set1.primary] = set1;
+				scoutingAssignedArray.push(set1.primary);
+			}
+		}
+		//res.log(thisFuncName + "primaryAndBackupMap=" + JSON.stringify(primaryAndBackupMap));
+
 		//
-		// Get the current set of already-assigned pairs; make a map of {"id": {"prim", "seco", "tert"}}
+		// Read all present members, ordered by 'seniority' ~ have an array ordered by seniority
 		//
-		scoutPairCol.find({}, {}, function (e, docs) {
+		memberCol.find({ "name": {$in: scoutingAssignedArray }}, { sort: {"seniority": 1, "subteam": 1, "name": 1} }, function(e, docs) {
+			res.log(thisFuncName + "inside memberCol.find()");
 			if(e){ //if error, log to console
 				res.log(thisFuncName + e);
 			}
-			var scoutingpairs = docs;
-
-			// Iterate through scoutingpairs; create {1st: 2nd: 3rd:} and add to 'dict' keying off 1st <1, or 1/2 2/1, or 1/2/3 2/3/1 3/1/2>
-			var primaryAndBackupMap = {};
-			var scoutingAssignedArray = [];
+			var teammembers = docs;
+			var teammembersLen = teammembers.length;
 			
-			var pairsLen = scoutingpairs.length;
-			for (var i = 0; i < pairsLen; i++) {
-				var thisPair = scoutingpairs[i];
-				if (thisPair.member3) {
-					var set1 = {}; set1.primary = thisPair.member1; set1.secondary = thisPair.member2; set1.tertiary = thisPair.member3; primaryAndBackupMap[set1.primary] = set1;
-					scoutingAssignedArray.push(set1.primary);
-					var set2 = {}; set2.primary = thisPair.member2; set2.secondary = thisPair.member3; set2.tertiary = thisPair.member1; primaryAndBackupMap[set2.primary] = set2;
-					scoutingAssignedArray.push(set2.primary);
-					var set3 = {}; set3.primary = thisPair.member3; set3.secondary = thisPair.member1; set3.tertiary = thisPair.member2; primaryAndBackupMap[set3.primary] = set3;
-					scoutingAssignedArray.push(set3.primary);
-				} else if (thisPair.member2) {
-					var set1 = {}; set1.primary = thisPair.member1; set1.secondary = thisPair.member2; primaryAndBackupMap[set1.primary] = set1;
-					scoutingAssignedArray.push(set1.primary);
-					var set2 = {}; set2.primary = thisPair.member2; set2.secondary = thisPair.member1; primaryAndBackupMap[set2.primary] = set2;
-					scoutingAssignedArray.push(set2.primary);
-				} else {
-					var set1 = {}; set1.primary = thisPair.member1; primaryAndBackupMap[set1.primary] = set1;
-					scoutingAssignedArray.push(set1.primary);
-				}
-			}
-			//res.log(thisFuncName + "primaryAndBackupMap=" + JSON.stringify(primaryAndBackupMap));
-
-			//
-			// Read all present members, ordered by 'seniority' ~ have an array ordered by seniority
-			//
-			memberCol.find({ "name": {$in: scoutingAssignedArray }}, { sort: {"seniority": 1, "subteam": 1, "name": 1} }, function(e, docs) {
-				res.log(thisFuncName + "inside memberCol.find()");
-				if(e){ //if error, log to console
-					res.log(thisFuncName + e);
-				}
-				var teammembers = docs;
-				var teammembersLen = teammembers.length;
-				/*
-				for (var i = 0; i < teammembersLen; i++)
-					res.log(thisFuncName + "member["+i+"=" + JSON.stringify(teammembers[i]));
-				*/
-
+			currentTeamsCol.find({},{}, function(e, teamArray){
+				
 				//
-				// Get all the teams for the 'current' event
+				// Cycle through teams, adding 1st 2nd 3rd to each based on array of 1st2nd3rds
 				//
-				var url = "https://www.thebluealliance.com/api/v3/event/" + eventId + "/teams/simple";
-				res.log(thisFuncName + "url=" + url);
-				client.get(url, args, function (data, response) {
-					var tbaTeamArray = JSON.parse(data);
-					var tbaTeamArrayLen = tbaTeamArray.length;
-					if (tbaTeamArrayLen == null) {
-						res.log(thisFuncName + "Whoops, there was an error!")
-						res.log(thisFuncName + "data=" + data);
-						
-						//year = (new Date()).getFullYear();
-						// 2019-01-23, M.O'C: See YEARFIX comment above
-						var year = parseInt(event_key.substring(0,4));
-						
-						res.render('./adminindex', { 
-							title: 'Admin pages',
-							current: eventId
-						});
-						return;
-					}
-
-					//
-					// Cycle through teams, adding 1st 2nd 3rd to each based on array of 1st2nd3rds
-					//
-					var teamassignments = [];
-					var teamassignmentsByTeam = {};
-					var assigneePointer = 0;
-					for (var i = 0; i < tbaTeamArrayLen; i++) {
-						var thisTbaTeam = tbaTeamArray[i];
-						var thisTeammemberName = teammembers[assigneePointer].name;
-						var thisPrimaryAndBackup = primaryAndBackupMap[thisTeammemberName];
-						/*
-						res.log(thisFuncName + "i=" + i + "; assigneePointer=" + assigneePointer);
-						res.log(thisFuncName + "thisTbaTeam=" + JSON.stringify(thisTbaTeam));
-						res.log(thisFuncName + "thisTeammemberName=" + thisTeammemberName);
-						res.log(thisFuncName + "thisPrimaryAndBackup=" + JSON.stringify(thisPrimaryAndBackup));
-						*/
-						
-						// { year, event_key, team_key, primary, secondary, tertiary, actual, scouting_data: {} }
-						var thisAssignment = {};
-						// general info
-						thisAssignment["year"] = year;
-						thisAssignment["event_key"] = event_key;
-						// unique per team
-						thisAssignment["team_key"] = thisTbaTeam.key;
-						
-						// 2018-03-15, M.O'C: Skip assigning if this teams is the "active" team (currently hardcoding to 'frc102')
-						if (activeTeamKey != thisTbaTeam.key) {						
-							thisAssignment["primary"] = thisPrimaryAndBackup.primary;
-							if (thisPrimaryAndBackup.secondary)
-								thisAssignment["secondary"] = thisPrimaryAndBackup.secondary;
-							if (thisPrimaryAndBackup.tertiary)
-								thisAssignment["tertiary"] = thisPrimaryAndBackup.tertiary;
-							
-							assigneePointer += 1;
-							if (assigneePointer >= teammembersLen)
-								assigneePointer = 0;
-						} else {
-							res.log(thisFuncName + "Skipping team " + thisTbaTeam.key);
-						}
-							
-						
-						// Array for mass insert
-						teamassignments.push(thisAssignment);
-						// Map of assignments by team so we can lookup by team later during match assigning
-						teamassignmentsByTeam[thisTbaTeam.key] = thisAssignment;
-					}
-					res.log(thisFuncName + "****** New/updated teamassignments:");
-					for (var i = 0; i < tbaTeamArrayLen; i++)
-						res.log(thisFuncName + "team,primary,secondary,tertiary=" + teamassignments[i].team_key + " ~> " + teamassignments[i].primary + "," + teamassignments[i].secondary + ","  + teamassignments[i].tertiary);
+				var teamArrayLen = teamArray.length;
+				var teamassignments = [];
+				var teamassignmentsByTeam = {};
+				var assigneePointer = 0;
+				for (var i = 0; i < teamArrayLen; i++) {
+					var thisTbaTeam = teamArray[i];
+					var thisTeammemberName = teammembers[assigneePointer].name;
+					var thisPrimaryAndBackup = primaryAndBackupMap[thisTeammemberName];
+					/*
+					res.log(thisFuncName + "i=" + i + "; assigneePointer=" + assigneePointer);
+					res.log(thisFuncName + "thisTbaTeam=" + JSON.stringify(thisTbaTeam));
+					res.log(thisFuncName + "thisTeammemberName=" + thisTeammemberName);
+					res.log(thisFuncName + "thisPrimaryAndBackup=" + JSON.stringify(thisPrimaryAndBackup));
+					*/
 					
-					// Delete ALL the old elements first for the 'current' event
-					scoutDataCol.remove({"event_key": event_key}, function(e, docs) {
-						// Insert the new data
-						scoutDataCol.insert(teamassignments, function(e, docs) {
-							//res.redirect("./");	
-							return res.send({status: 200, alert: "Generated team allocations successfully."});
-						});
+					// { year, event_key, team_key, primary, secondary, tertiary, actual, scouting_data: {} }
+					var thisAssignment = {};
+					// general info
+					thisAssignment["year"] = year;
+					thisAssignment["event_key"] = event_key;
+					// unique per team
+					thisAssignment["team_key"] = thisTbaTeam.key;
+					
+					// 2018-03-15, M.O'C: Skip assigning if this teams is the "active" team (currently hardcoding to 'frc102')
+					if (activeTeamKey != thisTbaTeam.key) {						
+						thisAssignment["primary"] = thisPrimaryAndBackup.primary;
+						if (thisPrimaryAndBackup.secondary)
+							thisAssignment["secondary"] = thisPrimaryAndBackup.secondary;
+						if (thisPrimaryAndBackup.tertiary)
+							thisAssignment["tertiary"] = thisPrimaryAndBackup.tertiary;
+						
+						assigneePointer += 1;
+						if (assigneePointer >= teammembersLen)
+							assigneePointer = 0;
+					} else {
+						res.log(thisFuncName + "Skipping team " + thisTbaTeam.key);
+					}
+						
+					
+					// Array for mass insert
+					teamassignments.push(thisAssignment);
+					// Map of assignments by team so we can lookup by team later during match assigning
+					teamassignmentsByTeam[thisTbaTeam.key] = thisAssignment;
+				}
+				res.log(thisFuncName + "****** New/updated teamassignments:");
+				for (var i = 0; i < teamArrayLen; i++)
+					res.log(thisFuncName + "team,primary,secondary,tertiary=" + teamassignments[i].team_key + " ~> " + teamassignments[i].primary + "," + teamassignments[i].secondary + ","  + teamassignments[i].tertiary);
+				
+				// Delete ALL the old elements first for the 'current' event
+				scoutDataCol.remove({"event_key": event_key}, function(e, docs) {
+					// Insert the new data
+					scoutDataCol.insert(teamassignments, function(e, docs) {
+						//res.redirect("./");	
+						return res.send({status: 200, alert: "Generated team allocations successfully."});
 					});
 				});
 			});

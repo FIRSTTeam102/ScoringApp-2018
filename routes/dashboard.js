@@ -243,16 +243,29 @@ router.get('/pits', function(req, res) {
 
 	var db = req.db;
 	var scoutDataCol = db.get("scoutingdata");
-	var teamsCol = req.db.get('teams');
+	var currentTeamsCol = req.db.get('currentteams');
 	
 	// for later querying by event_key
-	var eventId = req.event.key;
+	var event_key = req.event.key;
 	
-	scoutDataCol.find({"event_key": eventId}, { sort: {"team_key": 1} }, function (e, docs) {
+	scoutDataCol.find({"event_key": event_key}, { }, function (e, docs) {
 		var teams = docs;
 		
+		//sort teams list by number
+		teams.sort(function(a, b) {
+			let aNum = parseInt(a.team_key.substring(3));
+			let bNum = parseInt(b.team_key.substring(3));
+			if( aNum < bNum ){
+				return -1;
+			}
+			if( aNum > bNum ){
+				return 1;
+			}
+			return 0;
+		});
+		
 		// read in team list for data
-		teamsCol.find({},{ sort: {team_number: 1} }, function(e, docs) {
+		currentTeamsCol.find({},{ sort: {team_number: 1} }, function(e, docs) {
 			var teamArray = docs;
 			
 			// Build map of team_key -> team data

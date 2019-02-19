@@ -142,11 +142,10 @@ router.get('/pit*', function(req, res) {
 
 	//Add event key and pit data to get pit function
 	var event_key = req.event.key;
+	var event_year = req.event.year;
+	
 	var thisFuncName = "scouting.pit*[get]: ";
 	res.log(thisFuncName + 'ENTER');
-	
-	var thisUser = req.user;
-	var thisUserName = thisUser.name;
 
 	var teamKey = req.query.team;
 	if (!teamKey) {
@@ -159,7 +158,7 @@ router.get('/pit*', function(req, res) {
 	var pitCol = req.db.get('scoutingdata'); //for pitcol.find()
 	
 	
-	scoutCol.find({}, {sort: {"order": 1}}, function(e, docs){
+	scoutCol.find({ "year": event_year }, {sort: {"order": 1}}, function(e, docs){
 		var layout = docs;
 
 		//pasted code

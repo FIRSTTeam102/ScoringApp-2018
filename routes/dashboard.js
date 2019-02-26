@@ -302,7 +302,8 @@ router.get('/matches', function(req, res) {
 	var db = req.db;
 	var scoreDataCol = db.get("scoringdata");
 	var matchCol = db.get("matches");
-	var teamsCol = db.get("teams");
+	//var teamsCol = db.get("teams");
+	var currentTeamsCol = req.db.get('currentteams');
 
 	// for later querying by event_key
 	var eventId = req.event.key;
@@ -333,6 +334,8 @@ router.get('/matches', function(req, res) {
 			if(!scoreData)
 				return console.error("mongo error at dashboard/matches");
 
+			res.log(thisFuncName + 'scoreData.length=' + scoreData.length);
+
 			for (var scoreIdx = 0; scoreIdx < scoreData.length; scoreIdx++) {
 				//res.log(thisFuncName + 'getting for ' + scoreData[scoreIdx].match_key);
 				scoreData[scoreIdx].predicted_time = matchLookup[scoreData[scoreIdx].match_key].predicted_time;
@@ -340,7 +343,8 @@ router.get('/matches', function(req, res) {
 			
 			res.log(thisFuncName + 'DEBUG getting nicknames next?');
 			// read in team list for data
-			teamsCol.find({},{ sort: {team_number: 1} }, function(e, docs) {
+			currentTeamsCol.find({},{ sort: {team_number: 1} }, function(e, docs) {
+			//teamsCol.find({},{ sort: {team_number: 1} }, function(e, docs) {
 				var teamArray = docs;
 				
 				// Build map of team_key -> team data

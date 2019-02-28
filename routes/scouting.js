@@ -10,6 +10,8 @@ router.get('/match*', function(req, res) {
 	var thisFuncName = "scouting.match*[get]: ";
 	res.log(thisFuncName + 'ENTER');
 	
+	var event_year = req.event.year;
+
 	var thisUser = req.user;
 	var thisUserName = thisUser.name;
 	var event_year = req.event.year;
@@ -24,7 +26,7 @@ router.get('/match*', function(req, res) {
 	
 	var db = req.db;
 	var collection = db.get("scoringlayout");
-	collection.find({ year: event_year }, {sort: {"order": 1}}, function(e, docs){
+	collection.find({ "year": event_year }, {sort: {"order": 1}}, function(e, docs){
 		var layout = docs;
 		//res.log(layout);
 		res.render("./scouting/match", {

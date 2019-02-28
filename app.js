@@ -1,3 +1,6 @@
+//scotchio img tutorial
+var dotenv = require('dotenv').config();
+
 const express = require('express');					//main express shiz
 const path = require('path');						//for filesystem
 const favicon = require('serve-favicon');			//serves favicon
@@ -91,6 +94,8 @@ var dashboard = require("./routes/dashboard");
 var scouting = require("./routes/scouting");
 var reports = require('./routes/reports');
 var allianceselection = require('./routes/allianceselection');
+var test = require("./routes/test");
+var image = require("./routes/image");
 //ADMIN ROUTES
 var adminindex = require('./routes/admin/adminindex');
 var scoutingaudit = require("./routes/admin/audit");
@@ -114,6 +119,8 @@ app.use('/admin/data', externaldata);
 app.use('/admin/current', current);
 app.use('/admin/audit', scoutingaudit);
 app.use('/manualinput', manualinput);
+app.use('/test', test);
+app.use('/image', image);
 
 // catch 404 and forward to error handler
 app.use(useFunctions.notFoundHandler);

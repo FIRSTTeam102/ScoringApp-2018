@@ -12,6 +12,7 @@ router.get('/match*', function(req, res) {
 	
 	var thisUser = req.user;
 	var thisUserName = thisUser.name;
+	var event_year = req.event.year;
 
 	var matchKey = req.query.key;
 	var alliance = req.query.alliance;
@@ -23,7 +24,7 @@ router.get('/match*', function(req, res) {
 	
 	var db = req.db;
 	var collection = db.get("scoringlayout");
-	collection.find({}, {sort: {"order": 1}}, function(e, docs){
+	collection.find({ year: event_year }, {sort: {"order": 1}}, function(e, docs){
 		var layout = docs;
 		//res.log(layout);
 		res.render("./scouting/match", {

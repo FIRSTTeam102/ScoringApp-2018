@@ -17,31 +17,30 @@ block content
 	script(src="/js/pit-client.js")
 	h3= key.replace('frc','Team #')
 	p
-	//- console.log("pit.pug, pitData="+JSON.stringify(pitData))
-	form#scoutform(name="scoutform")
-		input#teamkey(type="hidden", name="teamkey", value=`${key}`)
-		div(style="text-align:center")
-			each element in layout
-				- var answer = ""
-				- if (pitData) answer = pitData[element.id]
-				- console.log("element.id, answer="+element.id+","+answer)
-				
-				case element.type
-					when "checkbox"
-						include templates/formCheckbox
-					when "counter"
-						include templates/formCounterInput
-					when "badcounter"
-						include templates/formBadcounter
-					when "multiselect"
-						include templates/dropdown
-					when "textblock"
-						include templates/formTextblock
-					when "h2"
-						include templates/categoryHeader
-					when "spacer"
-						include templates/formSpacer
-	center
+	div(class="")
+		form#scoutform(class="" name="scoutform")
+			input#teamkey(type="hidden", name="teamkey", value=`${key}`)
+			div(class="w3-auto")
+				each element in layout
+					- var answer = ""
+					- if (pitData) answer = pitData[element.id]
+					- console.log("element.id, answer="+element.id+","+answer)
+					
+					case element.type
+						when "checkbox"
+							include templates/formCheckbox
+						when "counter"
+							include templates/formCounterInput
+						when "badcounter"
+							include templates/formBadcounter
+						when "multiselect"
+							include templates/dropdown
+						when "textblock"
+							include templates/formTextblock
+						when "h2"
+							include templates/categoryHeader
+						when "spacer"
+							include templates/formSpacer
 		button#submit( onclick="window.onbeforeunload = null;" class="w3-btn theme-submit") Submit
 	| <script>
 	each element in layout

@@ -6,14 +6,14 @@ var router = express.Router();
  * @url /test
  * @view test/test
  */
-// router.get('/', function(req, res) {
-//     res.render('./test', {
-//       imageUrl: 'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png'
-//         //Work on the test.pug file for image retrieval
-//     });
-//     //res.send(imageUrl)
-//     //see https://stackoverflow.com/questions/15772394/how-to-upload-display-and-save-images-using-node-js-and-express
-// });
+router.get('/', function(req, res) {
+    res.render('./test', {
+      imageUrl: 'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png'
+        //Work on the test.pug file for image retrieval
+    });
+    //res.send(imageUrl)
+    //see https://stackoverflow.com/questions/15772394/how-to-upload-display-and-save-images-using-node-js-and-express
+});
 
 // router.post("/upload", function(req, res) {
 //     res.redirect('/test');
@@ -48,4 +48,4 @@ var router = express.Router();
 // });
 
 
-// module.exports = router;
+module.exports = router;

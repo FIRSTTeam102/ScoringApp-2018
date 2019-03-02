@@ -7,14 +7,13 @@ var router = express.Router();
  * @view image/test
  */
 
-/* Pasted code... *////////////////////////////////////////
-
 // import multer and the AvatarStorage engine
 var _ = require('lodash');
 var path = require('path');
 var multer = require('multer');
 var AvatarStorage = require('../helpers/AvatarStorage');
 
+/* REMOVING EXTRA STUFF FOR TESTING PURPOSES
 // setup a new instance of the AvatarStorage engine 
 var storage = AvatarStorage({
     square: true,
@@ -40,14 +39,33 @@ var fileFilter = function(req, file, cb) {
         cb(new Error('Invalid file type. Only jpg, png and gif image files are allowed.'));
     }
 };
+*/
 
+//set custom upload path
+var UPLOAD_PATH = path.resolve(__dirname, "..", "public\\uploads") + "\\";
+console.log(`UPLOAD_PATH 2: ${UPLOAD_PATH}`);
+
+//create basic multer diskStorage
+var storage = multer.diskStorage({
+	destination: UPLOAD_PATH,
+	filename: function (req, file, callback) {
+		callback(null, file.fieldname + '-' + Date.now());
+	}
+});
+
+//create basic multer function upload
+var upload = multer({
+    storage: storage
+}).single("avatarfield");
+
+/*
 // setup multer
 var upload = multer({
     storage: storage,
     limits: limits,
     fileFilter: fileFilter
-});
-
+}).single("avatarfield");
+*/
 
 router.get('/', function(req, res, next) {
     // res.render('index', { title: 'Upload Avatar', avatar_field: process.env.AVATAR_FIELD });
@@ -61,7 +79,29 @@ router.get('/', function(req, res, next) {
 
 /* More pasted code... ... */////////////////////////////////////////
 
-router.post('/upload', upload.single("avatarfield"), function(req, res, next) {
+router.post('/upload', function(req, res, next) {
+    
+    res.log("going to upload");
+    
+    upload(req, res, function(e){
+        console.log("hello");
+    });
+    
+    res.log("called upload");
+    /*
+    var thisFuncName = "/image/upload (POST) ";
+    
+    res.log(`req.query: ${JSON.stringify(req.query)}`);
+    res.log(`req.query: ${JSON.stringify(req.body)}`);
+    res.log(`req.file: ${JSON.stringify(req.file)}`);
+    
+    res.log(`${thisFuncName} going to call upload.single`);
+    upload.single("avatarfield");
+    res.log(`${thisFuncName} after calling upload.single`);
+    
+    res.log(`req.query: ${JSON.stringify(req.query)}`);
+    res.log(`req.query: ${JSON.stringify(req.body)}`);
+    res.log(`req.file: ${JSON.stringify(req.file)}`);
     
     console.log("process.env.AVATAR_FIELD =" + process.env.AVATAR_FIELD);
     var files;
@@ -88,7 +128,7 @@ router.post('/upload', upload.single("avatarfield"), function(req, res, next) {
     res.json({
         images: files
     });
-    
+    */
 });
 
 

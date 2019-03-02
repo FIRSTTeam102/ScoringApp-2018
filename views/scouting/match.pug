@@ -35,8 +35,10 @@ block content
 						include templates/formSubHeader
 					when "spacer"
 						include templates/formSpacer
+	br 
 	center
 		button#submit( onclick="window.onbeforeunload = null;" class="w3-btn theme-submit") Submit
+	br 
 	| <script>
 	each element in layout
 		case element.type

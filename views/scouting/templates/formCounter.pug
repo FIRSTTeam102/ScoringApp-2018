@@ -1,6 +1,7 @@
-div(class="w3-row")
+div(class="w3-auto w3-row")
 	div(class="w3-col s2 m4")
-		button(class="w3-btn theme-red gear-counter" onclick=`updateCounter_${element.id}(-1)` type="button") -
+		button(class="w3-btn theme-red gear-counter" onclick=`updateCounter_${element.id}(-1)` type="button") 
+			div(class="minus") -
 	div(class="w3-col s8 m4")
 		label(id=`${element.id}`)
 			center #{element.label}: 0

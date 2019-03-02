@@ -26,7 +26,7 @@ block content
 					div(class="w3-col m2 w3-padding-small")
 						button(class="w3-btn theme-submit w3-block" type="submit") Update
 					div(class="w3-col m3 w3-padding-small")
-						input(type="text" value=member.name name="name" class="w3-input theme-input w3-no-border gear-inline-padding")
+						input(type="text" value=member.name name="name" class="w3-input theme-input w3-no-border theme-inline-padding")
 					div(class="w3-col m2 w3-padding-small")
 						select(class="w3-select theme-input w3-no-border" name="subteam")
 							- options = ["mech", "elec", "prog", "exec", "lead", "driv", "support"];
@@ -44,13 +44,13 @@ block content
 								- else
 									option(value=option)= option
 					div(class="w3-col m2 w3-padding-small")
-						input(type="text" value=member.years name="years" class="w3-input theme-input w3-no-border gear-inline-padding")
+						input(type="text" value=member.years name="years" class="w3-input theme-input w3-no-border theme-inline-padding")
 		div(class="w3-row")
 			form(action="/admin/teammembers/addmember" method="post")
 				div(class="w3-col m2 w3-padding-small")
 					button(type="submit" class="w3-btn theme-submit w3-block") Add
 				div(class="w3-col m3 w3-padding-small")
-					input(type="text" class="w3-input theme-input w3-block w3-no-border gear-inline-padding" name="name" placeholder="name")
+					input(type="text" class="w3-input theme-input w3-block w3-no-border theme-inline-padding" name="name" placeholder="name")
 				div(class="w3-col m2 w3-padding-small")
 					select(name="subteam" class="w3-select theme-input w3-no-border")
 						- options = ["mech", "elec", "prog", "driv", "lead", "exec", "support"];
@@ -62,7 +62,7 @@ block content
 						each option in options
 							option(value=option)= option
 				div(class="w3-col m2 w3-padding-small")
-					input(class="w3-input theme-input w3-no-border gear-inline-padding" name="years" type="text" placeholder="years on team")
+					input(class="w3-input theme-input w3-no-border theme-inline-padding" name="years" type="text" placeholder="years on team")
 	script.
 		function confirmDelete(memberName, memberId){
 			if(confirm('Delete member: "' + memberName + '"?')){

@@ -13,18 +13,18 @@ var path = require('path');
 var multer = require('multer');
 var AvatarStorage = require('../helpers/AvatarStorage');
 
-/* REMOVING EXTRA STUFF FOR TESTING PURPOSES
-// setup a new instance of the AvatarStorage engine 
 var storage = AvatarStorage({
-    square: true,
+    square: false,
     responsive: true,
-    greyscale: true,
-    quality: 90
+    output: "jpg",
+    greyscale: false,
+    quality: 60,
+    threshold: 1000
 });
 
 var limits = {
     files: 1, // allow only 1 file per request
-    fileSize: 1024 * 1024, // 1 MB (max file size)
+    fileSize: 10 * 1024 * 1024, // 10 MB (max file size)
 };
 
 var fileFilter = function(req, file, cb) {
@@ -39,33 +39,14 @@ var fileFilter = function(req, file, cb) {
         cb(new Error('Invalid file type. Only jpg, png and gif image files are allowed.'));
     }
 };
-*/
-
-//set custom upload path
-var UPLOAD_PATH = path.resolve(__dirname, "..", "public\\uploads") + "\\";
-console.log(`UPLOAD_PATH 2: ${UPLOAD_PATH}`);
-
-//create basic multer diskStorage
-var storage = multer.diskStorage({
-	destination: UPLOAD_PATH,
-	filename: function (req, file, callback) {
-		callback(null, file.fieldname + '-' + Date.now());
-	}
-});
 
 //create basic multer function upload
-var upload = multer({
-    storage: storage
-}).single("avatarfield");
-
-/*
-// setup multer
 var upload = multer({
     storage: storage,
     limits: limits,
     fileFilter: fileFilter
 }).single("avatarfield");
-*/
+
 
 router.get('/', function(req, res, next) {
     // res.render('index', { title: 'Upload Avatar', avatar_field: process.env.AVATAR_FIELD });

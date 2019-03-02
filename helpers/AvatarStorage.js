@@ -3,7 +3,7 @@ var _ = require('lodash');
 var fs = require('fs');
 var path = require('path');
 var Jimp = require('jimp');
-var crypto = require('crypto');
+//var crypto = require('crypto');
 var mkdirp = require('mkdirp');
 var concat = require('concat-stream');
 var streamifier = require('streamifier');
@@ -23,7 +23,7 @@ var AvatarStorage = function(options) {
         console.log("We're in the AvatarStorage constructor!");
         var baseUrl = process.env.AVATAR_BASE_URL;
         
-        var allowedStorageSystems = ['local'];
+        var allowedStorageSystems = ['local', 'remote'];
         var allowedOutputFormats = ['jpg', 'png'];
         
         //fallback for the options
@@ -80,18 +80,31 @@ var AvatarStorage = function(options) {
         !fs.existsSync(this.uploadPath) && mkdirp.sync(this.uploadPath);
         }
     }
+    
+    // //this generates a random cryptographic filename
+    // AvatarStorage.prototype._generateRandomFilename = function() {
+    //     //create pseudo random bytes
+    //     var bytes = crypto.pseudoRandomBytes(32);
+        
+    //     //create the md5 hash of the random bytes
+    //     var checksum = crypto.createHash('MD5').update(bytes).digest('hex');
+        
+    //     //return as filename the hash with the output extension
+    //     return checksum + '.' + this.options.output;
+    // }
+    
 
-    //this generates a random cryptographic filename
+
+
+
+
+    
     AvatarStorage.prototype._generateRandomFilename = function() {
-        //create pseudo random bytes
-        var bytes = crypto.pseudoRandomBytes(32);
-        
-        //create the md5 hash of the random bytes
-        var checksum = crypto.createHash('MD5').update(bytes).digest('hex');
-        
-        //return as filename the hash with the output extension
-        return checksum + '.' + this.options.output;
+        console.log("Hallo thare");
+        var teamKey = req.query.team;
+        return teamKey + '_' + this.options.output; //Still some bugs with this
     }
+
 
     //this creates a Writable stream for a filepath
     AvatarStorage.prototype._createOutputStream = function(filepath, cb) {
@@ -131,7 +144,7 @@ var AvatarStorage = function(options) {
         var sizes = ['lg', 'md', 'sm'];
         
         var filename = this._generateRandomFilename();
-        
+        console.log("filename=" + filename);
         var mime = Jimp.MIME_PNG;
         
         //create a clone of the Jimp image

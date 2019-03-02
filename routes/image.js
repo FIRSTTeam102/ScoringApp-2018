@@ -69,47 +69,6 @@ router.post('/upload', function(req, res, next) {
     });
     
     res.log("called upload");
-    /*
-    var thisFuncName = "/image/upload (POST) ";
-    
-    res.log(`req.query: ${JSON.stringify(req.query)}`);
-    res.log(`req.query: ${JSON.stringify(req.body)}`);
-    res.log(`req.file: ${JSON.stringify(req.file)}`);
-    
-    res.log(`${thisFuncName} going to call upload.single`);
-    upload.single("avatarfield");
-    res.log(`${thisFuncName} after calling upload.single`);
-    
-    res.log(`req.query: ${JSON.stringify(req.query)}`);
-    res.log(`req.query: ${JSON.stringify(req.body)}`);
-    res.log(`req.file: ${JSON.stringify(req.file)}`);
-    
-    console.log("process.env.AVATAR_FIELD =" + process.env.AVATAR_FIELD);
-    var files;
-    var file = req.file.filename;
-    var matches = file.match(/^(.+?)_.+?\.(.+)$/i);
-    
-    if (matches) {
-        files = _.map(['lg', 'md', 'sm'], function(size) {
-            return matches[1] + '_' + size + '.' + matches[2];
-        });
-    } 
-    else{
-        files = [file];
-    }
-    
-    files = _.map(files, function(file) {
-        var port = req.app.get('port');
-        var base = req.protocol + '://' + req.hostname + (port ? ':' + port : '');
-        var url = path.join(req.file.baseUrl, file).replace(/[\\\/]+/g, '/').replace(/^[\/]+/g, '');
-        
-        return (req.file.storage == 'local' ? base : '') + '/' + url;
-    });
-    
-    res.json({
-        images: files
-    });
-    */
 });
 
 

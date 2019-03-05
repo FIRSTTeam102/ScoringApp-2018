@@ -3,7 +3,7 @@ var _ = require('lodash');
 var fs = require('fs');
 var path = require('path');
 var Jimp = require('jimp');
-//var crypto = require('crypto');
+var crypto = require('crypto');
 var mkdirp = require('mkdirp');
 var concat = require('concat-stream');
 var streamifier = require('streamifier');
@@ -16,11 +16,9 @@ console.log("UPLOAD_PATH = " + UPLOAD_PATH);
 //create a multer storage engine
 var AvatarStorage = function(options) {
     
-    console.log("AvatarStorage function declaration");
 
     //this serves as a constructor
     function AvatarStorage(opts) {
-        console.log("We're in the AvatarStorage constructor!");
         var baseUrl = process.env.AVATAR_BASE_URL;
         
         var allowedStorageSystems = ['local', 'remote'];
@@ -81,28 +79,23 @@ var AvatarStorage = function(options) {
         }
     }
     
-    // //this generates a random cryptographic filename
-    // AvatarStorage.prototype._generateRandomFilename = function() {
-    //     //create pseudo random bytes
-    //     var bytes = crypto.pseudoRandomBytes(32);
-        
-    //     //create the md5 hash of the random bytes
-    //     var checksum = crypto.createHash('MD5').update(bytes).digest('hex');
-        
-    //     //return as filename the hash with the output extension
-    //     return checksum + '.' + this.options.output;
-    // }
-    
-
-
-
-
-
-    
+    //this generates a random cryptographic filename
     AvatarStorage.prototype._generateRandomFilename = function() {
-        console.log("Hallo thare");
-        var teamKey = req.query.team;
-        return teamKey + '_' + this.options.output; //Still some bugs with this
+        
+        //create pseudo random bytes
+        var bytes = crypto.pseudoRandomBytes(32);//error here
+        
+        //create the md5 hash of the random bytes
+        var checksum = crypto.createHash('MD5').update(bytes).digest('hex');
+        
+        //return as filename the hash with the output extension
+        return checksum + '.' + this.options.output;
+    }
+    
+
+    AvatarStorage.prototype._generateFilename = function(baseFilename) {
+        var imgFilename = baseFilename + '.' + this.options.output;
+        return imgFilename;
     }
 
 
@@ -133,8 +126,9 @@ var AvatarStorage = function(options) {
     }
 
     //this processes the Jimp image buffer
-    AvatarStorage.prototype._processImage = function(image, cb) {
+    AvatarStorage.prototype._processImage = function(image, baseFilename, cb) {
         
+
         //create a reference for this to use in local functions
         var that = this;
         
@@ -142,9 +136,11 @@ var AvatarStorage = function(options) {
         
         //the responsive sizes
         var sizes = ['lg', 'md', 'sm'];
-        
         var filename = this._generateRandomFilename();
-        console.log("filename=" + filename);
+        if (baseFilename) {
+            filename = this._generateFilename(baseFilename);
+        }
+
         var mime = Jimp.MIME_PNG;
         
         //create a clone of the Jimp image
@@ -249,7 +245,6 @@ var AvatarStorage = function(options) {
 
     //multer requires this for handling the uploaded file
     AvatarStorage.prototype._handleFile = function(req, file, cb) {
-        
         //create a reference for this to use in local functions
         var that = this;
         
@@ -263,7 +258,7 @@ var AvatarStorage = function(options) {
         Jimp.read(imageData)
             .then(function(image) {
                 //process the Jimp image buffer
-                that._processImage(image, cb);
+                that._processImage(image, req.baseFilename, cb);
             })
             .catch(cb);
         });
@@ -307,7 +302,6 @@ var AvatarStorage = function(options) {
         });
     }
     
-    console.log("Done with AS function declaration");
 
     //create a new instance with the passed options and return it
     return new AvatarStorage(options);

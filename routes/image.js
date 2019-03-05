@@ -19,7 +19,7 @@ var storage = AvatarStorage({
     output: "jpg",
     greyscale: false,
     quality: 60,
-    threshold: 1000
+    threshold: 2000
 });
 
 var limits = {
@@ -58,14 +58,27 @@ router.get('/', function(req, res, next) {
 
 });
 
+// ||\\  ||  //|||||\\  |||\\    ||||||||      ||||||||   /|||||||
+// || \\ ||  ||     ||  ||  \\   ||               ||      ||
+// ||  \\||  ||     ||  ||   \\  |||||            ||      \||||||\
+// ||   \\|  ||     ||  ||   //  ||               ||            ||
+// ||    ||  ||     ||  ||  //   ||               ||            ||
+// ||    ||  \\|||||//  |||//    ||||||||  ||  ||||/      |||||||/
+//...because why not
+
+
 /* More pasted code... ... */////////////////////////////////////////
 
 router.post('/upload', function(req, res, next) {
     
     res.log("going to upload");
+    console.log("going to upload");
     
+    req.baseFilename = "102";
+
     upload(req, res, function(e){
         console.log("hello");
+        console.log("req.file="+JSON.stringify(req.file));
     });
     
     res.log("called upload");

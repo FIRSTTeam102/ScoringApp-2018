@@ -150,6 +150,7 @@ var AvatarStorage = function(options) {
         var width = clone.bitmap.width;
         var height = clone.bitmap.height;
         var square = Math.min(width, height);
+        var rectangle = Math.max(width, height);
         var threshold = this.options.threshold;
         
         //resolve the Jimp output mime type
@@ -166,8 +167,12 @@ var AvatarStorage = function(options) {
         //auto scale the image dimensions to fit the threshold requirement
         if (threshold && square > threshold) {
             clone = (square == width) ? clone.resize(threshold, Jimp.AUTO) : clone.resize(Jimp.AUTO, threshold);
+        } else {
+            clone = (square == width) ? clone.resize(threshold, Jimp.AUTO) : clone.resize(Jimp.AUTO, threshold);
         }
         
+        console.log("threshold="+threshold+", square="+square+", rectangle="+rectangle);
+
         //crop the image to a square if enabled
         if (this.options.square) {
         

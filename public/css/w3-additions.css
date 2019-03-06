@@ -7,9 +7,20 @@
 	margin: 15px 8px 0px 8px;
 }
 
-.gear-counter,.w3-counter{
-	font-weight:bold;box-sizing:content-box;width:20px;height:20px;padding:8px;
+.gear-counter{
+	font-weight:bold;
+	box-sizing:content-box;
+	width:20px;
+	height:20px;
+	padding:8px;
+	font-family: "Tahoma, Geneva, sans-serif";
+    font-size: 20px;
 }
+.gear-counter .minus{
+	margin-top: -7px;
+	font-size: 25px;
+}
+
 /* Tooltip container */
 .tooltip {
 	position: relative;

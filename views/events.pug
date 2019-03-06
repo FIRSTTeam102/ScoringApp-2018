@@ -48,7 +48,7 @@ block content
 						button(class="w3-btn theme-submit" onClick=`getMatchesForEvent('${event.key}')`) Matches
 					td
 						button(class="w3-btn theme-submit" onClick=`getTeamsForEvent('${event.key}')`) Teams
-	form#getmatchdata(name="getmatchdata" method="get" action="/admin/data/matches")
+	form#getmatchdata(name="getmatchdata" method="post" action="/admin/data/matches")
 		input#matcheventId(type="hidden", name="eventId")
 	form#getteamdata(name="getteamdata" method="get" action="/admin/data/teams")
 		input#teamEventId(type="hidden", name="eventId")

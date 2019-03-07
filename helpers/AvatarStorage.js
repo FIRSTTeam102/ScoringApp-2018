@@ -1,4 +1,5 @@
 //Load dependencies
+var dotenv = require('dotenv').config();
 var _ = require('lodash');
 var fs = require('fs');
 var path = require('path');
@@ -16,7 +17,6 @@ console.log("UPLOAD_PATH = " + UPLOAD_PATH);
 //create a multer storage engine
 var AvatarStorage = function(options) {
     
-
     //this serves as a constructor
     function AvatarStorage(opts) {
         var baseUrl = process.env.AVATAR_BASE_URL;

@@ -8,6 +8,8 @@ block content
 	- if (team.country != 'USA') country = team.country;
 	h4(class="gear-text-white w3-tooltip" style="font-style:italic") From: #{team.city}, #{team.state_prov} #{country}
 		span(class="w3-tooltiptext w3-block" style="font-style:italic") #{team.name}
+	a(href=`/uploads/responsive/${event_year}_${team.key}_lg.jpg`)
+		img(src=`/uploads/responsive/${event_year}_${team.key}_md.jpg` alt="")
 	div(class="w3-padding")
 		a(class="theme-link w3-btn" href=`/reports/upcoming?team=${team.key}`) Upcoming matches for team #{team.key.substring(3)}
 	div(class="w3-padding")

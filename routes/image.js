@@ -77,10 +77,10 @@ router.post('/upload*', function(req, res, next) {
     var year = req.event.year;
     req.baseFilename = year + "_" + team_key;
 
-
     upload(req, res, function(e){
         console.log("hello");
         console.log("req.file="+JSON.stringify(req.file));
+        res.redirect("/scouting/pit?team=" + team_key);
     });
     
     res.log("called upload");

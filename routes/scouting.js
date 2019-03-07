@@ -159,8 +159,6 @@ router.get('/pit*', function(req, res) {
 	var db = req.db;
 	var scoutCol = db.get("scoutinglayout");
 	var pitCol = req.db.get('scoutingdata'); //for pitcol.find()
-	var fs = require("fs");
-	var path = require('path');
 	
 	scoutCol.find({ "year": event_year }, {sort: {"order": 1}}, function(e, docs){
 		var layout = docs;
@@ -172,19 +170,12 @@ router.get('/pit*', function(req, res) {
 				if (docs[0].data)
 					pitData = docs[0].data;
 			
-			var pathForImg = path.resolve(__dirname, '..') + 
-				`/public/uploads/responsive/${event_year}_${teamKey}_md.jpg`;
-			res.log("Checking for exists: " + pathForImg);
-			
-			var robotImageExists = fs.existsSync(pathForImg);
-			
 			//res.log(layout);
 			res.render("./scouting/pit", {
 				title: "Pit Scouting",
 				layout: layout,
 				pitData: pitData, 
-				key: teamKey,
-				robotImageExists: robotImageExists
+				key: teamKey
 			});
 		});
 	});

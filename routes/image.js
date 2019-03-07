@@ -1,18 +1,14 @@
 var express = require('express');
 var router = express.Router();
 
-/**
- * Image storage and retrieval page. Meant to help with image down- & up-loads to the main directory
- * @url /image
- * @view image/test
- */
 
-// import multer and the AvatarStorage engine
+//import multer and the AvatarStorage engine
 var _ = require('lodash');
 var path = require('path');
 var multer = require('multer');
 var AvatarStorage = require('../helpers/AvatarStorage');
 
+//create AvatarStorage object with our own parameters
 var storage = AvatarStorage({
     square: false,
     responsive: true,
@@ -22,13 +18,16 @@ var storage = AvatarStorage({
     threshold: 500
 });
 
+//create image limits (10MB max)
 var limits = {
     files: 1, // allow only 1 file per request
     fileSize: 10 * 1024 * 1024, // 10 MB (max file size)
 };
 
+//file filter to guarantee filetype is image
 var fileFilter = function(req, file, cb) {
-    // supported image file mimetypes
+    
+    //supported image file mimetypes
     var allowedMimes = ['image/jpeg', 'image/pjpeg', 'image/png', 'image/gif'];
 
     if (_.includes(allowedMimes, file.mimetype)) {
@@ -47,7 +46,11 @@ var upload = multer({
     fileFilter: fileFilter
 }).single("avatarfield");
 
-
+/**
+ * Image storage and retrieval page. Meant to help with image down- & up-loads to the main directory
+ * @url /image
+ * @view image/test
+ */
 router.get('/', function(req, res, next) {
     // res.render('index', { title: 'Upload Avatar', avatar_field: process.env.AVATAR_FIELD });
     //This stuff works
@@ -55,21 +58,17 @@ router.get('/', function(req, res, next) {
         title: "Image Testing Page",
         avatar_field: process.env.AVATAR_FIELD
     });
-
 });
 
-// ||\\  ||  //|||||\\  |||\\    ||||||||      ||||||||  /|||||||
-// || \\ ||  ||     ||  ||  \\   ||               ||     ||
-// ||  \\||  ||     ||  ||   \\  |||||            ||     \||||||\
-// ||   \\|  ||     ||  ||   //  ||               ||           ||
-// ||    ||  ||     ||  ||  //   ||               ||           ||
-// ||    ||  \\|||||//  |||//    ||||||||  ||  ||||/     |||||||/
-//...because why not
-
-
-/* More pasted code... ... */////////////////////////////////////////
-
+/**
+ * POST: Image upload page for pit scouting. 
+ * @url /image/upload
+ * @param (query) team_key
+ * @param (post) avatarfield, used in upload
+ * @redirect /scouting/pit?team=team_key
+ */
 router.post('/upload*', function(req, res, next) {
+    
     var team_key = req.query.team_key;
     res.log("going to upload");
     console.log("going to upload");
@@ -86,5 +85,11 @@ router.post('/upload*', function(req, res, next) {
     res.log("called upload");
 });
 
-
 module.exports = router;
+
+// ||\\  ||  //|||||\\  |||\\    ||||||||      ||||||||  /|||||||
+// || \\ ||  ||     ||  ||  \\   ||               ||     ||
+// ||  \\||  ||     ||  ||   \\  |||||            ||     \||||||\
+// ||   \\|  ||     ||  ||   //  ||               ||           ||
+// ||    ||  ||     ||  ||  //   ||               ||           ||
+// ||    ||  \\|||||//  |||//    ||||||||  ||  ||||/     |||||||/

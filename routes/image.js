@@ -69,12 +69,14 @@ router.get('/', function(req, res, next) {
 
 /* More pasted code... ... */////////////////////////////////////////
 
-router.post('/upload', function(req, res, next) {
-    
+router.post('/upload*', function(req, res, next) {
+    var team_key = req.query.team_key;
     res.log("going to upload");
     console.log("going to upload");
     
-    req.baseFilename = "102";
+    var year = req.event.year;
+    req.baseFilename = year + "_" + team_key;
+
 
     upload(req, res, function(e){
         console.log("hello");

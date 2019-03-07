@@ -17,6 +17,12 @@ block content
 	script(src="/js/pit-client.js")
 	h3= key.replace('frc','Team #')
 	p
+	form#imageform(action=`/image/upload?team_key=${key}` method="post" enctype="multipart/form-data" name="imageform")
+		input#teamimage(type="file", name="avatarfield")
+		input#returnurl(type="hidden", name="returnurl", value="")
+		input#imagekey(type="hidden", name="teamkey", value=`${key}`)
+		button#submitimage(onclick="window.onbeforeunload = null;", class="w3-btn theme-submit") Upload Image
+	p
 	div(class="")
 		form#scoutform(class="" name="scoutform")
 			input#teamkey(type="hidden", name="teamkey", value=`${key}`)
@@ -45,6 +51,7 @@ block content
 							include templates/formSpacer
 		button#submit( onclick="window.onbeforeunload = null;" class="w3-btn theme-submit") Submit
 	| <script>
+	| document.getElementById("returnurl").value = window.location.href;
 	each element in layout
 		case element.type
 			when "checkbox"

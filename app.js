@@ -1,6 +1,4 @@
-//scotchio img tutorial
-var dotenv = require('dotenv').config();
-
+//load dependencies
 const express = require('express');					//main express shiz
 const path = require('path');						//for filesystem
 const favicon = require('serve-favicon');			//serves favicon

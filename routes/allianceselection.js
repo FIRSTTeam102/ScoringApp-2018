@@ -12,6 +12,7 @@ router.get("/", function(req, res){
 	
 	// for later querying by event_key
 	var event_key = req.event.key;
+	var event_year = req.event.year;
 	res.log(thisFuncName + 'event_key=' + event_key);
 	
 	// get the current rankings
@@ -34,7 +35,7 @@ router.get("/", function(req, res){
 		// "teleScaleAVG": {$avg: "$data.teleScale"},
 		//  } }
 		// ] );						
-		scoreCol.find({}, {sort: {"order": 1}}, function(e, docs){
+		scoreCol.find({ "year": event_year }, {sort: {"order": 1}}, function(e, docs){
 			var scorelayout = docs;
 			
 			var aggQuery = [];

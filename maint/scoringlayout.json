@@ -1,30 +1,34 @@
 {"year" : 2019, "order": "1000", "type": "spacer"}
-{"year" : 2019, "order": "1010", "type": "checkbox", "label": "Started on Level 2?", "id": "SandstormStartLevel2"}
-{"year" : 2019, "order": "1020", "type": "checkbox", "label": "Did they cross the hab line during sandstorm?", "id": "SandstormCrossHabLine"}
+{"year" : 2019, "order": "1010", "type": "checkbox", "label": "Started on Level 2?", "id": "sandstormStartLevel2"}
+{"year" : 2019, "order": "1020", "type": "checkbox", "label": "Did they cross the hab line during sandstorm?", "id": "sandstormCrossHabLine"}
 {"year" : 2019, "order": "1098", "type": "spacer"}
 {"year" : 2019, "order": "1099", "type": "h2", "label": "Sandstorm", "id": "labelSandstorm"}
 {"year" : 2019, "order": "1100", "type": "h3", "label": "Cargo ship", "id": "labelSandstormCargoShip"}
-{"year" : 2019, "order": "1110", "type": "counter", "label": "Hatch panel", "id": "SandstormCargoShipPanel"}
-{"year" : 2019, "order": "1120", "type": "counter", "label": "Cargo", "id": "SandstormCargoShipCargo"}
+{"year" : 2019, "order": "1110", "type": "counter", "label": "Hatch panel", "id": "sandstormCargoShipPanel"}
+{"year" : 2019, "order": "1120", "type": "counter", "label": "Cargo", "id": "sandstormCargoShipCargo"}
 {"year" : 2019, "order": "1200", "type": "h3", "label": "Rocket", "id": "labelSandstormRocket"}
-{"year" : 2019, "order": "1210", "type": "counter", "label": "Hatch panel", "id": "SandstormRocketPanel"}
-{"year" : 2019, "order": "1220", "type": "counter", "label": "Cargo", "id": "SandstormRocketCargo"}
+{"year" : 2019, "order": "1210", "type": "counter", "label": "Hatch panel", "id": "sandstormRocketPanel"}
+{"year" : 2019, "order": "1220", "type": "counter", "label": "Cargo", "id": "sandstormRocketCargo"}
 {"year" : 2019, "order": "1990", "type": "spacer"}
 {"year" : 2019, "order": "2000", "type": "h2", "label": "Teleop", "id": "labelTeleop"}
 {"year" : 2019, "order": "2100", "type": "h3", "label": "Cargo ship", "id": "labelTeleopCargoShip"}
-{"year" : 2019, "order": "2110", "type": "counter", "label": "Hatch panel", "id": "TeleopCargoShipPanel"}
-{"year" : 2019, "order": "2120", "type": "counter", "label": "Cargo", "id": "TeleopCargoShipCargo"}
+{"year" : 2019, "order": "2110", "type": "counter", "label": "Hatch panel", "id": "teleopCargoShipPanel"}
+{"year" : 2019, "order": "2120", "type": "counter", "label": "Cargo", "id": "teleopCargoShipCargo"}
 {"year" : 2019, "order": "2200", "type": "h3", "label": "Rocket", "id": "labelTeleopRocket"}
-{"year" : 2019, "order": "2210", "type": "counter", "label": "Hatch panel", "id": "TeleopRocketPanel"}
-{"year" : 2019, "order": "2220", "type": "counter", "label": "Cargo", "id": "TeleopRocketCargo"}
+{"year" : 2019, "order": "2210", "type": "counter", "label": "Hatch panel", "id": "teleopRocketPanel"}
+{"year" : 2019, "order": "2220", "type": "counter", "label": "Cargo", "id": "teleopRocketCargo"}
 {"year" : 2019, "order": "2990", "type": "spacer"}
 {"year" : 2019, "order": "3000", "type": "h2", "label": "End Game", "id": "labelEndgame"}
-{"year" : 2019, "order": "3110", "type": "counter", "label": "Attempted climb level", "id": "EndgameAttemptedClimbLevel"}
-{"year" : 2019, "order": "3120", "type": "counter", "label": "Actual scored climb level", "id": "EndgameActualScoredClimbLevel"}
+{"year" : 2019, "order": "3110", "type": "counter", "label": "Attempted climb level", "id": "endgameAttemptedClimbLevel"}
+{"year" : 2019, "order": "3120", "type": "counter", "label": "Actual scored climb level", "id": "endgameActualScoredClimbLevel"}
 {"year" : 2019, "order": "3990", "type": "spacer"}
-{"year" : 2019, "order": "4000", "type": "h2", "label": "Issues", "id": "labelIssues"}
-{"year" : 2019, "order": "4010", "type": "checkbox", "label": "Died during the match (or never started)?", "id": "issuesDiedDuringMatch"}
-{"year" : 2019, "order": "4020", "type": "checkbox", "label": "Recovered from freeze?", "id": "issuesRecoveredFromFreeze"}
+{"year" : 2019, "order": "4000", "type": "h2", "label": "General", "id": "labelEndgame"}
+{"year" : 2019, "order": "4010", "type": "checkbox", "label": "Defended (stopped or delayed at least one score)?", "id": "playedDefense"}
+{"year" : 2019, "order": "4011", "type": "checkbox", "label": "Attempted to stop or deflect a defender?", "id": "playedCounterDefense"}
+{"year" : 2019, "order": "4020", "type": "checkbox", "label": "Died during the match (or never started)?", "id": "diedDuringMatch"}
+{"year" : 2019, "order": "4021", "type": "checkbox", "label": "Recovered from freeze?", "id": "recoveredFromFreeze"}
+{"year" : 2019, "order": "4025", "type": "spacer"}
+{"year" : 2019, "order": "4030", "type": "textblock", "label":"Other comments and notes:", "id":"otherNotes"}
 
 {"year" : 2018, "order":"1000","type":"h2","label":"Autonomous","id":"autolabel"}
 {"year" : 2018, "order":"1010","type":"checkbox","label":"Attempted to move?","id":"autoTriedMove"}

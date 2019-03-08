@@ -38,7 +38,7 @@ router.get('/match*', function(req, res) {
 	});
 });
 
-router.post('/match/submit', function(req, res){
+router.post('/match/submit', function(req, res) {
 	
 	/** We need to do this eventually for security. Commented out of fear that scouters may be logged out while scouting (by accident)
 	//auth
@@ -160,6 +160,7 @@ router.get('/pit*', function(req, res) {
 	var scoutCol = db.get("scoutinglayout");
 	var pitCol = req.db.get('scoutingdata'); //for pitcol.find()
 	
+	
 	scoutCol.find({ "year": event_year }, {sort: {"order": 1}}, function(e, docs){
 		var layout = docs;
 
@@ -169,7 +170,7 @@ router.get('/pit*', function(req, res) {
 			if (docs && docs[0])
 				if (docs[0].data)
 					pitData = docs[0].data;
-			
+
 			//res.log(layout);
 			res.render("./scouting/pit", {
 				title: "Pit Scouting",

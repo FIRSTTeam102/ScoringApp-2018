@@ -247,7 +247,7 @@ router.get("/teamintel", function(req, res){
 							// "teleScaleMAX": {$max: "$data.teleScale"}
 							//  } }
 							// ] );						
-							scoreCol.find({}, {sort: {"order": 1}}, function(e, docs){
+							scoreCol.find({ "year": event_year }, {sort: {"order": 1}}, function(e, docs){
 								var scorelayout = docs;
 								var aggQuery = [];
 								aggQuery.push({ $match : { "data":{$exists:true}, "event_key": event_key, "team_key": teamKey } });

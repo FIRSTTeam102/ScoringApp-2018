@@ -91,6 +91,74 @@ block content
 			each match in matches
 				hr
 				div(class="w3-row")
+					div(class="w3-col s12 m12 l2")
+						a(href=`/reports/matchintel?key=${match.key}`) 
+							div(class="theme-gray gear-hover-white w3-btn w3-block w3-border")
+								- var matchPrefix = "";
+								- if (match.comp_level != 'qm') matchPrefix = "" + match.comp_level + "" + match.set_number + " ";
+								- var outcome = "Tie!";
+								- if (match.winning_alliance == 'red') outcome = "Red won";
+								- if (match.winning_alliance == 'blue') outcome = "Blue won";
+								span #{match.event_key.substring(4).toUpperCase()} #{matchPrefix.toUpperCase()}Match #{match.match_number}: #{outcome}
+					div(class="w3-col s12 m12 l1") &nbsp;
+					div(class="w3-col s8 m3 l2")
+						div(class="w3-col w3-border alliance-blue previousmatches-container")
+							each teamkey in match.alliances.blue.team_keys
+								- var teamStyleBlue = "height: 36px;";
+								- if (teamkey == team.key) teamStyleBlue += "font-weight:800;";
+								a(href=`/reports/teammatchintel?key=${match.key}_${teamkey}`)
+									div(class="w3-btn w3-block previousmatches-team-container alliance-hover-blue" style=`${teamStyleBlue}`)
+										span(class="previousmatches-team")= teamkey.substring(3)
+					div(class="w3-col s4 m2")
+						- var divClassBlue = 'w3-btn w3-block w3-border previousmatches-container ';
+						- if (match.winning_alliance == 'blue') divClassBlue += 'w3-white';
+						- else divClassBlue += 'theme-gray';
+						div(class=`${divClassBlue}`)
+							if (match.alliances.blue.score > -1)
+								span Score:
+								br
+								span= match.alliances.blue.score
+								br
+								- var blueRPs = ''
+								- if (match.score_breakdown.blue.completeRocketRankingPoint) blueRPs = 'CR '
+								- if (match.score_breakdown.blue.habDockingRankingPoint) blueRPs += 'HD'
+								span= blueRPs
+							else
+								span &nbsp;
+					div(class="w3-col m2 l1") &nbsp;
+					div(class="w3-col s8 m3 l2")
+						div(class="w3-col w3-border alliance-red previousmatches-container")
+							each teamkey in match.alliances.red.team_keys
+								- var teamStyleRed = "height: 36px;";
+								- if (teamkey == team.key) teamStyleRed += "font-weight:800";
+								a(href=`/reports/teammatchintel?key=${match.key}_${teamkey}`)
+									div(class="w3-btn w3-block previousmatches-team-container alliance-hover-red" style=`${teamStyleRed}`)
+										span(class="previousmatches-team")= teamkey.substring(3)
+					div(class="w3-col s4 m2 l2")
+						- var divClassRed = 'w3-btn w3-block w3-border previousmatches-container ';
+						- if (match.winning_alliance == 'red') divClassRed += 'w3-white';
+						- else divClassRed += 'theme-gray';
+						div(class=`${divClassRed}`)
+							if (match.alliances.red.score > -1)
+								span Score:
+								br
+								span= match.alliances.red.score
+								br
+								- var redRPs = ''
+								- if (match.score_breakdown.red.completeRocketRankingPoint) redRPs = 'CR '
+								- if (match.score_breakdown.red.habDockingRankingPoint) redRPs += 'HD'
+								span= redRPs
+							else
+								span &nbsp;
+				if (match.scoringdata && user)
+					each element in scorelayout
+						case element.type
+							when "textblock"
+								if (match.scoringdata[element.id])
+									h5(class="gear-text-white") #{element.label} <strong>#{match.scoringdata[element.id]}</strong>
+			//-each match in matches
+				hr
+				div(class="w3-row")
 					div(class="w3-col s12 m2")
 						div(class="w3-dark-grey gear-hover-white w3-btn w3-block w3-border")
 							- var matchPrefix = "";

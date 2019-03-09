@@ -7,6 +7,10 @@
 	margin: 15px 8px 0px 8px;
 }
 
+.previousmatches-container{ height: 108px; }
+.previousmatches-team{ height: 20px; }
+.previousmatches-team-container{ height: 36px; }
+
 .gear-counter{
 	font-weight:bold;
 	box-sizing:content-box;
@@ -34,10 +38,10 @@
 	position: relative;
 	display: inline-block;
 	border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
-  }
-  
-  /* Tooltip text */
-  .w3-tooltip .w3-tooltiptext {
+}
+
+/* Tooltip text */
+.w3-tooltip .w3-tooltiptext {
 	visibility: hidden;
 	width: 360px;
 	background-color: #555;
@@ -45,21 +49,21 @@
 	text-align: center;
 	padding: 5px 0;
 	border-radius: 6px;
-  
+
 	/* Position the tooltip text */
 	position: absolute;
 	z-index: 1;
 	bottom: 125%;
 	left: 50%;
 	margin-left: -180px;
-  
+
 	/* Fade in tooltip */
 	opacity: 0;
 	transition: opacity 0.3s;
-  }
-  
-  /* Tooltip arrow */
-  .w3-tooltip .w3-tooltiptext::after {
+}
+
+/* Tooltip arrow */
+.w3-tooltip .w3-tooltiptext::after {
 	content: "";
 	position: absolute;
 	top: 100%;
@@ -68,15 +72,23 @@
 	border-width: 5px;
 	border-style: solid;
 	border-color: #555 transparent transparent transparent;
-  }
-  
-  /* Show the tooltip text when you mouse over the tooltip container */
-  .w3-tooltip:hover .w3-tooltiptext {
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.w3-tooltip:hover .w3-tooltiptext {
 	visibility: visible;
 	opacity: 1;
-  }
+}
+
+
+@media (min-width:993px){
+	.w3-col.l0{display:none;}
+	.w3-col.l-half{width:4.166%;}
+}
 
 @media (min-width: 601px){
+	.w3-col.m0{display:none;}
+	.w3-col.m-half{width:4.166%;}
 	.gear-label,.w3-label{
 		text-align: right;
 		padding-right: 8px;
@@ -86,6 +98,8 @@
 }
 
 @media (max-width: 600px){
+	.w3-col.s0{display:none;}
+	.w3-col.s-half{width:4.166%;}
 	.gear-resp90,.w3-resp90{
 		width: 90%!important;
 	}

@@ -498,12 +498,12 @@ router.get("/teammatchintel*", function(req, res){
 	var thisFuncName = "reports.teammatchintel*[get]: ";
 	res.log(thisFuncName + 'ENTER');
 	
-	var teamMatchKey = req.query.key;
-	if (!teamMatchKey) {
+	var match_team_key = req.query.key;
+	if (!match_team_key) {
 		res.redirect("/?alert=No team-match key specified in Team Match Intel page.");
 		return;
 	}
-	res.log(thisFuncName + 'teamMatchKey=' + teamMatchKey);
+	res.log(thisFuncName + 'teamMatchKey=' + match_team_key);
 	
 	var db = req.db;
 	var scoringDataCol = req.db.get('scoringdata');
@@ -518,7 +518,7 @@ router.get("/teammatchintel*", function(req, res){
 	scoringLayoutCol.find({ "year": event_year }, {sort: {"order": 1}}, function(e, docs){
 		var layout = docs;
 		
-		scoringDataCol.find({"match_team_key": teamMatchKey}, {}, function (e, docs) {
+		scoringDataCol.find({"match_team_key": match_team_key}, {}, function (e, docs) {
 			var data = null;
 			var teammatch = null;
 			if (docs && docs[0]) {
@@ -526,8 +526,32 @@ router.get("/teammatchintel*", function(req, res){
 				data = teammatch.data;
 			}
 			
+			var title = "Intel: "
+			var x = match_team_key;
+			var matchType, matchNum;
+			var teamNum = x.substring(x.lastIndexOf("_")+4);
+			
+			if( x.indexOf("qm") != -1 ){
+				matchType = "Match";
+				matchNum = x.substring(x.indexOf("qm")+2, x.lastIndexOf("_"));
+			}
+			else if( x.indexOf("qf") != -1){
+				matchType = "Quarterfinal";
+				matchNum = x.substring(x.indexOf("qf")+2, x.lastIndexOf("_"));
+			}
+			else if( x.indexOf("sf") != -1 ){
+				matchType = "Semifinal";
+				matchNum = x.substring(x.indexOf("sf")+2, x.lastIndexOf("_"));
+			}
+			else{
+				matchType = "Final";
+				matchNum = x.substring(x.indexOf("f")+2, x.lastIndexOf("_"));
+			}
+			
+			
 			//res.log(thisFuncName + 'teammatch=' + JSON.stringify(teammatch));
 			res.render("./reports/teammatchintel", {
+				title: `Intel: ${matchType} ${matchNum} Team ${teamNum}`,
 				layout: layout,
 				data: data,
 				teammatch: teammatch

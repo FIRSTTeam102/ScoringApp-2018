@@ -33,10 +33,10 @@ block content
 							br
 							span= match.alliances.blue.score
 							br
-							- var blueQuests = ''
-							- if (match.score_breakdown.blue.autoQuestRankingPoint) blueQuests = 'AQ '
-							- if (match.score_breakdown.blue.faceTheBossRankingPoint) blueQuests += 'FB'
-							span= blueQuests
+							- var blueRPs = ''
+							- if (match.score_breakdown.blue.completeRocketRankingPoint) blueRPs = 'CR '
+							- if (match.score_breakdown.blue.habDockingRankingPoint) blueRPs += 'HD'
+							span= blueRPs
 						else
 							span &nbsp;
 				div(class="w3-col m1") &nbsp;
@@ -56,10 +56,10 @@ block content
 							br
 							span= match.alliances.red.score
 							br
-							- var redQuests = ''
-							- if (match.score_breakdown.red.autoQuestRankingPoint) redQuests = 'AQ '
-							- if (match.score_breakdown.red.faceTheBossRankingPoint) redQuests += 'FB'
-							span= redQuests
+							- var redRPs = ''
+							- if (match.score_breakdown.red.completeRocketRankingPoint) redRPs = 'CR '
+							- if (match.score_breakdown.red.habDockingRankingPoint) redRPs += 'HD'
+							span= redRPs
 						else
 							span &nbsp;	
 	else

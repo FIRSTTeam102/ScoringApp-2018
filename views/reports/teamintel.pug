@@ -42,14 +42,21 @@ block content
 						br 
 						div(class="theme-spacer")
 						h2(class="theme-text-white") #{element.label}
-					when "spacer"
+					when "h3"
+						if (changeCount == 0)
+							h4(class="") <i>(no change)</i>
+						- changeCount = 0;
 						br 
+						div(class="theme-spacer")
+						h3(class="theme-text-white") #{element.label}
+					when "spacer"
+						br
 			if (changeCount == 0)
 				h4(class="gear-text-white") (no change)
 			if (inTable)
 				| </table>
 		else
-			h6 pit scouting data yet - check back later
+			h6 No pit scouting data yet - check back later
 
 	p
 	button#StatisticsButton(onClick="toggle('StatisticsSection', this)" class="w3-block w3-btn  w3-left-align w3-border-gray w3-border-bottom w3-large") 

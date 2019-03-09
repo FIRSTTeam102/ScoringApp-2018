@@ -339,6 +339,8 @@ router.get("/teamintelhistory", function(req, res){
 	var aggCol = req.db.get('scoringdata');
 	var matchCol = req.db.get('matches');
 	var scoreCol = db.get("scoringlayout");
+
+	var event_year = req.event.year;
 	
 	// Team details
 	teamsCol.find({ "key" : teamKey }, {}, function(e, docs){
@@ -398,7 +400,7 @@ router.get("/teamintelhistory", function(req, res){
 				// "teleScaleMAX": {$max: "$data.teleScale"}
 				//  } }
 				// ] );						
-				scoreCol.find({}, {sort: {"order": 1}}, function(e, docs){
+				scoreCol.find({ "year": event_year }, {sort: {"order": 1}}, function(e, docs){
 					var scorelayout = docs;
 					var aggQuery = [];
 					aggQuery.push({ $match : { "data":{$exists:true}, "team_key": teamKey, "year": year } });
@@ -509,9 +511,11 @@ router.get("/teammatchintel*", function(req, res){
 	//var pitCol = req.db.get('scoutingdata');
 	//var currentCol = db.get("current");
 	var scoutCol = db.get("scoringlayout");
+
+	var event_year = req.event.year;
 	
 	// Match data layout
-	scoutCol.find({}, {sort: {"order": 1}}, function(e, docs){
+	scoutCol.find({ "year": event_year }, {sort: {"order": 1}}, function(e, docs){
 		var layout = docs;
 		
 		scoreCol.find({"match_team_key": teamMatchKey}, {}, function (e, docs) {
@@ -542,6 +546,7 @@ router.get("/upcomingmatchmetrics", function(req, res) {
 	var currentCol = db.get("current");
 	var matchCol = db.get('matches');
 	
+	var event_year = req.event.year;
 	var matchKey = req.query.key;
 	
 	//
@@ -577,7 +582,7 @@ router.get("/upcomingmatchmetrics", function(req, res) {
 			// "teleScaleAVG": {$avg: "$data.teleScale"},
 			//  } }
 			// ] );						
-			scoreCol.find({}, {sort: {"order": 1}}, function(e, docs){
+			scoreCol.find({ "year": event_year }, {sort: {"order": 1}}, function(e, docs){
 				var scorelayout = docs;
 				var aggQuery = [];
 				var redAllianceArray = match.alliances.red.team_keys;
@@ -660,6 +665,8 @@ router.get("/metricsranked", function(req, res){
 	var scoreCol = db.get("scoringlayout");
 	var currentCol = db.get("current");
 	
+	var event_year = req.event.year;
+
 	//
 	// Get the 'current' event from DB
 	//
@@ -688,7 +695,7 @@ router.get("/metricsranked", function(req, res){
 		// "teleScaleMAX": {$max: "$data.teleScale"}
 		//  } }
 		// ] );						
-		scoreCol.find({}, {sort: {"order": 1}}, function(e, docs){
+		scoreCol.find({ "year": event_year }, {sort: {"order": 1}}, function(e, docs){
 			var scorelayout = docs;
 			var aggQuery = [];
 			aggQuery.push({ $match : { "data":{$exists:true}, "event_key": event_key } });
@@ -771,6 +778,8 @@ router.get("/metrics", function(req, res){
 	var scoreCol = db.get("scoringlayout");
 	var currentCol = db.get("current");
 	
+	var event_year = req.event.year;
+
 	//
 	// Get the 'current' event from DB
 	//
@@ -799,7 +808,7 @@ router.get("/metrics", function(req, res){
 		// "teleScaleMAX": {$max: "$data.teleScale"}
 		//  } }
 		// ] );						
-		scoreCol.find({}, {sort: {"order": 1}}, function(e, docs){
+		scoreCol.find({ "year": event_year }, {sort: {"order": 1}}, function(e, docs){
 			var scorelayout = docs;
 			var aggQuery = [];
 			aggQuery.push({ $match : { "data":{$exists:true}, "event_key": event_key } });

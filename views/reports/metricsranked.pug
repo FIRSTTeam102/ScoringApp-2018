@@ -15,7 +15,7 @@ block content
 				tr
 					- var text = agg.key; var result1 = text.replace( /([A-Z])/g, " $1" ); var result2 = result1.charAt(0).toUpperCase() + result1.slice(1)
 					td(class="w3-text-light-gray w3-small")
-						a(class="gear-btn theme-link gear-hover-white w3-btn" href=`/reports/metricintel?key=${agg.key}`)= result2
+						a(href=`/reports/metricintel?key=${agg.key}`)= result2
 					if (agg.team.substring(3) == '(mult)' || agg.team.substring(3) == 'None') 
 						td(class='w3-text-white w3-center')= agg.team.substring(3)
 					else

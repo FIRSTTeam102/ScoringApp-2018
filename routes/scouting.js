@@ -10,30 +10,53 @@ router.get('/match*', function(req, res) {
 	var thisFuncName = "scouting.match*[get]: ";
 	res.log(thisFuncName + 'ENTER');
 	
+	var db = req.db;
+	var scoringLayoutCol = db.get("scoringlayout");
+	var scoringDataCol = db.get("scoringdata");
 	var event_year = req.event.year;
-
 	var thisUser = req.user;
 	var thisUserName = thisUser.name;
-	var event_year = req.event.year;
-
-	var matchKey = req.query.key;
+	var match_team_key = req.query.key;
 	var alliance = req.query.alliance;
-	if (!matchKey) {
+	
+	res.log(`${thisFuncName}- match_team_key: ${match_team_key} alliance: ${alliance} user: ${thisUserName}`);
+	
+	if (!match_team_key) {
 		res.redirect("/dashboard");
 		return;
 	}
-	res.log(thisFuncName + 'matchKey=' + matchKey + ' ~ thisUserName=' + thisUserName);
 	
-	var db = req.db;
-	var collection = db.get("scoringlayout");
-	collection.find({ "year": event_year }, {sort: {"order": 1}}, function(e, docs){
-		var layout = docs;
-		//res.log(layout);
-		res.render("./scouting/match", {
-			title: "Match Scouting",
-			layout: layout,
-			key: matchKey,
-			alliance: alliance
+	//check if there is already data for this match
+	scoringDataCol.find({"year" : event_year, "match_team_key": match_team_key}, {sort: {"order": 1}}, function(e, scoringdata){
+		
+		//scouting answers for this match are initialized as null for visibility
+		var answers = null;
+		
+		if( scoringdata && scoringdata[0] ){
+			
+			//if we have data for this match, 
+			var data = scoringdata[0].data;
+			if(data){
+				res.log(`${thisFuncName}- data: ${JSON.stringify(scoringdata[0].data)}`);
+				//set answers to data if exists
+				answers = data;
+			}
+			else{
+				res.log(`${thisFuncName}- no data for this match`)
+			}
+		}
+		
+		//load layout
+		scoringLayoutCol.find({ "year": event_year }, {sort: {"order": 1}}, function(e, docs){
+			var layout = docs;
+			//render page
+			res.render("./scouting/match", {
+				title: "Match Scouting",
+				layout: layout,
+				key: match_team_key,
+				alliance: alliance,
+				answers: answers
+			});
 		});
 	});
 });
@@ -59,11 +82,11 @@ router.post('/match/submit', function(req, res) {
 	if(!matchData)
 		return res.send({status: 500, message: "No data was sent to /scouting/match/submit."});
 	
-	var matchKey = matchData.matchkey;
-	res.log(thisFuncName + "matchKey=" + matchKey + " ~ thisUserName=" + thisUserName);
-	delete matchData.matchkey;
+	var match_team_key = matchData.match_team_key;
+	res.log(thisFuncName + "match_key=" + match_team_key + " ~ thisUserName=" + thisUserName);
+	delete matchData.match_key;
 	res.log(thisFuncName + "matchData(pre-modified)=" + JSON.stringify(matchData));
-	//res.log(thisFuncName + 'matchKey=' + matchKey + ' ~ thisUserName=' + thisUserName);
+	//res.log(thisFuncName + 'match_key=' + match_key + ' ~ thisUserName=' + thisUserName);
 	//res.log(thisFuncName + 'matchData=' + JSON.stringify(matchData));
 
 	// Get the 'layout' so we know types of data elements
@@ -103,8 +126,8 @@ router.post('/match/submit', function(req, res) {
 	
 		// Post modified data to DB
 		var matchCol = req.db.get('scoringdata');
-
-		matchCol.update( { "match_team_key" : matchKey }, { $set: { "data" : matchData, "actual_scorer": thisUserName, useragent: req.shortagent } }, function(e, docs){
+		
+		matchCol.update( { "match_team_key" : match_team_key }, { $set: { "data" : matchData, "actual_scorer": thisUserName, useragent: req.shortagent } }, function(e, docs){
 			if(e)
 				return res.send({status: 500, message: e});
 			return res.send({message: "Submitted data successfully.", status: 200});
@@ -125,15 +148,15 @@ router.post('/submitmatch', function(req, res) {
 	
 	var matchData = req.body;
 	
-	var matchKey = matchData.matchkey;
-	delete matchData.matchkey;
-	res.log(thisFuncName + 'matchKey=' + matchKey + ' ~ thisUserName=' + thisUserName);
+	var match_key = matchData.match_key;
+	delete matchData.match_key;
+	res.log(thisFuncName + 'match_key=' + match_key + ' ~ thisUserName=' + thisUserName);
 	res.log(thisFuncName + 'matchData=' + JSON.stringify(matchData));
 
 	var db = req.db;
     var matchCol = db.get('scoringdata');
 
-	matchCol.update( { "match_team_key" : matchKey }, { $set: { "data" : matchData, "actual_scorer": thisUserName } }, function(e, docs){
+	matchCol.update( { "match_team_key" : match_key }, { $set: { "data" : matchData, "actual_scorer": thisUserName } }, function(e, docs){
 		res.redirect("/dashboard");
 	});
 });

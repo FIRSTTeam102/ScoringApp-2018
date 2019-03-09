@@ -6,7 +6,10 @@ $(function(){
 		var formDataString = JSON.stringify(formData);
 		
 		//adds data to local storage
-		localStorage.setItem("matchFormData", formDataString); 
+		localStorage.setItem("matchFormData", formDataString);
+		
+		console.log(formDataString);
+		console.log(localStorage.matchFormData);
 		
 		//data on item to submit
 		var toSubmit = {
@@ -14,7 +17,15 @@ $(function(){
 			dataKey: "matchFormData",
 			callback: function(){
 				console.log("Callback called from match-client.js");
-				window.location.href="/dashboard"
+				
+				darkener = document.createElement("div");
+				darkener.classList.add("canvas");
+				darkener.classList.add("theme-darkener");
+				document.body.appendChild(darkener);
+				
+				setTimeout(function(){
+					window.location.href="/dashboard";
+				}, 1000);
 			}
 		};
 		/*

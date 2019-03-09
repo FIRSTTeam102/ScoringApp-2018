@@ -21,7 +21,8 @@ block content
 	//-
 	//-	}
 	div(style="width:80%; margin-left:auto; margin-right:auto; display:block;")
-		img(src=`/uploads/responsive/${event_year}_${key}_md.jpg` width="100%" height="100%" alt="")
+		img(src=`/uploads/responsive/${event_year}_${key}_md.jpg` alt="" class="w3-image" style="max-height:350px;")
+	br 
 	form#imageform(action=`/image/upload?team_key=${key}` method="post" enctype="multipart/form-data" name="imageform")
 		input#teamimage(type="file", name="avatarfield")
 		input#returnurl(type="hidden", name="returnurl", value="")
@@ -54,7 +55,9 @@ block content
 							include templates/formSubHeader
 						when "spacer"
 							include templates/formSpacer
+		br 
 		button#submit( onclick="window.onbeforeunload = null;" class="w3-btn theme-submit") Submit
+		p 
 	| <script>
 	| document.getElementById("returnurl").value = window.location.href;
 	each element in layout

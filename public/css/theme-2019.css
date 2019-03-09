@@ -1,3 +1,23 @@
+/* Cool new effects (fade, rounded edges) */
+.theme-link{border-radius:12px}
+.theme-link{transition:0.2s}
+
+.theme-input{border-radius:12px}
+.theme-input{transition:0.2s}
+
+.theme-gray{border-radius:12px}
+.theme-gray{transition:0.2s}
+
+textarea{padding:8px 12px;}
+
+.theme-submit{border-radius:12px}
+.theme-submit{transition:0.2s}
+
+.gear-btn{border-radius:12px}
+.gear-btn{transition:0.2s}
+
+/* Original button styling */
+
 .theme-link:hover{color:rgb(22, 21, 20)!important;background-color:#f3dfd4!important}
 .theme-link{color:#ffffff!important;background-color:#cf5615!important}
 .theme-input{color:#fff!important;background-color:#585868!important}

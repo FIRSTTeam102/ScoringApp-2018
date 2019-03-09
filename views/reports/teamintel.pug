@@ -98,10 +98,6 @@ block content
 		span Show 
 		span Previous Matches
 	div#PreviousMatchesSection(class="w3-container w3-hide")
-		style.
-			.previousmatches-container{ height: 108px; }
-			.previousmatches-team{ height: 20px; }
-			.previousmatches-team-container{ height: 36px; }
 		h2(class="gear-text-white") Previous matches
 		
 		if (matches && matches.length > 0)		
@@ -110,17 +106,17 @@ block content
 			each match in matches
 				hr
 				div(class="w3-row")
-					div(class="w3-col s12 m2")
-						div(class="w3-dark-grey gear-hover-white w3-btn w3-block w3-border")
-							- var matchPrefix = "";
-							- if (match.comp_level != 'qm') matchPrefix = "" + match.comp_level + "" + match.set_number + " ";
-							- var outcome = "Tie!";
-							- if (match.winning_alliance == 'red') outcome = "Red won";
-							- if (match.winning_alliance == 'blue') outcome = "Blue won";
-							a(href=`/reports/matchintel?key=${match.key}`) 
+					div(class="w3-col s12 m12 l2")
+						a(href=`/reports/matchintel?key=${match.key}`) 
+							div(class="theme-gray gear-hover-white w3-btn w3-block w3-border")
+								- var matchPrefix = "";
+								- if (match.comp_level != 'qm') matchPrefix = "" + match.comp_level + "" + match.set_number + " ";
+								- var outcome = "Tie!";
+								- if (match.winning_alliance == 'red') outcome = "Red won";
+								- if (match.winning_alliance == 'blue') outcome = "Blue won";
 								span #{matchPrefix.toUpperCase()}Match #{match.match_number}: #{outcome}
-					div(class="w3-col m1") &nbsp;
-					div(class="w3-col s8 m2")
+					div(class="w3-col s12 m12 l1") &nbsp;
+					div(class="w3-col s8 m3 l2")
 						div(class="w3-col w3-border alliance-blue previousmatches-container")
 							each teamkey in match.alliances.blue.team_keys
 								- var teamStyleBlue = "height: 36px;";
@@ -144,16 +140,16 @@ block content
 								span= blueRPs
 							else
 								span &nbsp;
-					div(class="w3-col m1") &nbsp;
-					div(class="w3-col s8 m2")
+					div(class="w3-col m2 l1") &nbsp;
+					div(class="w3-col s8 m3 l2")
 						div(class="w3-col w3-border alliance-red previousmatches-container")
 							each teamkey in match.alliances.red.team_keys
 								- var teamStyleRed = "height: 36px;";
 								- if (teamkey == team.key) teamStyleRed += "font-weight:800";
 								a(href=`/reports/teammatchintel?key=${match.key}_${teamkey}`)
-									div(class="w3-btn w3-block alliance-hover-red" style=`${teamStyleRed}`)
+									div(class="w3-btn w3-block previousmatches-team-container alliance-hover-red" style=`${teamStyleRed}`)
 										span(class="previousmatches-team")= teamkey.substring(3)
-					div(class="w3-col s4 m2")
+					div(class="w3-col s4 m2 l2")
 						- var divClassRed = 'w3-btn w3-block w3-border previousmatches-container ';
 						- if (match.winning_alliance == 'red') divClassRed += 'w3-white';
 						- else divClassRed += 'theme-gray';

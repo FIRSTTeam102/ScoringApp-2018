@@ -1,6 +1,6 @@
 /* Cool new effects (fade, rounded edges) */
-.theme-link{border-radius:12px}
-.theme-link{transition:0.2s}
+.theme-link{border-radius:12px} /* Border radius rounded by 12 pixels */
+.theme-link{transition:0.2s} /* Fade from color 1 to color 2 in 0.2 secs */
 
 .theme-input{border-radius:12px}
 .theme-input{transition:0.2s}

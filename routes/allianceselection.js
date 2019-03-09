@@ -59,6 +59,8 @@ router.get("/", function(req, res){
 				var aggArray = [];
 				if (docs)
 					aggArray = docs;
+					
+				res.log(rankMap);
 				
 				// Rewrite data into display-friendly values
 				for (var aggIdx = 0; aggIdx < aggArray.length; aggIdx++) {
@@ -70,9 +72,11 @@ router.get("/", function(req, res){
 							thisAgg[thisLayout.id] = roundedVal;
 						}
 					}
-					thisAgg['rank'] = rankMap[thisAgg._id].rank;
-					thisAgg['value'] = rankMap[thisAgg._id].value;
-					aggArray[aggIdx] = thisAgg;
+					if(rankMap[thisAgg._id]){
+						thisAgg['rank'] = rankMap[thisAgg._id].rank;
+						thisAgg['value'] = rankMap[thisAgg._id].value;
+						aggArray[aggIdx] = thisAgg;
+					}
 				}
 				//res.log(thisFuncName + 'aggArray=' + JSON.stringify(aggArray));
 

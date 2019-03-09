@@ -155,7 +155,8 @@ router.get('/allianceselection', function(req, res){
 		return res.log(thisFuncName + 'returning null');
 	}
 	
-	var currentEventKey = req.event.key;
+	var event_key = req.event.key;
+	var event_year = req.event.year;
 	
 	req.db.get('currentrankings').find(
 		{}, {}, function(e, rankings){
@@ -178,12 +179,12 @@ router.get('/allianceselection', function(req, res){
 			}
 			
 			req.db.get('scoringlayout').find(
-				{}, {sort: {"order": 1}}, function(e, scoreLayout){
+				{ year: event_year }, {sort: {"order": 1}}, function(e, scoreLayout){
 					if(e || !scoreLayout[0])
 						return console.error(e || "Couldn't find scoringlayout in allianceselection".red);
 					
 					var aggQuery = [];
-					aggQuery.push({ $match : { "event_key": currentEventKey } });
+					aggQuery.push({ $match : { "event_key": event_key } });
 					var groupClause = {};
 					// group teams for 1 row per team
 					groupClause["_id"] = "$team_key";
@@ -213,11 +214,14 @@ router.get('/allianceselection', function(req, res){
 								}
 							}
 							if(!rankMap[thisAgg._id] || !rankMap[thisAgg._id].value){
-								return res.redirect("/?alert=Make sure that team rankings have been pulled from TheBlueAlliance");
+								//return res.redirect("/?alert=Make sure that team rankings have been pulled from TheBlueAlliance");
+								res.log(`Gonna crash w/ id ${thisAgg._id}`);
 							}
-							thisAgg['rank'] = rankMap[thisAgg._id].rank;
-							thisAgg['value'] = rankMap[thisAgg._id].value;
-							aggArray[aggIdx] = thisAgg;
+							if(rankMap[thisAgg._id]){
+								thisAgg['rank'] = rankMap[thisAgg._id].rank;
+								thisAgg['value'] = rankMap[thisAgg._id].value;
+								aggArray[aggIdx] = thisAgg;
+							}
 						}
 						//res.log(thisFuncName + 'aggArray=' + JSON.stringify(aggArray));
 						res.render('./dashboard/allianceselection', {

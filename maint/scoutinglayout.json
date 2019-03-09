@@ -17,9 +17,9 @@
 {"year": 2019, "order": "3140", "type": "checkbox", "label": "Can they score cargo in the cargo ship?", "id": "matchCanScoreCargoInShip"}
 {"year": 2019, "order": "3149", "type": "spacer"}
 {"year": 2019, "order": "3150", "type": "multiselect", "label": "What level can they score hatches on the rocket?", 
-	"options": ["Cannot score hatches on rocket", "1", "2", "3"]}
+	"options": ["Cannot score hatches on rocket", "1", "2", "3"], "id": "matchCanScoreHatchesRocketLevel"}
 {"year": 2019, "order": "3160", "type": "multiselect", "label": "What level can they score cargo in the rocket?",
-	"options": ["Cannot score cargo in the rocket", "1", "2", "3"]}
+	"options": ["Cannot score cargo in the rocket", "1", "2", "3"], "id": "matchCanScoreCargoRocketLevel"}
 {"year": 2019, "order": "3190", "type": "spacer"}
 {"year": 2019, "order": "3200", "type": "textblock", "label": "Describe how they score hatch panels and cargo (shoot, push out, etc.):", "id": "matchHowScorePanelsAndCargo"}
 {"year": 2019, "order": "3209", "type": "spacer"}

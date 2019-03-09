@@ -18,6 +18,10 @@ function submitData(url, dataKey, callback, indexOfLS){
 	var data = JSON.parse(dataString);
 	//console.log(data);
 	
+	console.log(`url: ${url}`);
+	console.log(`data:`);
+	console.log(data);
+	
 	$.post( url, data, function( res, status ){
 		var cardType;
 		

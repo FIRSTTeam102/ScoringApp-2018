@@ -21,6 +21,14 @@
 	font-size: 25px;
 }
 
+.theme-header{
+	margin: 0px;
+}
+
+.theme-subheader{
+	margin: 0px;
+}
+
 /* Tooltip container */
 .tooltip {
 	position: relative;

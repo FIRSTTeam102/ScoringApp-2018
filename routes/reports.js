@@ -506,19 +506,19 @@ router.get("/teammatchintel*", function(req, res){
 	res.log(thisFuncName + 'teamMatchKey=' + teamMatchKey);
 	
 	var db = req.db;
-	var scoreCol = req.db.get('scoringdata');
+	var scoringDataCol = req.db.get('scoringdata');
 	//var teamsCol = req.db.get('teams');
 	//var pitCol = req.db.get('scoutingdata');
 	//var currentCol = db.get("current");
-	var scoutCol = db.get("scoringlayout");
+	var scoringLayoutCol = db.get("scoringlayout");
 
 	var event_year = req.event.year;
 	
 	// Match data layout
-	scoutCol.find({ "year": event_year }, {sort: {"order": 1}}, function(e, docs){
+	scoringLayoutCol.find({ "year": event_year }, {sort: {"order": 1}}, function(e, docs){
 		var layout = docs;
 		
-		scoreCol.find({"match_team_key": teamMatchKey}, {}, function (e, docs) {
+		scoringDataCol.find({"match_team_key": teamMatchKey}, {}, function (e, docs) {
 			var data = null;
 			var teammatch = null;
 			if (docs && docs[0]) {
@@ -542,117 +542,105 @@ router.get("/upcomingmatchmetrics", function(req, res) {
 	
 	var db = req.db;
 	var aggCol = req.db.get('scoringdata');
-	var scoreCol = db.get("scoringlayout");
+	var scoringLayoutCol = db.get("scoringlayout");
 	var currentCol = db.get("current");
 	var matchCol = db.get('matches');
 	
 	var event_year = req.event.year;
+	var event_key = req.event.key;
 	var matchKey = req.query.key;
 	
-	//
-	// Get the 'current' event from DB
-	//
-	currentCol.find({}, {}, function(e, docs) {
-		var noEventFound = 'No event defined';
-		var eventId = noEventFound;
-		if (docs)
-			if (docs.length > 0)
-				eventId = docs[0].event;
-		if (eventId === noEventFound) {
-			res.render('/adminindex', { 
-				title: 'Admin pages',
-				current: eventId
-			});
-		}
-		// for later querying by event_key
-		var event_key = eventId;
-		res.log(thisFuncName + 'event_key=' + event_key);
-	
-		// get the specified match object
-		matchCol.find({"key": matchKey}, {}, function (e, docs) {
-			var match = {};
-			if (docs && docs[0])
-				match = docs[0];
-	
-			// Match data layout - use to build dynamic Mongo aggregation query  --- Comboing twice, on two sets of team keys: red alliance & blue alliance
-			// db.scoringdata.aggregate( [ 
-			// { $match : { "team_key":{$in: [...]}, "event_key": event_key } }, 
-			// { $group : { _id: "$event_key",
-			// "autoScaleAVG": {$avg: "$data.autoScale"},
-			// "teleScaleAVG": {$avg: "$data.teleScale"},
-			//  } }
-			// ] );						
-			scoreCol.find({ "year": event_year }, {sort: {"order": 1}}, function(e, docs){
-				var scorelayout = docs;
-				var aggQuery = [];
-				var redAllianceArray = match.alliances.red.team_keys;
-				aggQuery.push({ $match : { "team_key": {$in: redAllianceArray}, "event_key": event_key } });
-				var groupClause = {};
-				// group teams for 1 row per event (we're doing this twice, once for red & once for blue)
-				groupClause["_id"] = "$event_key";
+	if( !matchKey ){
+		return res.redirect("/?alert=Must specify match key for reports/upcomingmatchmetrics");
+	}
+	res.log(`${thisFuncName} matchKey: ${matchKey}`);
 
+	// get the specified match object
+	matchCol.find({"key": matchKey}, {}, function (e, docs) {
+		var match = {};
+		if (docs && docs[0])
+			match = docs[0];
+			
+		res.log(`${thisFuncName} match: ${JSON.stringify(match)}`);
+
+		// Match data layout - use to build dynamic Mongo aggregation query  --- Comboing twice, on two sets of team keys: red alliance & blue alliance
+		// db.scoringdata.aggregate( [ 
+		// { $match : { "team_key":{$in: [...]}, "event_key": event_key } }, 
+		// { $group : { _id: "$event_key",
+		// "autoScaleAVG": {$avg: "$data.autoScale"},
+		// "teleScaleAVG": {$avg: "$data.teleScale"},
+		//  } }
+		// ] );						
+		scoringLayoutCol.find({ "year": event_year }, {sort: {"order": 1}}, function(e, docs){
+			var scorelayout = docs;
+			var aggQuery = [];
+			var redAllianceArray = match.alliances.red.team_keys;
+			aggQuery.push({ $match : { "team_key": {$in: redAllianceArray}, "event_key": event_key } });
+			var groupClause = {};
+			// group teams for 1 row per event (we're doing this twice, once for red & once for blue)
+			groupClause["_id"] = "$event_key";
+
+			for (var scoreIdx = 0; scoreIdx < scorelayout.length; scoreIdx++) {
+				var thisLayout = scorelayout[scoreIdx];
+				if (thisLayout.type == 'checkbox' || thisLayout.type == 'counter' || thisLayout.type == 'badcounter')
+					groupClause[thisLayout.id + "AVG"] = {$avg: "$data." + thisLayout.id};
+			}
+			aggQuery.push({ $group: groupClause });
+			//res.log(thisFuncName + 'aggQuery=' + JSON.stringify(aggQuery));
+			
+			aggCol.aggregate(aggQuery, function(e, docs){
+				var aggresult = {};
+				if (docs && docs[0])
+					aggresult = docs[0];
+				//res.log(thisFuncName + 'aggresult=' + JSON.stringify(aggresult));
+
+				// Unspool single row of aggregate results into tabular form
+				var aggTable = [];
 				for (var scoreIdx = 0; scoreIdx < scorelayout.length; scoreIdx++) {
 					var thisLayout = scorelayout[scoreIdx];
-					if (thisLayout.type == 'checkbox' || thisLayout.type == 'counter' || thisLayout.type == 'badcounter')
-						groupClause[thisLayout.id + "AVG"] = {$avg: "$data." + thisLayout.id};
+					if (thisLayout.type == 'checkbox' || thisLayout.type == 'counter' || thisLayout.type == 'badcounter') {
+						var aggRow = {};
+						aggRow['key'] = thisLayout.id;
+						aggRow['red'] = (Math.round(aggresult[thisLayout.id + "AVG"] * 10)/10).toFixed(1);
+						aggTable.push(aggRow);
+					}
 				}
+
+				// repeat aggregation for blue alliance
+				aggQuery = [];
+				var blueAllianceArray = match.alliances.blue.team_keys;
+				aggQuery.push({ $match : { "team_key": {$in: blueAllianceArray}, "event_key": event_key } });
+				// reuse prior groupClause
 				aggQuery.push({ $group: groupClause });
 				//res.log(thisFuncName + 'aggQuery=' + JSON.stringify(aggQuery));
-				
+			
 				aggCol.aggregate(aggQuery, function(e, docs){
-					var aggresult = {};
+					aggresult = {};
 					if (docs && docs[0])
 						aggresult = docs[0];
 					//res.log(thisFuncName + 'aggresult=' + JSON.stringify(aggresult));
 
 					// Unspool single row of aggregate results into tabular form
-					var aggTable = [];
+					// Utilize pointer to aggTable to line up data
+					var aggTablePointer = 0;
 					for (var scoreIdx = 0; scoreIdx < scorelayout.length; scoreIdx++) {
 						var thisLayout = scorelayout[scoreIdx];
 						if (thisLayout.type == 'checkbox' || thisLayout.type == 'counter' || thisLayout.type == 'badcounter') {
-							var aggRow = {};
-							aggRow['key'] = thisLayout.id;
-							aggRow['red'] = (Math.round(aggresult[thisLayout.id + "AVG"] * 10)/10).toFixed(1);
-							aggTable.push(aggRow);
+							aggTable[aggTablePointer].blue = (Math.round(aggresult[thisLayout.id + "AVG"] * 10)/10).toFixed(1);
+							aggTablePointer++;
 						}
 					}
-
-					// repeat aggregation for blue alliance
-					aggQuery = [];
-					var blueAllianceArray = match.alliances.blue.team_keys;
-					aggQuery.push({ $match : { "team_key": {$in: blueAllianceArray}, "event_key": event_key } });
-					// reuse prior groupClause
-					aggQuery.push({ $group: groupClause });
-					//res.log(thisFuncName + 'aggQuery=' + JSON.stringify(aggQuery));
 				
-					aggCol.aggregate(aggQuery, function(e, docs){
-						aggresult = {};
-						if (docs && docs[0])
-							aggresult = docs[0];
-						//res.log(thisFuncName + 'aggresult=' + JSON.stringify(aggresult));
-
-						// Unspool single row of aggregate results into tabular form
-						// Utilize pointer to aggTable to line up data
-						var aggTablePointer = 0;
-						for (var scoreIdx = 0; scoreIdx < scorelayout.length; scoreIdx++) {
-							var thisLayout = scorelayout[scoreIdx];
-							if (thisLayout.type == 'checkbox' || thisLayout.type == 'counter' || thisLayout.type == 'badcounter') {
-								aggTable[aggTablePointer].blue = (Math.round(aggresult[thisLayout.id + "AVG"] * 10)/10).toFixed(1);
-								aggTablePointer++;
-							}
-						}
-					
-						res.log(thisFuncName + 'aggTable=' + JSON.stringify(aggTable));
-					
-						res.render("./reports/upcomingmatchmetrics", {
-							title: "Metrics For Upcoming Match",
-							aggdata: aggTable,
-							match: match
-						});
+					res.log(thisFuncName + 'aggTable=' + JSON.stringify(aggTable));
+				
+					res.render("./reports/upcomingmatchmetrics", {
+						title: "Metrics For Upcoming Match",
+						aggdata: aggTable,
+						match: match
 					});
 				});
 			});
-		});	
+		});
 	});
 });
 

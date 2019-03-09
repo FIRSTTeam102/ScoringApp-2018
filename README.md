@@ -6,8 +6,8 @@ If you actually are interested about using the app for yourselves, contact us fo
 
 INSTALLATION
 
-do `npm install`
+type `npm install` in the console/terminal
 
 RUN
 
-do `npm start`
+type `npm start`

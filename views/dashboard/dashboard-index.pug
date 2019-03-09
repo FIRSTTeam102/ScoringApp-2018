@@ -11,7 +11,7 @@ block content
 			h3(class="gear-text-white") Scouting assignments
 			each team in assignedTeams
 				if team.data
-					a(href=`/reports/teamintel?team=${team.team_key}`) 
+					a(href=`/scouting/pit?team=${team.team_key}`) 
 						div(class="gear-btn w3-dark-grey w3-btn w3-section gear-margin-sides")
 							span= team.team_key.substring(3)
 				else
@@ -23,8 +23,9 @@ block content
 			h3(class="gear-text-white") Partner(s) scouting assignments
 			each team in backupTeams
 				if team.data
-					div(class="gear-btn w3-dark-grey w3-btn w3-section gear-margin-sides")
-						span= team.team_key.substring(3)
+					a(href=`/scouting/pit?team=${team.team_key}`) 
+						div(class="gear-btn w3-dark-grey w3-btn w3-section gear-margin-sides")
+							span= team.team_key.substring(3)
 				else
 					a(href=`/scouting/pit?team=${team.team_key}`) 
 						div(class="gear-btn theme-link gear-hover-white w3-btn w3-section gear-margin-sides")
@@ -48,8 +49,9 @@ block content
 				
 				h4 Match #{match.match_number} <br/> #{day} @ #{hour}:#{minute} 
 					if match.data
-						div(class="gear-btn w3-dark-grey w3-btn w3-section gear-margin-sides")
-							span= match.team_key.substring(3)
+						a(href=`/scouting/match?key=${match.match_team_key}&alliance=${match.alliance}`) 
+							div(class="gear-btn w3-dark-grey w3-btn w3-section gear-margin-sides")
+								span= match.team_key.substring(3)
 					else
 						a(href=`/scouting/match?key=${match.match_team_key}&alliance=${match.alliance}`) 
 							div(class=`gear-btn ${btnColor} gear-hover-white w3-btn w3-section gear-margin-sides`)

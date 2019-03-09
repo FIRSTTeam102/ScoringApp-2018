@@ -213,7 +213,7 @@ router.get('/allianceselection', function(req, res){
 								}
 							}
 							if(!rankMap[thisAgg._id] || !rankMap[thisAgg._id].value){
-								res.redirect("/?alert=Make sure that team rankings have been pulled from TheBlueAlliance");
+								return res.redirect("/?alert=Make sure that team rankings have been pulled from TheBlueAlliance");
 							}
 							thisAgg['rank'] = rankMap[thisAgg._id].rank;
 							thisAgg['value'] = rankMap[thisAgg._id].value;

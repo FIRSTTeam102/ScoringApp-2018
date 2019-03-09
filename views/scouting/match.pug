@@ -15,9 +15,13 @@ block content
 			span= titlePortion
 	p
 	form#matchform(name="matchform")
-		input#matchkey(type="hidden", name="matchkey", value=`${key}`)
+		input#match_team_key(type="hidden", name="match_team_key", value=`${key}`)
 		div(style="text-align:center")
 			each element in layout
+				- var answer = ""
+				- if (answers) answer = answers[element.id]
+				- console.log("element.id, answer="+element.id+","+answer)
+				
 				case element.type
 					when "checkbox"
 						include templates/formCheckbox
@@ -46,7 +50,7 @@ block content
 				include templates/scriptCheckbox
 			when "counter"
 			when "badcounter"
-				include templates/scriptCounter
+			//	include templates/scriptCounter
 	| </script>
 	script.
 		window.onbeforeunload = function() {

@@ -223,13 +223,50 @@ router.get('/allianceselection', function(req, res){
 								aggArray[aggIdx] = thisAgg;
 							}
 						}
+						//quick sort by rank
+						aggArray.sort(function(a,b){
+							let aNum = a.rank;
+							let bNum = b.rank;
+							if( aNum < bNum ){
+								return -1;
+							}
+							if( aNum > bNum ){
+								return 1;
+							}
+						});
+						
+						var sortedTeams = [];
+						for(var i = 8; i < rankings.length; i++){
+							sortedTeams[i - 8] = {
+								rank: rankings[i].rank,
+								team_key: rankings[i].team_key
+							};
+						}
+						sortedTeams.sort(function(a,b){
+							if(a && b){
+								let aNum = parseInt(a.team_key.substring(3));
+								let bNum = parseInt(b.team_key.substring(3));
+								if( aNum < bNum ){
+									return -1;
+								}
+								if( aNum > bNum ){
+									return 1;
+								}
+							}else{
+								return 1;
+							}
+						});
+						
+						console.log(sortedTeams);
+						
 						//res.log(thisFuncName + 'aggArray=' + JSON.stringify(aggArray));
 						res.render('./dashboard/allianceselection', {
 							title: "Alliance Selection",
 							rankings: rankings,
 							alliances: alliances,
 							aggdata: aggArray,
-							layout: scoreLayout
+							layout: scoreLayout,
+							sortedTeams: sortedTeams
 						});
 					});
 				}

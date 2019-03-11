@@ -1,20 +1,15 @@
 /* Cool new effects (fade, rounded edges) */
-.theme-link{border-radius:12px} /* Border radius rounded by 12 pixels */
-.theme-link{transition:0.2s} /* Fade from color 1 to color 2 in 0.2 secs */
+.w3-btn{
+    border-radius: 12px; /* Border radius rounded by 12 pixels */
+    transition: 0.2s;    /* Fade from color 1 to color 2 in 0.2 secs */
+} 
 
-.theme-input{border-radius:12px}
-.theme-input{transition:0.2s}
-
-.theme-gray{border-radius:12px}
-.theme-gray{transition:0.2s}
+.theme-input{
+    border-radius:12px;
+    transition:0.2s;
+}
 
 textarea{padding:8px 12px;}
-
-.theme-submit{border-radius:12px}
-.theme-submit{transition:0.2s}
-
-.gear-btn{border-radius:12px}
-.gear-btn{transition:0.2s}
 
 /* Original button styling */
 

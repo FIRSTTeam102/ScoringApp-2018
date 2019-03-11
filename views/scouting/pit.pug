@@ -17,12 +17,19 @@ block content
 	script(src="/js/pit-client.js")
 	h3= key.replace('frc','Team #')
 	p
-	//- if (`${event_year}_${key}`) == "" {
-	//-
-	//-	}
 	div(style="width:80%; margin-left:auto; margin-right:auto; display:block;")
 		img(src=`/uploads/responsive/${event_year}_${key}_md.jpg` alt="" class="w3-image" style="max-height:350px;")
-	br 
+	br
+	//------------------------------------------------------------+
+	//- Ok this is going to be hard...                            |
+	//- I'm going to call the three smaller images                |
+	//- "..._1.jpg", "..._2.jpg", and "..._3.jpg", respectively,  |
+	//- but this will cause problems with uploading the images... |
+	//------------------------------------------------------------+
+	div(style="width:25%; margin-left:auto; margin-right:auto; display:block;")
+		img(src=`/uploads/responsive/${event_year}_${key}_1_md.jpg` alt="" class="w3-image" style="max-height:100px;")
+		img(src=`/uploads/responsive/${event_year}_${key}_2_md.jpg` alt="" class="w3-image" style="max-height:100px;")
+		img(src=`/uploads/responsive/${event_year}_${key}_3_md.jpg` alt="" class="w3-image" style="max-height:100px;")
 	form#imageform(action=`/image/upload?team_key=${key}` method="post" enctype="multipart/form-data" name="imageform")
 		input#teamimage(type="file", name="avatarfield")
 		input#returnurl(type="hidden", name="returnurl", value="")

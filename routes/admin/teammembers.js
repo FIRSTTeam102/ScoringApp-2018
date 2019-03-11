@@ -100,6 +100,8 @@ router.post("/addmember", function(req, res){
 	var subteam = req.body.subteam;
 	var className = req.body.className;
 	var years = req.body.years;
+	
+	res.log(`Request to add member ${req.body}`, true);
 
 	// calculate seniority
 	var seniority = years;
@@ -156,6 +158,9 @@ router.post("/updatemember", function(req, res){
 	var className = req.body.className;
 	var years = req.body.years;
 	
+	//log it
+	res.log(`Request to update member ${memberId} with details ${JSON.stringify(req.body)}`, true);
+	
 	// recalculate seniority
 	var seniority = years;
 	// sanity-check! use '0' if it's not already a parseable int
@@ -206,7 +211,10 @@ router.post("/deletemember",function(req, res){
 	if(req.body.memberId){
 
 		var memberId = req.body.memberId;
-
+		
+		//log it
+		res.log(`Request to delete member ${memberId} by user ${req.user}`, true);
+		
 		res.log("Going to remove member with id: "+memberId, "white");
 
 		teammembers.remove({"_id": memberId}, {}, function(err){

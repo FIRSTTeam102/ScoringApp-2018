@@ -100,6 +100,9 @@
 @media (max-width: 600px){
 	.w3-col.s0{display:none;}
 	.w3-col.s-half{width:4.166%;}
+	.w3-hide-small{
+		display: none!important;
+	}
 	.gear-resp90,.w3-resp90{
 		width: 90%!important;
 	}

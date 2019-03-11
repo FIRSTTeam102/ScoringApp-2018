@@ -1,7 +1,9 @@
 .theme-link:hover{color:rgb(22, 21, 20)!important;background-color:#f3dfd4!important}
 .theme-link{color:#ffffff!important;background-color:#cf5615!important}
 .theme-input{color:#fff!important;background-color:#585868!important}
+.theme-light-gray{color:#fff!important;background-color:#8a8a8f!important}
 .theme-gray{color:#fff!important;background-color:#585868!important}
+.theme-dark-gray{color:#fff!important;background-color:#2a2a2e!important}
 .theme-red{color:#fff!important;background-color:#be0020!important}
 .theme-hover-red:hover{color:#fff!important;background-color:#ff6d85!important}
 .theme-submit{color:#fff!important;background-color:hsl(240, 62%, 58%)!important}
@@ -14,6 +16,7 @@
 
 .theme-text{color:#C8C8DC!important;}
 .theme-text-dark{color:#1E1E23!important;}
+.theme-text-gray,.theme-text-grey{color:#757575!important;}
 .theme-text-white{color:#fff!important;}
 .theme-text-black{color:#000!important;}
 

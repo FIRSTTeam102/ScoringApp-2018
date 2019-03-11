@@ -11,7 +11,7 @@ var streamifier = require('streamifier');
 
 //Configure UPLOAD_PATH
 //process.env.AVATAR_STORAGE contains uploads/avatars
-var UPLOAD_PATH = path.resolve(__dirname, '..', process.env.AVATAR_STORAGE) + "\\";
+var UPLOAD_PATH = path.resolve(__dirname, '..', process.env.AVATAR_STORAGE) + "/";
 console.log("UPLOAD_PATH = " + UPLOAD_PATH);
 
 //create a multer storage engine

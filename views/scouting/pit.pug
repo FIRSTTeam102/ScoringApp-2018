@@ -39,20 +39,20 @@ block content
 	form#imageform(action=`/image/upload?team_key=${key}` method="post" enctype="multipart/form-data" name="imageform")
 		input#teamimage(type="file", name="avatarfield")
 		input#returnurl(type="hidden", name="returnurl", value="")
-		input#imagekey(type="hidden", name="teamkey", value=`${key}` + "_1")
+		input#imagekey(type="hidden", name="teamkey", value=`${key}_1`)
 		button#submitimage(onclick="window.onbeforeunload = null;", class="w3-btn theme-submit") Upload Small Image #1
 	//- v For image #2 -//
 	form#imageform(action=`/image/upload?team_key=${key}` method="post" enctype="multipart/form-data" name="imageform")
 		input#teamimage(type="file", name="avatarfield")
 		input#returnurl(type="hidden", name="returnurl", value="")
-		input#imagekey(type="hidden", name="teamkey", value=`${key}` + "_2")
-		button#submitimage(onclick="window.onbeforeunload = null;", class="w3-btn theme-submit") Upload Small Image #1
+		input#imagekey(type="hidden", name="teamkey", value=`${key}_2`)
+		button#submitimage(onclick="window.onbeforeunload = null;", class="w3-btn theme-submit") Upload Small Image #2
 	//- ...and for #3 -//
 	form#imageform(action=`/image/upload?team_key=${key}` method="post" enctype="multipart/form-data" name="imageform")
 		input#teamimage(type="file", name="avatarfield")
 		input#returnurl(type="hidden", name="returnurl", value="")
-		input#imagekey(type="hidden", name="teamkey", value=`${key}` + "_3")
-		button#submitimage(onclick="window.onbeforeunload = null;", class="w3-btn theme-submit") Upload Small Image #1
+		input#imagekey(type="hidden", name="teamkey", value=`${key}_3`)
+		button#submitimage(onclick="window.onbeforeunload = null;", class="w3-btn theme-submit") Upload Small Image #3
 	p
 	div(class="")
 		form#scoutform(class="" name="scoutform")

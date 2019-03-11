@@ -43,7 +43,7 @@ block content
 				- for (var key in pair) if (key == "_id") pairId=pair[key];
 				- thisButtonLabel = selectedArray.toString();
 				button(onclick=`deletePair("${pairId}")` class="w3-btn theme-red") Delete pair
-				|    #{thisButtonLabel}
+				|	#{thisButtonLabel}
 	form(method="post" action="/admin/scoutingpairs/deletescoutingpair" id="deletememberpair")
 		input(id="deletememberpairinput" name="data" type="hidden")
 	hr

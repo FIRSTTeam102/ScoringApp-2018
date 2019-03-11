@@ -11,7 +11,7 @@ var streamifier = require('streamifier');
 
 //Configure UPLOAD_PATH
 //process.env.AVATAR_STORAGE contains uploads/avatars
-var UPLOAD_PATH = path.resolve(__dirname, '..', process.env.AVATAR_STORAGE) + "/";
+var UPLOAD_PATH = path.resolve(__dirname, '..', process.env.AVATAR_STORAGE) + "\\";
 console.log("UPLOAD_PATH = " + UPLOAD_PATH);
 
 //create a multer storage engine
@@ -203,7 +203,8 @@ var AvatarStorage = function(options) {
                 var filepath = filename.split('.');
                 
                 //create the complete filepath and create a writable stream for it
-                filepath = filepath[0] + '_' + size + '.' + filepath[1];
+                filepath = filepath[0] + '_1_' + size + '.' + filepath[1]; //A very faulty solution to the problem...
+                console.log("filepath=" + filepath)
                 filepath = path.join(that.uploadPath, filepath);
                 outputStream = that._createOutputStream(filepath, cb);
                 

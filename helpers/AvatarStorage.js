@@ -203,7 +203,7 @@ var AvatarStorage = function(options) {
                 var filepath = filename.split('.');
                 
                 //create the complete filepath and create a writable stream for it
-                filepath = filepath[0] + '_1_' + size + '.' + filepath[1]; //A very faulty solution to the problem...
+                filepath = filepath[0] + "_" + size + '.' + filepath[1];
                 console.log("filepath=" + filepath)
                 filepath = path.join(that.uploadPath, filepath);
                 outputStream = that._createOutputStream(filepath, cb);

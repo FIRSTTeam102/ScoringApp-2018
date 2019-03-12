@@ -73,6 +73,10 @@ router.post('/upload*', function(req, res, next) {
     res.log("going to upload");
     console.log("going to upload");
     
+    
+    var true_key = team_key.slice(0, team_key.length-2);
+    console.log(true_key);
+
     var year = req.event.year;
     req.baseFilename = year + "_" + team_key;
     upload(req, res, function(e){
@@ -80,6 +84,7 @@ router.post('/upload*', function(req, res, next) {
         console.log("_________________________________________________________________");
         console.log("req.file="+JSON.stringify(req.file));
         res.redirect("/scouting/pit?team=" + team_key);
+        console.log(true_key);
     });
     
     res.log("called upload");

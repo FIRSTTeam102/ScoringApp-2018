@@ -74,7 +74,7 @@ router.post('/upload*', function(req, res, next) {
     console.log("going to upload");
     var true_key = "init value";
     if (team_key.charAt(team_key.length-1) == 'a' || team_key.charAt(team_key.length-1) == 'b' || team_key.charAt(team_key.length-1) == 'c') {
-    true_key = team_key.slice(0, team_key.length-2);
+    true_key = team_key.slice(0, team_key.length-1);
     console.log(true_key);
     }
     else {

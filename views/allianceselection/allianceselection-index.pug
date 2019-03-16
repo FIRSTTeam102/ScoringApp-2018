@@ -1,8 +1,11 @@
 extends ../layout
 
 block content
+	style.
+		html{
+			overflow: visible;
+		}
 	h2(class="gear-text-white") Alliance Selection Data
-	
 	if (aggdata)
 		table(class="w3-table" id="metricTable")
 			tr

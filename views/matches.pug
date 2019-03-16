@@ -8,6 +8,10 @@
 	//
 extends layout
 block content
+	style.
+		html{
+			overflow: visible;
+		}
 	form#updateForEvent(name="updateForEvent" method="post" action="/admin/data/matches")
 		div(class="w3-show-inline-block w3-padding-small")
 			input#seteventid(class="theme-input w3-no-border theme-inline-padding" type="text", name="eventId")

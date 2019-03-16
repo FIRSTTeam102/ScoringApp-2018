@@ -55,6 +55,48 @@ router.get("/", function(req, res) {
 						lastMember = thisMember;
 						thisMemberArr = [];
 					}
+					
+					//create audit-element to push
+					var auditElement = {};
+					var auditElementChar;
+					//set auditElement.match_team_key
+					if(scoreData[scoreIdx]){
+						auditElement.match_team_key = scoreData[scoreIdx].match_team_key;
+					}
+					
+					if (scoreData[scoreIdx].data){
+						
+						if (scoreData[scoreIdx].assigned_scorer == scoreData[scoreIdx].actual_scorer)
+							auditElementChar = "Y";
+						else
+							// 2019-03-16 JL: App crashed due to actual_scorer being undefined
+							if (scoreData[scoreIdx].actual_scorer == undefined){
+								res.log(`${thisFuncName} actual_scorer undefined`);
+								auditElementChar = "N";
+							}
+							// 2018-03-22, M.O'C: Adding parent option
+							else if (scoreData[scoreIdx].actual_scorer.toLowerCase().startsWith('mr') || 
+								scoreData[scoreIdx].actual_scorer.toLowerCase().startsWith('mrs') || 
+								scoreData[scoreIdx].actual_scorer.toLowerCase().startsWith('ms')){
+									//covered by parent (and insert actual_scorer)
+									auditElementChar = "P";
+									auditElement.actual_scorer = scoreData[scoreIdx].actual_scorer;
+								}
+							else{
+								//covered by lead (and insert actual_scorer)
+								auditElementChar = "C";
+								auditElement.actual_scorer = scoreData[scoreIdx].actual_scorer;
+							}		
+					}
+					else{
+						auditElementChar = "N";
+					}
+					
+					//set auditElement's char to what we set above, then push to member array
+					auditElement.char = auditElementChar;
+					thisMemberArr.push(auditElement);
+					
+					/*
 					if (scoreData[scoreIdx].data)
 						if (scoreData[scoreIdx].assigned_scorer == scoreData[scoreIdx].actual_scorer)
 							thisMemberArr.push("Y");
@@ -71,8 +113,11 @@ router.get("/", function(req, res) {
 								thisMemberArr.push("P");
 							else
 								thisMemberArr.push("C");
-					else
+					else{
 						thisMemberArr.push("N");
+					}
+						
+					*/
 				}
 				// Write in the last set of records
 				var thisRow = {};

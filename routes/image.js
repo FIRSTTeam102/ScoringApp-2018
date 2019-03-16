@@ -72,14 +72,22 @@ router.post('/upload*', function(req, res, next) {
     var team_key = req.query.team_key;
     res.log("going to upload");
     console.log("going to upload");
-    
+    var true_key = "init value";
+    if (team_key.charAt(team_key.length-1) == 'a' || team_key.charAt(team_key.length-1) == 'b' || team_key.charAt(team_key.length-1) == 'c') {
+    true_key = team_key.slice(0, team_key.length-1);
+    console.log(true_key);
+    }
+    else {
+        true_key = team_key;
+    }
     var year = req.event.year;
     req.baseFilename = year + "_" + team_key;
-
     upload(req, res, function(e){
-        console.log("hello");
+        console.log(team_key);
+        console.log("_________________________________________________________________");
         console.log("req.file="+JSON.stringify(req.file));
-        res.redirect("/scouting/pit?team=" + team_key);
+        res.redirect("/scouting/pit?team=" + true_key);
+        console.log(true_key);
     });
     
     res.log("called upload");
@@ -87,9 +95,12 @@ router.post('/upload*', function(req, res, next) {
 
 module.exports = router;
 
-// ||\\  ||  //|||||\\  |||\\    ||||||||      ||||||||  /|||||||
-// || \\ ||  ||     ||  ||  \\   ||               ||     ||
-// ||  \\||  ||     ||  ||   \\  |||||            ||     \||||||\
-// ||   \\|  ||     ||  ||   //  ||               ||           ||
-// ||    ||  ||     ||  ||  //   ||               ||           ||
-// ||    ||  \\|||||//  |||//    ||||||||  ||  ||||/     |||||||/
+// ||\\  ||  //||||\\  ||||\\    ||||||||      ||||||||  /|||||||
+// || \\ ||  ||    ||  ||   \\   ||               ||     ||
+// ||  \\||  ||    ||  ||    \\  |||||            ||     \||||||\
+// ||   \\|  ||    ||  ||    //  ||               ||           ||
+// ||    ||  ||    ||  ||   //   ||               ||           ||
+// ||    ||  \\||||//  ||||//    ||||||||  ||  ||||/     |||||||/
+//
+//
+//...because why not

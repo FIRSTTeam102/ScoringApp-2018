@@ -203,7 +203,8 @@ var AvatarStorage = function(options) {
                 var filepath = filename.split('.');
                 
                 //create the complete filepath and create a writable stream for it
-                filepath = filepath[0] + '_' + size + '.' + filepath[1];
+                filepath = filepath[0] + "_" + size + '.' + filepath[1];
+                console.log("filepath=" + filepath)
                 filepath = path.join(that.uploadPath, filepath);
                 outputStream = that._createOutputStream(filepath, cb);
                 
@@ -314,3 +315,14 @@ var AvatarStorage = function(options) {
 
 //export the storage engine
 module.exports = AvatarStorage;
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~NN~~~~N~~~~~OOO~~~~~DDD~~~~~~~EEEEEEE~~~~~~~~JJJJJJJ~~~~SSSSSS~~~~~~~
+~~~~~~N~N~~~N~~~~O~~~O~~~~D~~DD~~~~~E~~~~~~~~~~~~~~~~~J~~~~~~S~~~~~~~~~~~~~
+~~~~~~N~N~~~N~~~O~~~~~O~~~D~~~~D~~~~E~~~~~~~~~~~~~~~~~J~~~~~~S~~~~~~~~~~~~~
+~~~~~~N~~N~~N~~~O~~~~~O~~~D~~~~~D~~~EEEE~~~~~~~~~~~~~~J~~~~~~~SSSSS~~~~~~~~
+~~~~~~N~~N~~N~~~O~~~~~O~~~D~~~~D~~~~E~~~~~~~~~~~~~~~~~J~~~~~~~~~~~~S~~~~~~~
+~~~~~~N~~~N~N~~~~O~~~O~~~~D~~DD~~~~~E~~~~~~~~~~~~~~~~~J~~~~~~~~~~~~S~~~~~~~
+~~~~~~N~~~~NN~~~~~OOO~~~~~DDD~~~~~~~EEEEEEE~~~@@~~~JJJ~~~~~~~SSSSSS~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/

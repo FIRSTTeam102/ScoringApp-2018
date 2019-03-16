@@ -47,7 +47,7 @@ block content
 					div(class="w3-col w3-border alliance-red previousmatches-container")
 						each teamkey in match.alliances.red.team_keys
 							a(href=`/reports/teammatchintel?key=${match.key}_${teamkey}`)
-								div(class="w3-btn w3-block previousmatches-team-container alliance-hover-red")
+								div(class="w3-padding w3-block previousmatches-team-container alliance-hover-red")
 									span(class="previousmatches-team")= teamkey.substring(3)
 				div(class="w3-col s4 m2 l2")
 					- var divClassRed = 'w3-padding w3-block w3-border previousmatches-container ';

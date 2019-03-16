@@ -157,7 +157,7 @@ router.get("/teamintel", function(req, res){
 	
 	var db = req.db;
 	var rankCol = db.get("currentrankings");
-	var teamsCol = req.db.get('teams');
+	var teamsCol = req.db.get('currentteams');
 	var pitCol = req.db.get('scoutingdata');
 	var aggCol = req.db.get('scoringdata');
 	var matchCol = req.db.get('matches');

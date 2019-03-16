@@ -11,7 +11,8 @@ router.get("/", function(req, res) {
 		return null;
 	}
 	
-	res.log("Scoring audit: enter");
+	var thisFuncName = "audit.root[GET]:";
+	res.log(`${thisFuncName} enter`);
 		
 	var scoreDataCol = req.db.get("scoringdata");
 	var matchCol = req.db.get("matches");
@@ -58,8 +59,13 @@ router.get("/", function(req, res) {
 						if (scoreData[scoreIdx].assigned_scorer == scoreData[scoreIdx].actual_scorer)
 							thisMemberArr.push("Y");
 						else
+							// 2019-03-16 JL: App crashed due to actual_scorer being undefined
+							if (scoreData[scoreIdx].actual_scorer == undefined){
+								res.log(`${thisFuncName} actual_scorer undefined`);
+								thisMemberArr.push("N");
+							}
 							// 2018-03-22, M.O'C: Adding parent option
-							if (scoreData[scoreIdx].actual_scorer.toLowerCase().startsWith('mr') || 
+							else if (scoreData[scoreIdx].actual_scorer.toLowerCase().startsWith('mr') || 
 								scoreData[scoreIdx].actual_scorer.toLowerCase().startsWith('mrs') || 
 								scoreData[scoreIdx].actual_scorer.toLowerCase().startsWith('ms'))
 								thisMemberArr.push("P");

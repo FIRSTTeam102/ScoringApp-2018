@@ -101,7 +101,8 @@ router.post("/addmember", function(req, res){
 	var className = req.body.className;
 	var years = req.body.years;
 	
-	res.log(`Request to add member ${req.body}`, true);
+	var memberJson = JSON.stringify(req.body);
+	res.log(`Request to add member ${memberJson}`, true);
 
 	// calculate seniority
 	var seniority = years;

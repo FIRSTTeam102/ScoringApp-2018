@@ -17,9 +17,9 @@ block content
 			hr
 			h4= row.member
 			each item in row.record
-				- var itemClass = "w3-button gear-hover-white theme-submit gear-counter"
-				- if (item == 'N') itemClass = "w3-button gear-hover-white theme-red gear-counter"
-				- if (item == 'C') itemClass = "w3-button gear-hover-white w3-yellow gear-counter"
-				- if (item == 'P') itemClass = "w3-button gear-hover-white w3-purple gear-counter"
+				- var itemClass = "w3-button gear-hover-white w3-green audit-card"
+				- if (item == 'N') itemClass = "w3-button gear-hover-white theme-red audit-card"
+				- if (item == 'C') itemClass = "w3-button gear-hover-white w3-yellow audit-card"
+				- if (item == 'P') itemClass = "w3-button gear-hover-white w3-purple audit-card"
 				div(class=`${itemClass}`)
 					span= item

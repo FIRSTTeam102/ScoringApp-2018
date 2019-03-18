@@ -123,6 +123,6 @@ app.use(useFunctions.notFoundHandler);
 // error handler
 app.use(useFunctions.errorHandler);
 
-console.log("app.js:".red + " Ready")
+console.log("app.js:".red + " " +"Ready!".bgGreen)
 
 module.exports = app;

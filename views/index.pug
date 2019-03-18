@@ -59,6 +59,10 @@ block content
 				a(href="/admin")
 					div(class="gear-btn theme-link gear-hover-white w3-btn") Admin Index
 	script.
+		$(function(){
+			//If user presses back button and teamselect is populated, gotta un-disable stats btn
+			doTeamDropdownChange( $("#teamSelect")[0] );
+		})
 		//Checks if teamSelect/teamNo are filled, and if so, redirect the user to intel.
 		function redIntel(){
 			if( !$("#teamSelect").val() ){

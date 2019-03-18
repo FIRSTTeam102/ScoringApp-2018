@@ -287,7 +287,7 @@ router.get('/teampictures', function(req, res) {////////////////////////////////
 	var team_num = req.db.get("currentteams")
 
 	res.log(`${thisFuncName}- match_team_key: ${match_team_key} alliance: ${alliance} user: ${thisUserName}`);
-	currentTeamsCol.find({ "team_number" : team_num }, {}, function(e, docs){});
+	currentteamsCol.find({ "team_number" : team_num }, {}, function(e, docs){}); //still some problems here
 	//check if there is already data for this match
 	scoringDataCol.find({"year" : event_year, "match_team_key": match_team_key}, {sort: {"order": 1}}, function(e, scoringdata){
 		

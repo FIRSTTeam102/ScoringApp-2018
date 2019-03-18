@@ -2,7 +2,11 @@
 .w3-btn{
     border-radius: 12px; /* Border radius rounded by 12 pixels */
     transition: 0.2s;    /* Fade from color 1 to color 2 in 0.2 secs */
-} 
+}
+
+.theme-rounded-large{border-radius:18px;}
+.theme-rounded{border-radius:12px;}
+.theme-rounded-small{border-radius:6px;}
 
 .theme-input{
     border-radius:12px;

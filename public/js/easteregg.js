@@ -1,7 +1,16 @@
 $(function(){
 	
-	var rand = Math.random();
-	if( rand < 0.05 ){
+	$("h3").click(function(){
+		if( $(this).text() == "Sandstorm" ){
+			//do easter egg
+			doEasterEgg();
+		}
+	});
+});
+
+function doEasterEgg(){
+	
+	if( !$("#sandstormEgg")[0] ){
 		var audio = document.createElement("audio");
 		var source = document.createElement("source");
 		$(audio).attr("id", "sandstormEgg");
@@ -9,12 +18,6 @@ $(function(){
 		$(source).attr("type", "audio/mpeg");
 		$(audio).append(source);
 		$(document.body).append(audio);
-		
-		var didPlayEasterEgg = false;
-		$(document.body).click(function(){
-			$("#sandstormEgg")[0].play();
-			didPlayEasterEgg = true;
-		});
 	}
-	
-})
+	$("#sandstormEgg")[0].play();
+}

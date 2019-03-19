@@ -41,9 +41,9 @@ textarea{padding:8px 12px;}
 /* 2019 background colors */
 .theme-link{color:#ffffff!important;background-color:#cf5615!important}
 .theme-input{color:#fff!important;background-color:#585868!important}
-.theme-light-gray{color:#fff!important;background-color:#8a8a8f!important}
-.theme-gray{color:#fff!important;background-color:#585868!important}
-.theme-dark-gray{color:#fff!important;background-color:#2a2a2e!important}
+.theme-light-gray,.theme-light-grey{color:#fff!important;background-color:#8a8a8f!important}
+.theme-gray,.theme-grey{color:#fff!important;background-color:#585868!important}
+.theme-dark-gray,.theme-dark-grey{color:#fff!important;background-color:#2a2a2e!important}
 .theme-red{color:#fff!important;background-color:#be0020!important}
 .theme-submit{color:#fff!important;background-color:hsl(240, 62%, 58%)!important}
 /* 2019 text colors */
@@ -55,7 +55,7 @@ textarea{padding:8px 12px;}
 /* 2019 hover background colors */
 .theme-link:hover{color:rgb(22, 21, 20)!important;background-color:#f3dfd4!important}
 .theme-hover-white:hover{color:#000!important;background-color:#f3dfd4!important}
-.theme-hover-light-gray:hover{color:#fff!important;background-color:#8a8a8f!important}
+.theme-hover-light-gray:hover,.theme-hover-light-grey:hover{color:#fff!important;background-color:#8a8a8f!important}
 .theme-submit:hover{color:#fff!important;background-color:hsl(240, 60%, 62%)!important}
 .theme-hover-red:hover{color:#fff!important;background-color:#ff6d85!important}
 

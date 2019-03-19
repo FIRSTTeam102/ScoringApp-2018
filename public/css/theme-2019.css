@@ -8,6 +8,26 @@
 .theme-rounded{border-radius:12px;}
 .theme-rounded-small{border-radius:6px;}
 
+.theme-rounded-large-tl{border-top-left-radius:18px;}
+.theme-rounded-large-tr{border-top-right-radius:18px;}
+.theme-rounded-large-bl{border-bottom-left-radius:18px;}
+.theme-rounded-large-br{border-bottom-right-radius:18px;}
+.theme-rounded-large-top{border-top-left-radius:18px;border-top-right-radius:18px;}
+.theme-rounded-large-bottom{border-bottom-left-radius:18px;border-bottom-right-radius:18px;}
+.theme-rounded-tl{border-top-left-radius:12px;}
+.theme-rounded-tr{border-top-right-radius:12px;}
+.theme-rounded-bl{border-bottom-left-radius:12px;}
+.theme-rounded-br{border-bottom-right-radius:12px;}
+.theme-rounded-top{border-top-left-radius:12px;border-top-right-radius:12px;}
+.theme-rounded-bottom{border-bottom-left-radius:12px;border-bottom-right-radius:12px;}
+.theme-rounded-small-tl{border-top-left-radius:6px;}
+.theme-rounded-small-tr{border-top-right-radius:6px;}
+.theme-rounded-small-bl{border-bottom-left-radius:6px;}
+.theme-rounded-small-br{border-bottom-right-radius:6px;}
+.theme-rounded-small-top{border-top-left-radius:6px;border-top-right-radius:6px;}
+.theme-rounded-small-bottom{border-bottom-left-radius:6px;border-bottom-right-radius:6px;}
+
+
 .theme-input{
     border-radius:12px;
     transition:0.2s;
@@ -17,20 +37,25 @@ textarea{padding:8px 12px;}
 
 /* Original button styling */
 
-.theme-link:hover{color:rgb(22, 21, 20)!important;background-color:#f3dfd4!important}
 .theme-link{color:#ffffff!important;background-color:#cf5615!important}
 .theme-input{color:#fff!important;background-color:#585868!important}
 .theme-light-gray{color:#fff!important;background-color:#8a8a8f!important}
 .theme-gray{color:#fff!important;background-color:#585868!important}
 .theme-dark-gray{color:#fff!important;background-color:#2a2a2e!important}
 .theme-red{color:#fff!important;background-color:#be0020!important}
-.theme-hover-red:hover{color:#fff!important;background-color:#ff6d85!important}
 .theme-submit{color:#fff!important;background-color:hsl(240, 62%, 58%)!important}
+
+.theme-link:hover{color:rgb(22, 21, 20)!important;background-color:#f3dfd4!important}
+.theme-hover-white:hover{color:#000!important;background-color:#f3dfd4!important}
+.theme-hover-light-gray:hover{color:#fff!important;background-color:#8a8a8f!important}
 .theme-submit:hover{color:#fff!important;background-color:hsl(240, 60%, 62%)!important}
+.theme-hover-red:hover{color:#fff!important;background-color:#ff6d85!important}
 
 .alliance-red{color:#fff!important;background-color:#EC0D00!important}
+.alliance-border-red{border: 1px solid hsl(3, 100%, 75%)!important}
 .alliance-hover-red:hover{color:rgb(43, 16, 16)!important;background-color:rgb(255, 171, 167)!important}
 .alliance-blue{color:#fff!important;background-color:#2623B8!important}
+.alliance-border-blue{border: 1px solid hsl(242, 100%, 83%)!important}
 .alliance-hover-blue:hover{color:rgb(14, 13, 32)!important;background-color:rgb(134, 132, 235)!important}
 
 .theme-text{color:#C8C8DC!important;}

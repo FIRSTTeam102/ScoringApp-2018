@@ -8,22 +8,9 @@ block content
 			/*padding: 12px 5px 12px 5px;*/
 			text-align: center;
 		}
-		.rank{
-			display: none;
-			min-width: 30px;
-		}
-		html{
-			overflow-x: visible;
-		}
-		@media (max-width: 600px){
-			.teamNo{
-				width: 33.3%;
-			}
-		}
-		@media (min-width: 601px){
-			title{
-				height: 114.5px;
-			}
+		.upcoming-rank{
+			margin-top: 2.5px;
+			min-width: 50px;
 		}
 	- team = !!team ? team.substring(3) : null;
 	if !matches[0] && !team
@@ -35,15 +22,16 @@ block content
 			h3(class="gear-text-white") Upcoming matches for team #{team}
 		else
 			h3(class="gear-text-white") Upcoming matches
-		div(class="w3-container")
-			label(class="gear-text-white")  
-			input(class="w3-padding gear-dark-gray w3-margin-right" style="border: none; width: 6.2em; position:relative;top:1px;" type="number" placeholder="Team #" id="teamNo")
-			a
-				div(class="gear-btn gear-dark-gray gear-hover-white w3-btn" onclick="redUpcoming()") View for another team
-		div#chkShowRanksContainer(class="w3-container")
-			input#chkShowRanks(type="checkbox" class="w3-check")
-			h4(class="gear-text-white w3-show-inline-block w3-margin-left")
-				label(for="chkShowRanks") Show Team Ranks
+		if( teamList && teamList[0] )
+			select#teamSelect(class="gear-btn theme-input w3-btn")
+				option(value="") Team #
+				each team in teamList
+					option(value=team class="w3-bar-item") #{team}
+			a#upcomingMatchesLink(href="/reports/upcoming")
+				div(class="gear-btn w3-btn theme-gray gear-hover-white") View upcoming matches for 
+					span#upcomingMatchesLabel [All Teams]
+		br 
+		br 
 		section
 			each match, i in matches
 				- match.teams = [];
@@ -87,19 +75,31 @@ block content
 							div(class="alliance-blue alliance-border-blue theme-rounded-small")
 								//- not doing this with a loop because border needs to be specified
 								div(class="w3-padding alliance-hover-blue theme-rounded-small-top")
+									span(class="w3-left w3-small theme-text upcoming-rank") 
+										i(class="w3-left") Rank #{teamRanks[blue1]}
 									span=blue1.substring(3)
 								div(class="w3-padding alliance-hover-blue")
+									span(class="w3-left w3-small theme-text upcoming-rank") 
+										i(class="w3-left") Rank #{teamRanks[blue2]}
 									span=blue2.substring(3)
 								div(class="w3-padding alliance-hover-blue theme-rounded-small-bottom")
+									span(class="w3-left w3-small theme-text upcoming-rank") 
+										i(class="w3-left") Rank #{teamRanks[blue3]}
 									span=blue3.substring(3)
 						div(class="w3-col s6 w3-padding-small")
 							div(class="alliance-red alliance-border-red theme-rounded-small")
 								//- not doing this with a loop because border needs to be specified
 								div(class="w3-padding alliance-hover-red theme-rounded-small-top")
+									span(class="w3-left w3-small theme-text upcoming-rank") 
+										i(class="w3-left") Rank #{teamRanks[red1]}
 									span=match.alliances.red.team_keys[0].substring(3)
 								div(class="w3-padding alliance-hover-red")
+									span(class="w3-left w3-small theme-text upcoming-rank") 
+										i(class="w3-left") Rank #{teamRanks[red2]}
 									span=match.alliances.red.team_keys[1].substring(3)
 								div(class="w3-padding alliance-hover-red theme-rounded-small-bottom")
+									span(class="w3-left w3-small theme-text upcoming-rank") 
+										i(class="w3-left") Rank #{teamRanks[red3]}
 									span=match.alliances.red.team_keys[2].substring(3)
 				p(class="theme-spacer")
 				
@@ -141,53 +141,21 @@ block content
 					div(class="w3-rest")
 						//can be used for results later for anothah pug fiel
 	script.
-		//just making it like this so i don't have to modify the html, just in case we wanna do hover links or whatever again.
-		//For example: if we have a stats page for each match, or something.
-		function hover(){}function unhover(){}
-		function redUpcoming(){
-			if( !$("#teamNo").val() ){
-				window.location.href = "/reports/upcoming";
-			}else{
-				var key = "frc".concat($("#teamNo").val());
-				window.location.href = "/reports/upcoming?team="+key;
-			}
-		}
-		$("#teamNo").keydown(function(e){
-			if(e.keyCode == 13){
-				redUpcoming();
-			}
+		$("#teamSelect").change(function(){
+			doTeamSelectChange(this);
 		});
-		$("#chkShowRanks").click(function(e){
-			if(this.checked){
-				$(".rank").css("display", "inherit");
-			}else{
-				$(".rank").css("display", "none");
+		
+		function doTeamSelectChange(it){
+			var that = $(it);
+			
+			var selectedTeam = that.val();
+			//if a team has been selected
+			if(selectedTeam){
+				$("#upcomingMatchesLabel").text(`team ${selectedTeam}`);
+				$("#upcomingMatchesLink").attr("href", `/reports/upcoming?team=frc${selectedTeam}`)
 			}
-		});
-		/*
-		function hover(elem, id){
-			elem.classList.add("w3-gray");
-			elem.classList.remove("gear-dark-gray");
-			x = elem;
-			if(id == 2){
-				elem.parentElement.previousElementSibling.firstElementChild.classList.add("w3-gray");
-				elem.parentElement.previousElementSibling.firstElementChild.classList.remove("gear-dark-gray");
-			}
-			if(id == 1){
-				elem.parentElement.nextElementSibling.firstElementChild.classList.add("w3-gray");
-				elem.parentElement.nextElementSibling.firstElementChild.classList.remove("gear-dark-gray");
+			else{
+				$("#upcomingMatchesLabel").text("[All Teams]");
+				$("#upcomingMatchesLink").attr("href", "/reports/upcoming")
 			}
 		}
-		function unhover(elem, id){
-			elem.classList.remove("w3-gray");
-			elem.classList.add("gear-dark-gray");
-			if(id == 2){
-				elem.parentElement.previousElementSibling.firstElementChild.classList.remove("w3-gray");
-				elem.parentElement.previousElementSibling.firstElementChild.classList.add("gear-dark-gray");
-			}
-			if(id == 1){
-				elem.parentElement.nextElementSibling.firstElementChild.classList.remove("w3-gray");
-				elem.parentElement.nextElementSibling.firstElementChild.classList.add("gear-dark-gray");
-			}
-		}
-		*/

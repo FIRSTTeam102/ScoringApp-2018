@@ -1,16 +1,14 @@
 extends ../layout
 block content
 	style.
-		.teamNo{ 
-			display: inline-block;
-			/*width: 33.3%;*/
-			min-width: 40px;
-			/*padding: 12px 5px 12px 5px;*/
-			text-align: center;
-		}
 		.upcoming-rank{
 			margin-top: 2.5px;
 			min-width: 50px;
+		}
+		.thick-border{
+			border-width: 6.5px!important;
+			margin-top: -5.5px;
+			border-radius: 10px;
 		}
 	- team = !!team ? team.substring(3) : null;
 	if !matches[0] && !team
@@ -35,11 +33,16 @@ block content
 		section
 			each match, i in matches
 				- match.teams = [];
-				each team, i in match.alliances.blue.team_keys
-					- match.teams[i] = team.substring(3);
-				each team, i in match.alliances.red.team_keys
-					- match.teams[i + 3] = team.substring(3);
-					
+				- var isBlue = false, isRed = false;
+				each teamKey, i in match.alliances.blue.team_keys
+					- match.teams[i] = teamKey.substring(3);
+					//isBlue for setting thick border of alliance div when a team is selected
+					- if( teamKey.substring(3) == team ) isBlue = true;
+				each teamKey, i in match.alliances.red.team_keys
+					- match.teams[i + 3] = teamKey.substring(3);
+					//isRed for setting thick border of alliance div when a team is selected
+					- if( teamKey.substring(3) == team ) isRed = true;
+				
 				- //get date crap
 				- var date = new Date( match.time * 1000 )
 				- if (match.predicted_time) date = new Date( match.predicted_time * 1000 );
@@ -72,7 +75,12 @@ block content
 							- var blue = match.alliances.blue.team_keys, red = match.alliances.red.team_keys;
 							- var blue1 = blue[0], blue2 = blue[1], blue3 = blue[2];
 							- var red1 = red[0], red2 = red[1], red3 = red[2];
-							div(class="alliance-blue alliance-border-blue theme-rounded-small")
+							//- set classes for alliance window
+							- var blueClass = "alliance-blue alliance-border-blue theme-rounded-small";
+							- var redClass = "alliance-red alliance-border-red theme-rounded-small";
+							- if( isBlue ) blueClass += " thick-border";
+							- else if( isRed ) redClass += " thick-border";
+							div(class=blueClass)
 								//- not doing this with a loop because border needs to be specified
 								div(class="w3-padding alliance-hover-blue theme-rounded-small-top")
 									span(class="w3-left w3-small theme-text upcoming-rank") 
@@ -87,7 +95,7 @@ block content
 										i(class="w3-left") Rank #{teamRanks[blue3]}
 									span=blue3.substring(3)
 						div(class="w3-col s6 w3-padding-small")
-							div(class="alliance-red alliance-border-red theme-rounded-small")
+							div(class=redClass)
 								//- not doing this with a loop because border needs to be specified
 								div(class="w3-padding alliance-hover-red theme-rounded-small-top")
 									span(class="w3-left w3-small theme-text upcoming-rank") 

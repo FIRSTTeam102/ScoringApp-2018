@@ -87,6 +87,21 @@
 	border-color: #555 transparent transparent transparent;
 }
 
+.w3-tooltiptext.tooltip-white{
+	background-color: #f2f2f8;
+	color: #000!important;
+}
+.w3-tooltip .w3-tooltiptext.tooltip-white::after{
+	border-color: #f2f2f8 transparent transparent transparent;
+}
+.w3-tooltiptext.tooltip-gray{
+	background-color: #8a8a9b;
+	color: #fff!important;
+}
+.w3-tooltip .w3-tooltiptext.tooltip-gray::after{
+	border-color: #8a8a9b transparent transparent transparent;
+}
+
 /* Show the tooltip text when you mouse over the tooltip container */
 .w3-tooltip:hover .w3-tooltiptext {
 	visibility: visible;

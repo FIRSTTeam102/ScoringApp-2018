@@ -66,7 +66,7 @@ router.post('/match/submit', function(req, res) {
 	/** We need to do this eventually for security. Commented out of fear that scouters may be logged out while scouting (by accident)
 	//auth
 	if(!require('./checkauthentication')(req, res))
-		return null;
+		return null;usefunct
 	*/
 	var thisFuncName = "scouting.match[post]: ";
 	res.log(thisFuncName + 'ENTER');
@@ -266,7 +266,70 @@ router.post('/submitpit', function(req, res) {
 	});
 });
 
-///////// PREVIOUS LEGACY CODE
+//For \views\scouting\teampictures.pug
+router.get('/teampictures', function(req, res) {///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	
+	var thisUser = { name: "James G." };
+	var thisUserName = "James G."; //So I don't have to sign in every time
+	
+	var thisFuncName = "scouting.match*[get]: ";
+	res.log(thisFuncName + 'ENTER');
+	
+	var db = req.db;
+	var scoringLayoutCol = db.get("scoringlayout");
+	var scoringDataCol = db.get("scoringdata");
+	var event_year = req.event.year;
+	var thisUser = "James G."; //So I don't have to sign in every time
+	var thisUserName = thisUser.name;
+	var match_team_key = req.query.key;
+	var alliance = req.query.alliance;
+	var team_num = req.db.get("currentteams")
+
+	res.log(`${thisFuncName}- match_team_key: ${match_team_key} alliance: ${alliance} user: ${thisUserName}`);
+	currentteamsCol.find({ "team_number" : team_num }, {}, function(e, docs){}); //still some problems here
+	//check if there is already data for this match
+	scoringDataCol.find({"year" : event_year, "match_team_key": match_team_key}, {sort: {"order": 1}}, function(e, scoringdata){
+		
+		//scouting answers for this match are initialized as null for visibility
+		var answers = null;
+		
+		if( scoringdata && scoringdata[0] ){
+			
+			//if we have data for this match, 
+			var data = scoringdata[0].data;
+			if(data){
+				res.log(`${thisFuncName}- data: ${JSON.stringify(scoringdata[0].data)}`);
+				//set answers to data if exists
+				answers = data;
+			}
+			else{
+				res.log(`${thisFuncName}- no data for this match`)
+			}
+		}
+		
+		//load layout
+		scoringLayoutCol.find({ "year": event_year }, {sort: {"order": 1}}, function(e, docs){
+			var layout = docs;
+			//render page
+			res.render("./scouting/teampictures", {
+				title: "Team Robot Pictures",
+				layout: layout,
+				key: match_team_key,
+				alliance: alliance,
+				answers: answers,
+				team: match_team_key,
+				team_key: match_team_key
+			});
+		});
+	});
+
+});
+/////////////////////////////////////////
+/////////////////////////////////////////
+///////// PREVIOUS LEGACY CODE: /////////
+/////////////////////////////////////////
+/////////////////////////////////////////
 
 router.get('/', function(req, res){
 	

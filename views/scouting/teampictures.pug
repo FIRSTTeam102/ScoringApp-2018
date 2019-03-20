@@ -1,0 +1,18 @@
+extends ../layout
+
+block content
+    h2(class="gear-text-white") Teams with robot pictures
+    h6 <i>Click on a team to see intel on that team</i>
+    table(class="w3-table")
+        tr
+            th Rank
+            th Team
+            th Picture
+            th Origin?
+        tr
+            td(class="gear-text-white w3-center")= "a number"
+            td(class="w3-text-light-gray w3-center")
+                a(href=`/reports/teamintel?team=${team.team_key}`)= team.team_key.substring(3)
+            td(src=`/uploads/responsive/${event_year}_${team.team_key}_sm.jpg` alt="" class="w3-image" style="max-height:350px;")
+            td(class="w3-text-light-gray w3-center")= team.record.wins+'-'+team.record.losses+'-'+team.record.ties
+            

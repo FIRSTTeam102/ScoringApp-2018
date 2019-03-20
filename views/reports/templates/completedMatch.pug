@@ -1,0 +1,99 @@
+div(class="w3-row")
+	- if (match.winning_alliance == 'red') 
+		- outcome = "Red won";
+	- if (match.winning_alliance == 'blue') 
+		- outcome = "Blue won";
+	div(class="w3-col s12 m0")
+		div(class="theme-rounded theme-gray w3-padding w3-border")
+			- var matchPrefix = "";
+			- if (match.comp_level != 'qm') matchPrefix = "" + match.comp_level + "" + match.set_number + " ";
+			span #{matchPrefix.toUpperCase()} Match #{match.match_number}: 
+			span #{outcome}
+	div(class="w3-col s0 m3 w3-padding-small")
+		div(class="theme-rounded theme-gray w3-border")
+			- var matchPrefix = "";
+			- if (match.comp_level != 'qm') matchPrefix = "" + match.comp_level + "" + match.set_number + " ";
+			div(class="w3-padding") #{matchPrefix.toUpperCase()} Match #{match.match_number}
+			div(class="w3-padding") #{outcome}
+			a(href=`/reports/upcomingmatchmetrics?key=${match.key}`)
+				div(class="w3-padding-16 w3-small gear-hover-white theme-rounded-bottom") 
+					i Compare alliances
+	div(class="w3-col s12 m9 w3-padding-small")
+		//- set shorthands for each team key
+		- var blue = match.alliances.blue.team_keys, red = match.alliances.red.team_keys;
+		- var blue1 = blue[0], blue2 = blue[1], blue3 = blue[2];
+		- var red1 = red[0], red2 = red[1], red3 = red[2];
+		- var blueContainerColor = "theme-gray", redContainerColor = "theme-gray", blueBorder = "", redBorder = "";
+		- if (match.winning_alliance == 'blue') blueContainerColor = "gear-white", blueBorder = "thick-border";
+		- else redContainerColor = "gear-white", redBorder = "thick-border"
+		div(class="w3-col s6 w3-padding-small")
+			div(class=`w3-col theme-rounded-small alliance-border-blue ${blueContainerColor} ${blueBorder}`)
+				div(class="w3-col s7 m6 l8 alliance-blue theme-rounded-small-tl theme-rounded-small-bl")
+					//- not doing this with a loop because border needs to be specified
+					div(class="w3-padding alliance-hover-blue theme-rounded-small-tl")
+						//-span(class="w3-left w3-small theme-text upcoming-rank") 
+							i(class="w3-left") Rank #{teamRanks[blue1]}
+						if team && team.key == blue1
+							strong=blue1.substring(3)
+						else
+							span=blue1.substring(3)
+					div(class="w3-padding alliance-hover-blue")
+						//-span(class="w3-left w3-small theme-text upcoming-rank") 
+							i(class="w3-left") Rank #{teamRanks[blue2]}
+						if team && team.key == blue2
+							strong=blue2.substring(3)
+						else
+							span=blue2.substring(3)
+					div(class="w3-padding alliance-hover-blue theme-rounded-small-bl")
+						//-span(class="w3-left w3-small theme-text upcoming-rank") 
+							i(class="w3-left") Rank #{teamRanks[blue3]}
+						if team && team.key == blue3
+							strong=blue3.substring(3)
+						else
+							span=blue3.substring(3)
+				div(class="w3-col s5 m6 l4 theme-rounded-small tr theme-rounded-small br")
+					div(class="w3-padding theme-rounded-small-tr")
+						span Score:
+					div
+						span=match.alliances.blue.score
+					div(class="w3-padding")
+						- if (match.score_breakdown)
+							- if (match.score_breakdown.blue.completeRocketRankingPoint)
+								div(class="w3-tooltip w3-show-inline-block")
+									span CR&nbsp;
+									div(class="w3-tooltiptext tooltip-gray" style="width: 80px; margin-left: -40px;") Completed Rocket
+							- if (match.score_breakdown.blue.habDockingRankingPoint)
+								div(class="w3-tooltip w3-show-inline-block")
+									span HD
+									div(class="w3-tooltiptext tooltip-gray" style="width: 80px; margin-left: -40px;") Docked Habitat Zone
+		div(class="w3-col s6 w3-padding-small")
+			div(class=`w3-col theme-rounded-small alliance-border-red ${redContainerColor} ${redBorder}`)
+				div(class="w3-col s7 m6 l8 alliance-red alliance-border-red theme-rounded-small-tl theme-rounded-small-bl")
+					//- not doing this with a loop because border needs to be specified
+					div(class="w3-padding alliance-hover-red theme-rounded-small-tl")
+						//-span(class="w3-left w3-small theme-text upcoming-rank") 
+							i(class="w3-left") Rank #{teamRanks[red1]}
+						span=match.alliances.red.team_keys[0].substring(3)
+					div(class="w3-padding alliance-hover-red")
+						//-span(class="w3-left w3-small theme-text upcoming-rank") 
+							i(class="w3-left") Rank #{teamRanks[red2]}
+						span=match.alliances.red.team_keys[1].substring(3)
+					div(class="w3-padding alliance-hover-red theme-rounded-small-bl")
+						//-span(class="w3-left w3-small theme-text upcoming-rank") 
+							i(class="w3-left") Rank #{teamRanks[red3]}
+						span=match.alliances.red.team_keys[2].substring(3)
+				div(class="w3-col s5 m6 l4 theme-rounded-small tr theme-rounded-small br")
+					div(class="w3-padding theme-rounded-small-tr")
+						span Score:
+					div
+						span=match.alliances.red.score
+					div(class="w3-padding")
+						- if (match.score_breakdown)
+							- if (match.score_breakdown.red.completeRocketRankingPoint)
+								div(class="w3-tooltip w3-show-inline-block")
+									span CR&nbsp;
+									div(class="w3-tooltiptext tooltip-gray" style="width: 80px; margin-left: -40px;") Completed Rocket
+							- if (match.score_breakdown.red.habDockingRankingPoint)
+								div(class="w3-tooltip w3-show-inline-block")
+									span HD
+									div(class="w3-tooltiptext tooltip-gray" style="width: 80px; margin-left: -40px;") Docked Habitat Zone

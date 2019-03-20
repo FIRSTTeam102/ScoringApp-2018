@@ -1,12 +1,19 @@
 extends ../layout
 
 block content
-
+	style.
+		.thick-border{
+			border-width: 3px!important;
+			margin-top: -2px;
+			border-radius: 9px;
+			border-color: #dfe1e9!important;
+		}
 	if (matches && matches.length > 0)
 		h2(class="gear-text-white") Finished Matches
 		each match in matches
-			hr
-			div(class="w3-row")
+			include templates/completedMatch
+			p(class="theme-spacer")
+			//-div(class="w3-row")
 				div(class="w3-col s12 m12 l2")
 					a(href=`/reports/matchintel?key=${match.key}`) 
 						div(class="theme-gray gear-hover-white w3-btn w3-block w3-border")

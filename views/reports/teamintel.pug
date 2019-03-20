@@ -111,14 +111,29 @@ block content
 		span Show 
 		span Previous Matches
 	div#PreviousMatchesSection(class="w3-container w3-hide")
+		style.
+			.thick-border{
+				border-width: 3px!important;
+				margin-top: -2px;
+				border-radius: 9px;
+				border-color: #dfe1e9!important;
+			}
 		h2(class="gear-text-white") Previous matches
 		
 		if (matches && matches.length > 0)		
 			h6 <i>Click team number for match scouting details</i>
 			h6 <i>Click match button for overall alliance performances</i>
 			each match in matches
-				hr
-				div(class="w3-row")
+				include templates/completedMatch
+				if (match.scoringdata && user)
+					each element in scorelayout
+						case element.type
+							when "textblock"
+								if (match.scoringdata[element.id])
+									h5(class="gear-text-white") #{element.label} <strong>#{match.scoringdata[element.id]}</strong>
+				p(class="theme-spacer")
+				//-hr
+				//-div(class="w3-row")
 					div(class="w3-col s12 m12 l2")
 						a(href=`/reports/matchintel?key=${match.key}`) 
 							div(class="theme-gray gear-hover-white w3-btn w3-block w3-border")
@@ -178,12 +193,6 @@ block content
 								span= redRPs
 							else
 								span &nbsp;
-				if (match.scoringdata && user)
-					each element in scorelayout
-						case element.type
-							when "textblock"
-								if (match.scoringdata[element.id])
-									h5(class="gear-text-white") #{element.label} <strong>#{match.scoringdata[element.id]}</strong>
 		else
 			h6 No previous matches yet - check back later
 	script.

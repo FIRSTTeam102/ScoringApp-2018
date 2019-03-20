@@ -61,10 +61,10 @@ textarea{padding:8px 12px;}
 
 /* For alliance colors */
 .alliance-red{color:#fff!important;background-color:#EC0D00!important}
-.alliance-border-red{border: 1px solid hsl(3, 100%, 75%)!important}
+.alliance-border-red{border: 1px solid hsl(2, 100%, 88%)!important}
 .alliance-hover-red:hover{color:rgb(43, 16, 16)!important;background-color:rgb(235, 144, 140)!important}
 .alliance-blue{color:#fff!important;background-color:#2623B8!important}
-.alliance-border-blue{border: 1px solid hsl(242, 100%, 83%)!important}
+.alliance-border-blue{border: 1px solid hsl(242, 100%, 89%)!important}
 .alliance-hover-blue:hover{color:rgb(14, 13, 32)!important;background-color:rgb(134, 132, 235)!important}
 
 

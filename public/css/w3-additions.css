@@ -1,6 +1,7 @@
 .w3-btn{box-shadow: none!important;}
 
 .w3-no-border{border:none!important}
+.w3-no-focus,.w3-no-outline:focus {outline:0;}
 
 .gear-btn{ 
 	min-width:100px; 

@@ -30,7 +30,7 @@ block content
 		a(class="theme-link w3-btn" href=`/reports/teamintelhistory?team=${team.key}`) All data for Team #{team.key.substring(3)} from this year
 	br 
 
-	button#PitScoutingButton(onClick="toggle('PitScoutingSection', this)" class="w3-block w3-btn  w3-left-align w3-border-gray w3-border-bottom") 
+	button#PitScoutingButton(onClick="toggle('PitScoutingSection', this)" class="w3-block w3-btn w3-no-outline w3-left-align w3-border-gray w3-border-bottom theme-rounded-small") 
 		span(class="w3-left") &#9660;&nbsp;
 		span Show 
 		span Pit Scouting
@@ -77,7 +77,7 @@ block content
 			h6 No pit scouting data yet - check back later
 
 	p
-	button#StatisticsButton(onClick="toggle('StatisticsSection', this)" class="w3-block w3-btn  w3-left-align w3-border-gray w3-border-bottom w3-large") 
+	button#StatisticsButton(onClick="toggle('StatisticsSection', this)" class="w3-block w3-btn w3-no-outline w3-left-align w3-border-gray w3-border-bottom theme-rounded-small") 
 		span(class="w3-left") &#9660;&nbsp;
 		span Show 
 		span Statistics
@@ -119,7 +119,7 @@ block content
 
 
 	p
-	button#PreviousMatchesButton(onClick="toggle('PreviousMatchesSection', this)" class="w3-block w3-btn w3-left-align w3-border-gray w3-border-bottom") 
+	button#PreviousMatchesButton(onClick="toggle('PreviousMatchesSection', this)" class="w3-block w3-btn w3-no-outline w3-left-align w3-border-gray w3-border-bottom theme-rounded-small") 
 		span(class="w3-left") &#9660;&nbsp;
 		span Show 
 		span Previous Matches

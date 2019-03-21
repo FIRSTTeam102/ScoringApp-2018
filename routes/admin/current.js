@@ -128,11 +128,8 @@ router.post("/updatematch", function(req, res) {
 	var currentAggCol = db.get("currentaggranges");
 
 	// REST client for accessing TBA
-	var Client = require('node-rest-client').Client;
-	var client = new Client();
-	var args = {
-		headers: { "accept": "application/json", "X-TBA-Auth-Key": "iSpbq2JH2g27Jx2CI5yujDsoKYeC8pGuMw94YeK3gXFU6lili7S2ByYZYZOYI3ew" }
-	}
+	var client = req.client;
+	var args = req.tbaRequestArgs;
 	
 	var eventId = req.event.key;
 	

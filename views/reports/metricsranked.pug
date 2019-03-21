@@ -1,6 +1,11 @@
 extends ../layout
 
 block content
+	include templates/heatmap
+	- var aggRangeMap = [];
+	for scoreItem in currentAggRanges
+		- aggRangeMap[scoreItem.key] = scoreItem;
+
 	h2(class="gear-text-white") Statistical summary of ALL teams
 	h6 <i>Click on a metric to compare individual teams</i>
 	h6 <i>Click on a team to jump to team intel</i>
@@ -23,7 +28,10 @@ block content
 							a(href=`/reports/teamintel?team=${agg.team}`)= agg.team.substring(3)
 					- var avgCol = 'w3-right-align w3-text-white'
 					- if (agg.avg == 0) avgCol = 'w3-right-align w3-text-gray'
-					td(class=`${avgCol}`)= agg.avg
+					if (aggRangeMap[agg.key])
+						td(class=`${avgCol}` style=`background-color: rgb(${getValR(aggRangeMap[agg.key].AVGmin, aggRangeMap[agg.key].AVGmax, agg.avg)},${getValG(aggRangeMap[agg.key].AVGmin, aggRangeMap[agg.key].AVGmax, agg.avg)},${getValB(aggRangeMap[agg.key].AVGmin, aggRangeMap[agg.key].AVGmax, agg.avg)})`)= agg.avg
+					else
+						td(class=`${avgCol}`)= agg.avg
 		p
 		a(class="gear-btn theme-submit w3-btn" href='/reports/metrics') Click here to see overall aggregated event data
 

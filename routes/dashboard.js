@@ -158,6 +158,9 @@ router.get('/allianceselection', function(req, res){
 	var event_key = req.event.key;
 	var event_year = req.event.year;
 	
+	// 2019-03-21, M.O'C: Utilize the currentaggranges
+	var currentAggCol = req.db.get("currentaggranges");
+
 	req.db.get('currentrankings').find(
 		{}, {}, function(e, rankings){
 			if(e || !rankings[0])
@@ -258,15 +261,23 @@ router.get('/allianceselection', function(req, res){
 						});
 						
 						console.log(sortedTeams);
-						
-						//res.log(thisFuncName + 'aggArray=' + JSON.stringify(aggArray));
-						res.render('./dashboard/allianceselection', {
-							title: "Alliance Selection",
-							rankings: rankings,
-							alliances: alliances,
-							aggdata: aggArray,
-							layout: scoreLayout,
-							sortedTeams: sortedTeams
+
+						// read in the current agg ranges
+						currentAggCol.find({}, {}, function (e, docs) {
+							var currentAggRanges = [];
+							if (docs)
+								currentAggRanges = docs;
+
+							//res.log(thisFuncName + 'aggArray=' + JSON.stringify(aggArray));
+							res.render('./dashboard/allianceselection', {
+								title: "Alliance Selection",
+								rankings: rankings,
+								alliances: alliances,
+								aggdata: aggArray,
+								currentAggRanges: currentAggRanges,
+								layout: scoreLayout,
+								sortedTeams: sortedTeams
+							});
 						});
 					});
 				}

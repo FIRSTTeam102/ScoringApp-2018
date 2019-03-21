@@ -1,12 +1,22 @@
 extends ../layout
 
 block content
+	include templates/heatmap
+	- var aggRangeMap = [];
+	for scoreItem in currentAggRanges
+		- aggRangeMap[scoreItem.key] = scoreItem;
+
 	- var matchPrefix = ''; if (match.comp_level != 'qm') matchPrefix = match.comp_level;
 	h2(class="gear-text-white") Comparing alliances for match ##{match.match_number}
+	h6 <i>Click on an alliance to see individual team stats</i>
 	- var blueTeams = match.alliances.blue.team_keys[0].substring(3)+', '+match.alliances.blue.team_keys[1].substring(3)+', '+match.alliances.blue.team_keys[2].substring(3);
-	h4(class="gear-text-white") <i>Blue: #{blueTeams}</i>
+	- var blueTeamKeys = match.alliances.blue.team_keys[0]+','+match.alliances.blue.team_keys[1]+','+match.alliances.blue.team_keys[2]
+	h4(class="gear-text-white")
+		a(href=`/reports/alliancestats?teams=${blueTeamKeys}`) <i>Blue: #{blueTeams}</i>
 	- var redTeams = match.alliances.red.team_keys[0].substring(3)+', '+match.alliances.red.team_keys[1].substring(3)+', '+match.alliances.red.team_keys[2].substring(3);
-	h4(class="gear-text-white") <i>Red: #{redTeams}</i>
+	- var redTeamKeys = match.alliances.red.team_keys[0]+','+match.alliances.red.team_keys[1]+','+match.alliances.red.team_keys[2]
+	h4(class="gear-text-white")
+		a(href=`/reports/alliancestats?teams=${redTeamKeys}`) <i>Red: #{redTeams}</i>
 	h6 <i>Click on a metric to compare event teams</i>
 	
 	if (aggdata)
@@ -22,10 +32,14 @@ block content
 						a(href=`/reports/metricintel?key=${agg.key}`)= result2
 					- var blueCol = 'w3-right-align w3-text-white'
 					- if (agg.blue == 0) blueCol = 'w3-right-align w3-text-gray'
-					td(class=`${blueCol}`)= agg.blue
 					- var redCol = 'w3-right-align w3-text-white'
 					- if (agg.red == 0) redCol = 'w3-right-align w3-text-gray'
-					td(class=`${redCol}`)= agg.red
+					if (aggRangeMap[agg.key])
+						td(class=`${blueCol}` style=`background-color: rgb(${getValR(aggRangeMap[agg.key].AVGmin, aggRangeMap[agg.key].AVGmax, agg.blue)},${getValG(aggRangeMap[agg.key].AVGmin, aggRangeMap[agg.key].AVGmax, agg.blue)},${getValB(aggRangeMap[agg.key].AVGmin, aggRangeMap[agg.key].AVGmax, agg.blue)})`)= agg.blue
+						td(class=`${redCol}` style=`background-color: rgb(${getValR(aggRangeMap[agg.key].AVGmin, aggRangeMap[agg.key].AVGmax, agg.red)},${getValG(aggRangeMap[agg.key].AVGmin, aggRangeMap[agg.key].AVGmax, agg.red)},${getValB(aggRangeMap[agg.key].AVGmin, aggRangeMap[agg.key].AVGmax, agg.red)})`)= agg.red
+					else
+						td(class=`${blueCol}`)= agg.blue
+						td(class=`${redCol}`)= agg.red
 		p
 		a(href='/reports/metricsranked') Click here to see overall ranked event data
 

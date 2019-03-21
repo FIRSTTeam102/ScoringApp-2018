@@ -1,4 +1,8 @@
+include ../reports/templates/heatmap
 if (aggdata)
+	- var aggRangeMap = [];
+	for scoreItem in currentAggRanges
+		- aggRangeMap[scoreItem.key] = scoreItem;
 	br 
 	table(class="w3-table" id="metricTable")
 		tr
@@ -29,7 +33,11 @@ if (aggdata)
 					if (item.type == 'checkbox' || item.type == 'counter' || item.type == 'badcounter')
 						- var valStyle = 'w3-right-align'
 						- if (row[item.key] == 0) valStyle = 'w3-right-align theme-text-gray'
-						td(class=`${valStyle}`)= row[item.key]
+						//- td(class=`${valStyle}`)= row[item.key]
+						if (aggRangeMap[item.key])
+							td(class=`${valStyle}` style=`background-color: rgb(${getValR(aggRangeMap[item.key].AVGmin, aggRangeMap[item.key].AVGmax, row[item.key])},${getValG(aggRangeMap[item.key].AVGmin, aggRangeMap[item.key].AVGmax, row[item.key])},${getValB(aggRangeMap[item.key].AVGmin, aggRangeMap[item.key].AVGmax, row[item.key])})`)= row[item.key]
+						else
+							td(class=`${valStyle}`)= row[item.key]
 else
 	p <i>Insufficient data at this time, come back later!</i>
 script.

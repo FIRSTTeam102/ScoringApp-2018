@@ -1,6 +1,11 @@
 extends ../layout
 
 block content
+	include templates/heatmap
+	- var aggRangeMap = [];
+	for scoreItem in currentAggRanges
+		- aggRangeMap[scoreItem.key] = scoreItem;
+
 	h2(class="theme-text-white") Team #{team.team_number}: #{team.nickname.replace(new RegExp(' ', 'g'), '\xa0')}
 	if (ranking)
 		h4(class="gear-text-white") Currently ranked ##{ranking.rank} </br> #{ranking.record.wins+'-'+ranking.record.losses+'-'+ranking.record.ties} record with #{ranking.extra_stats[0]} RP
@@ -94,16 +99,24 @@ block content
 							a(href=`/reports/metricintel?key=${agg.key}`)= result2
 						- var minCol = 'w3-right-align w3-text-white'
 						- if (agg.min == 0) minCol = 'w3-right-align w3-text-gray'
-						td(class=`${minCol}`)= agg.min
 						- var avgCol = 'w3-right-align w3-text-white'
 						- if (agg.avg == 0) avgCol = 'w3-right-align w3-text-gray'
-						td(class=`${avgCol}`)= agg.avg
 						- var varCol = 'w3-right-align w3-text-white'
 						- if (agg.var == 0) varCol = 'w3-right-align w3-text-gray'
-						td(class=`${varCol}`)= agg.var
 						- var maxCol = 'w3-right-align w3-text-white'
 						- if (agg.max == 0) maxCol = 'w3-right-align w3-text-gray'
-						td(class=`${maxCol}`)= agg.max
+						if (aggRangeMap[agg.key])
+							td(class=`${minCol}` style=`background-color: rgb(${getValR(aggRangeMap[agg.key].MINmin, aggRangeMap[agg.key].MINmax, agg.min)},${getValG(aggRangeMap[agg.key].MINmin, aggRangeMap[agg.key].MINmax, agg.min)},${getValB(aggRangeMap[agg.key].MINmin, aggRangeMap[agg.key].MINmax, agg.min)})`)= agg.min
+							td(class=`${avgCol}` style=`background-color: rgb(${getValR(aggRangeMap[agg.key].AVGmin, aggRangeMap[agg.key].AVGmax, agg.avg)},${getValG(aggRangeMap[agg.key].AVGmin, aggRangeMap[agg.key].AVGmax, agg.avg)},${getValB(aggRangeMap[agg.key].AVGmin, aggRangeMap[agg.key].AVGmax, agg.avg)})`)= agg.avg
+							td(class=`${varCol}` style=`background-color: rgb(${getValR(aggRangeMap[agg.key].VARmin, aggRangeMap[agg.key].VARmax, agg.var)},${getValG(aggRangeMap[agg.key].VARmin, aggRangeMap[agg.key].VARmax, agg.var)},${getValB(aggRangeMap[agg.key].VARmin, aggRangeMap[agg.key].VARmax, agg.var)})`)= agg.var
+							td(class=`${maxCol}` style=`background-color: rgb(${getValR(aggRangeMap[agg.key].MAXmin, aggRangeMap[agg.key].MAXmax, agg.max)},${getValG(aggRangeMap[agg.key].MAXmin, aggRangeMap[agg.key].MAXmax, agg.max)},${getValB(aggRangeMap[agg.key].MAXmin, aggRangeMap[agg.key].MAXmax, agg.max)})`)= agg.max
+						else
+							td(class=`${minCol}`)= agg.min
+							td(class=`${avgCol}`)= agg.avg
+							td(class=`${varCol}`)= agg.var
+							td(class=`${maxCol}`)= agg.max
+
+
 
 	p
 	button#PreviousMatchesButton(onClick="toggle('PreviousMatchesSection', this)" class="w3-block w3-btn w3-left-align w3-border-gray w3-border-bottom") 

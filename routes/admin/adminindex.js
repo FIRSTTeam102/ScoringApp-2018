@@ -37,8 +37,14 @@ router.post('/setcurrent', function(req, res) {
 	
 	//Set our collection to change current event key
 	var currentCol = req.db.get("current");
-	var passwordsCol = req.db.get("passwords");
 	var currentTeamsCol = req.db.get("currentteams");
+	var rankCol = req.db.get("currentrankings");
+	
+	//set up tba calls
+	var client = req.client;
+	var args = req.tbaRequestArgs;
+	var teamsUrl = `https://www.thebluealliance.com/api/v3/event/${eventId}/teams`;
+	var rankingsUrl = `https://www.thebluealliance.com/api/v3/event/${eventId}/rankings`;
 	
 	// Remove the previous 'current' data
 	currentCol.remove({}, function(e, docs) {
@@ -47,37 +53,42 @@ router.post('/setcurrent', function(req, res) {
 		currentCol.insert({"event": eventId}, function(e, docs) {
 			
 			//Now attempt to get list of teams at event from TheBlueAlliance
-			
-			//get TBA key from db
-			passwordsCol.find({ name:"thebluealliance-args" }, function(e, args){
-				if(e || !args[0]){
-					res.redirect(`/admin?alert=Set current event ${eventId} successfully. COULD NOT get list of teams from TBA. You must get them manually.`);
+				
+			//get teams from tba
+			client.get(teamsUrl, args, function (teamsData, response) {
+				
+				var currentTeams = JSON.parse(teamsData);
+				
+				if(!currentTeams){
+					return res.status(500).send("didn't get teams list");
 				}
-				args = args[0];
 				
-				//set up tba call
-				var Client = require('node-rest-client').Client;
-				var client = new Client();
-				var teamsUrl = `https://www.thebluealliance.com/api/v3/event/${eventId}/teams`;
-				
-				//get teams from tba
-				client.get(teamsUrl, args, function (data, response) {
+				//delete contents of currentteams
+				currentTeamsCol.remove({},function(){
 					
-					var currentTeams = JSON.parse(data);
-					
-					if(!currentTeams){
-						return res.status(500).send("didn't get teams list");
-					}
-					
-					//delete contents of currentteams
-					currentTeamsCol.remove({},function(){
+					//insert teams into currentteams
+					currentTeamsCol.insert(currentTeams, function(){
 						
-						//insert teams into currentteams
-						currentTeamsCol.insert(currentTeams, function(){
-							res.redirect(`/admin?alert=Set current event ${eventId} successfuly and got list of teams for event ${eventId} successfully.`);
+						//Now attempt to get rankings at event from TheBlueAlliance
+						
+						client.get(rankingsUrl, args, function(rankData, response){
+							
+							//get rankings
+							var currentRankings = JSON.parse(rankData).rankings;
+							
+							//clear currentrankings
+							rankCol.remove({},function(){
+								
+								//now, insert rankings whether it's empty or not
+								rankCol.insert(currentRankings, function(){
+									
+									res.redirect(`/admin?alert=Set current event ${eventId} successfuly and got list of teams/rankings for event ${eventId} successfully.`);
+								})
+							});
 						});
-					})
-				});
+						
+						});
+				})
 			});
 		});
 	});

@@ -23,7 +23,7 @@ div(style="font-size:1.1em;")
 				a(href="/dashboard/matches" class="w3-bar-item w3-button gear-clear w3-mobile") Match scouting
 				a(href="/dashboard/allianceselection" class="w3-bar-item w3-button gear-clear w3-mobile") Alliance Selection
 				if user.subteam == "support" || user.subteam == "exec"
-				a(href="/admin" class="w3-bar-item w3-button gear-clear w3-mobile") Admin Index
+					a(href="/admin" class="w3-bar-item w3-button gear-clear w3-mobile") Admin Index
 		if user.name != "[Dev]"
 			div#userBar(class="w3-dropdown-content w3-bar-block w3-margin-left" style="position:absolute;top:2.1rem; z-index:99; max-width: 10rem;")
 				a(href="/logout" class="w3-bar-item w3-button w3-padding-24") Log out

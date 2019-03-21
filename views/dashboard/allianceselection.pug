@@ -15,11 +15,11 @@ block content
 			padding: 15px 0px;
 		}
 		.team-taken{
-			background-color: #484854!important;
+			background-color: #444450!important;
 			border: 1px solid #999999!important;
 		}
 		.team-available{
-			background-color: #68687b!important;
+			background-color: #747488!important;
 			border: 1px solid white!important;
 		}
 		.team-highlighted{
@@ -119,10 +119,9 @@ block content
 		window.onbeforeunload = function(){return "This page won't be saved."};
 		
 		$(function(){
-			//set top 8 teams to gray out
-			for(var i = 1; i <= 8; i++){
-				grayOutRow( state.rankings[i] );
-			}
+			//gray out first team
+			grayOutRow( state.rankings[1] );
+			
 			//prettify table
 			prettifyTable();
 			
@@ -147,6 +146,9 @@ block content
 		
 		function doUndo(){
 			console.log("Undo has been called.");
+			
+			//un-highlight currentSelectedTeam row
+			unHighlightRow(state.currentSelectedTeam);
 			
 			if( state.moveHistory.length > 0){
 				
@@ -196,15 +198,27 @@ block content
 				//if there is a team already selected, remove highlight
 				if( currentSelectedTeam ){
 					$(`#${currentSelectedTeam}`).removeClass("team-highlighted");
+					
+					//un-highlight currentSelectedTeam row
+					unHighlightRow(state.currentSelectedTeam);
 				}
 				//if we're clicking same team twice, remove currentselectedteam
 				if( state.currentSelectedTeam == teamKey ){
+					//un-highlight currentSelectedTeam row
+					unHighlightRow(state.currentSelectedTeam);
+					
 					state.currentSelectedTeam = null;
 				}
 				//if not clicking same team twice, set the now-clicked team to be selected
 				else{
+					//un-highlight currentSelectedTeam row
+					unHighlightRow(state.currentSelectedTeam);
+					
 					that.addClass("team-highlighted");
 					state.currentSelectedTeam = teamKey;
+					
+					//now highlight new current team row
+					highlightRow(state.currentSelectedTeam);
 				}
 			}
 			//spotIsAvailable: if this is a slot that can be filled
@@ -324,7 +338,8 @@ block content
 						//set first team in alliance to be unavailable
 						let team1 = state.rankings[state.currentAlliance];
 						
-						$(`#${team1}`).removeClass("available")		//make team no longer able to be highlighted
+						console.log("Gonna disable "+team1);
+						$(`#${team1}`).attr("available", false)		//make team no longer able to be highlighted
 							.addClass("team-taken");				//make dark
 					}
 					else{
@@ -367,6 +382,22 @@ block content
 			return clone;
 		}
 		
+		function highlightRow(teamKey){
+			$(`#row_${teamKey}`).css({
+				"background-color": "rgba(220,220,240)",
+				"color": "#000000"
+			}).attr({
+				"selectable": "false"
+			});
+		}
+		
+		function unHighlightRow(teamKey){
+			$(`#row_${teamKey}`).attr({
+				"selectable": "true"
+			});
+			prettifyTable();
+		}
+		
 		function grayOutRow(teamKey){
 			
 			$(`#row_${teamKey}`).css({
@@ -387,27 +418,29 @@ block content
 		
 		function prettifyTable(){
 			
-			var table = $("#metricTable").eq(0);
-			var rows = table.find('tr:gt(0)').toArray();
-			
-			for(var i = 0; i < rows.length; i++){
+			requestAnimationFrame(function(){
+				var table = $("#metricTable").eq(0);
+				var rows = table.find('tr:gt(0)').toArray();
 				
-				if( $(rows[i]).attr("selectable") != "false"){
-					//style every other row
-					if( i % 2 == 0 ){
-						$(rows[i]).css({
-							"background-color": "rgba(255, 255, 255, 0.25)",
-							"color": "#fff"
-						});
-					}
-					else{
-						$(rows[i]).css({
-							"background-color": "rgba(200, 200, 200, 0.25)",
-							"color": "#fff"
-						});
+				for(var i = 0; i < rows.length; i++){
+					
+					if( $(rows[i]).attr("selectable") != "false"){
+						//style every other row
+						if( i % 2 == 0 ){
+							$(rows[i]).css({
+								"background-color": "rgba(255, 255, 255, 0.25)",
+								"color": "#fff"
+							});
+						}
+						else{
+							$(rows[i]).css({
+								"background-color": "rgba(200, 200, 200, 0.25)",
+								"color": "#fff"
+							});
+						}
 					}
 				}
-			}
+			});
 		}
 		
 		$("#showHideData").click(function(e){

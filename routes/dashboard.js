@@ -160,8 +160,9 @@ router.get('/allianceselection', function(req, res){
 	
 	// 2019-03-21, M.O'C: Utilize the currentaggranges
 	var currentAggCol = req.db.get("currentaggranges");
+	var rankCol = req.db.get("currentrankings");
 
-	req.db.get('currentrankings').find(
+	rankCol.find(
 		{}, {}, function(e, rankings){
 			if(e || !rankings[0])
 				return console.error(e || "Couldn't find rankings in allianceselection".red);

@@ -3,12 +3,26 @@ div(class="w3-row")
 		- outcome = "Red won";
 	- if (match.winning_alliance == 'blue') 
 		- outcome = "Blue won";
-	div(class="w3-col s12 m0")
+	//-div(class="w3-col s12 m0")
 		div(class="theme-rounded theme-gray w3-padding w3-border")
 			- var matchPrefix = "";
 			- if (match.comp_level != 'qm') matchPrefix = "" + match.comp_level + "" + match.set_number + " ";
 			span #{matchPrefix.toUpperCase()} Match #{match.match_number}: 
 			span #{outcome}
+	//-Title for small screens
+	div(class="w3-col s12 m0 theme-rounded theme-gray w3-border")
+		div(class="w3-col s10 w3-padding")
+			div(class="")
+				- var matchPrefix = "";
+				- if (match.comp_level != 'qm') matchPrefix = "" + match.comp_level + "" + match.set_number + " ";
+				span #{matchPrefix.toUpperCase()} Match #{match.match_number}: 
+				span #{outcome}
+		div(class="w3-col s2")
+			a(href=`/reports/upcomingmatchmetrics?key=${match.key}`)
+				div(class="w3-padding-small w3-right-align w3-small gear-hover-white theme-rounded-br theme-rounded-tr" style="padding-right: 18px!important;")
+					i Compare alliances
+	div(class="w3-col s12 m0 w3-tiny") &nbsp;
+	//-Title for medium screens
 	div(class="w3-col s0 m3 w3-padding-small")
 		div(class="theme-rounded theme-gray w3-border")
 			- var matchPrefix = "";
@@ -18,6 +32,7 @@ div(class="w3-row")
 			a(href=`/reports/upcomingmatchmetrics?key=${match.key}`)
 				div(class="w3-padding-16 w3-small gear-hover-white theme-rounded-bottom") 
 					i Compare alliances
+	//-Alliance container
 	div(class="w3-col s12 m9 w3-padding-small")
 		//- set shorthands for each team key
 		- var blue = match.alliances.blue.team_keys, red = match.alliances.red.team_keys;
@@ -26,31 +41,31 @@ div(class="w3-row")
 		- var blueContainerColor = "theme-gray", redContainerColor = "theme-gray", blueBorder = "", redBorder = "";
 		- if (match.winning_alliance == 'blue') blueContainerColor = "gear-white", blueBorder = "thick-border";
 		- else redContainerColor = "gear-white", redBorder = "thick-border"
+		//-The Blue alliance
 		div(class="w3-col s6 w3-padding-small")
-			div(class=`w3-col theme-rounded-small alliance-border-blue ${blueContainerColor} ${blueBorder}`)
+			div(class=`w3-col theme-rounded-small w3-border ${blueContainerColor} ${blueBorder}`)
+				//-teams
 				div(class="w3-col s7 m6 l8 alliance-blue theme-rounded-small-tl theme-rounded-small-bl")
 					//- not doing this with a loop because border needs to be specified
-					div(class="w3-padding alliance-hover-blue theme-rounded-small-tl")
-						//-span(class="w3-left w3-small theme-text upcoming-rank") 
-							i(class="w3-left") Rank #{teamRanks[blue1]}
-						if team && team.key == blue1
-							strong=blue1.substring(3)
-						else
-							span=blue1.substring(3)
-					div(class="w3-padding alliance-hover-blue")
-						//-span(class="w3-left w3-small theme-text upcoming-rank") 
-							i(class="w3-left") Rank #{teamRanks[blue2]}
-						if team && team.key == blue2
-							strong=blue2.substring(3)
-						else
-							span=blue2.substring(3)
-					div(class="w3-padding alliance-hover-blue theme-rounded-small-bl")
-						//-span(class="w3-left w3-small theme-text upcoming-rank") 
-							i(class="w3-left") Rank #{teamRanks[blue3]}
-						if team && team.key == blue3
-							strong=blue3.substring(3)
-						else
-							span=blue3.substring(3)
+					a(href=`/reports/teamintel?team=${blue1}`)
+						div(class="w3-padding alliance-hover-blue theme-rounded-small-tl")
+							if team && team.key == blue1
+								strong=blue1.substring(3)
+							else
+								span=blue1.substring(3)
+					a(href=`/reports/teamintel?team=${blue2}`)
+						div(class="w3-padding alliance-hover-blue")
+							if team && team.key == blue2
+								strong=blue2.substring(3)
+							else
+								span=blue2.substring(3)
+					a(href=`/reports/teamintel?team=${blue3}`)
+						div(class="w3-padding alliance-hover-blue theme-rounded-small-bl")
+							if team && team.key == blue3
+								strong=blue3.substring(3)
+							else
+								span=blue3.substring(3)
+				//-breakdown
 				div(class="w3-col s5 m6 l4 theme-rounded-small tr theme-rounded-small br")
 					div(class="w3-padding theme-rounded-small-tr")
 						span Score:
@@ -66,22 +81,29 @@ div(class="w3-row")
 								div(class="w3-tooltip w3-show-inline-block")
 									span HD
 									div(class="w3-tooltiptext tooltip-gray" style="width: 80px; margin-left: -40px;") Docked Habitat Zone
+		//-The Red Alliance
 		div(class="w3-col s6 w3-padding-small")
-			div(class=`w3-col theme-rounded-small alliance-border-red ${redContainerColor} ${redBorder}`)
-				div(class="w3-col s7 m6 l8 alliance-red alliance-border-red theme-rounded-small-tl theme-rounded-small-bl")
+			div(class=`w3-col theme-rounded-small w3-border ${redContainerColor} ${redBorder}`)
+				div(class="w3-col s7 m6 l8 alliance-red theme-rounded-small-tl theme-rounded-small-bl")
 					//- not doing this with a loop because border needs to be specified
-					div(class="w3-padding alliance-hover-red theme-rounded-small-tl")
-						//-span(class="w3-left w3-small theme-text upcoming-rank") 
-							i(class="w3-left") Rank #{teamRanks[red1]}
-						span=match.alliances.red.team_keys[0].substring(3)
-					div(class="w3-padding alliance-hover-red")
-						//-span(class="w3-left w3-small theme-text upcoming-rank") 
-							i(class="w3-left") Rank #{teamRanks[red2]}
-						span=match.alliances.red.team_keys[1].substring(3)
-					div(class="w3-padding alliance-hover-red theme-rounded-small-bl")
-						//-span(class="w3-left w3-small theme-text upcoming-rank") 
-							i(class="w3-left") Rank #{teamRanks[red3]}
-						span=match.alliances.red.team_keys[2].substring(3)
+					a(href=`/reports/teamintel?team=${red1}`)
+						div(class="w3-padding alliance-hover-blue theme-rounded-small-tl")
+							if team && team.key == red1
+								strong=red1.substring(3)
+							else
+								span=red1.substring(3)
+					a(href=`/reports/teamintel?team=${red2}`)
+						div(class="w3-padding alliance-hover-red")
+							if team && team.key == red2
+								strong=red2.substring(3)
+							else
+								span=red2.substring(3)
+					a(href=`/reports/teamintel?team=${red3}`)
+						div(class="w3-padding alliance-hover-red theme-rounded-small-bl")
+							if team && team.key == red3
+								strong=red3.substring(3)
+							else
+								span=red3.substring(3)
 				div(class="w3-col s5 m6 l4 theme-rounded-small tr theme-rounded-small br")
 					div(class="w3-padding theme-rounded-small-tr")
 						span Score:

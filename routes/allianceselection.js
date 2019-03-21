@@ -9,6 +9,8 @@ router.get("/", function(req, res){
 	var aggCol = req.db.get('scoringdata');
 	var scoreCol = db.get("scoringlayout");
 	var rankCol = db.get('currentrankings');
+	// 2019-03-21, M.O'C: Utilize the currentaggranges
+	var currentAggCol = db.get("currentaggranges");
 	
 	// for later querying by event_key
 	var event_key = req.event.key;
@@ -80,10 +82,18 @@ router.get("/", function(req, res){
 				}
 				//res.log(thisFuncName + 'aggArray=' + JSON.stringify(aggArray));
 
-				res.render("./allianceselection/allianceselection-index", {
-					title: "Alliance Selection",
-					aggdata: aggArray,
-					layout: scorelayout
+				// read in the current agg ranges
+				currentAggCol.find({}, {}, function (e, docs) {
+					var currentAggRanges = [];
+					if (docs)
+						currentAggRanges = docs;
+
+					res.render("./allianceselection/allianceselection-index", {
+						title: "Alliance Selection",
+						aggdata: aggArray,
+						currentAggRanges: currentAggRanges,
+						layout: scorelayout
+					});
 				});
 			});
 		});

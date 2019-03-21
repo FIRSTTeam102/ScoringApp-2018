@@ -184,6 +184,8 @@ router.get("/teamintel", function(req, res){
 	var matchCol = req.db.get('matches');
 	var scoutCol = db.get("scoutinglayout");
 	var scoreCol = db.get("scoringlayout");
+	// 2019-03-21, M.O'C: Utilize the currentaggranges
+	var currentAggCol = db.get("currentaggranges");
 	
 	var event_key = req.event.key;
 	var event_year = req.event.year;
@@ -317,16 +319,24 @@ router.get("/teamintel", function(req, res){
 									//res.log(thisFuncName + 'pitData=' + JSON.stringify(pitData));
 									//res.log(thisFuncName + 'pitData1=' + JSON.stringify(pitData1));
 
-									res.render("./reports/teamintel", {
-										title: "Intel: Team " + teamKey.substring(3),
-										team: team,
-										ranking: ranking,
-										data: pitData,
-										data1: pitData1,
-										layout: layout,
-										scorelayout: scorelayout,
-										aggdata: aggTable,
-										matches: matches
+									// read in the current agg ranges
+									currentAggCol.find({}, {}, function (e, docs) {
+										var currentAggRanges = [];
+										if (docs)
+											currentAggRanges = docs;
+
+										res.render("./reports/teamintel", {
+											title: "Intel: Team " + teamKey.substring(3),
+											team: team,
+											ranking: ranking,
+											data: pitData,
+											data1: pitData1,
+											layout: layout,
+											scorelayout: scorelayout,
+											aggdata: aggTable,
+											currentAggRanges: currentAggRanges,
+											matches: matches
+										});
 									});
 								});
 							});
@@ -581,6 +591,101 @@ router.get("/teammatchintel*", function(req, res){
 	});
 });
 
+router.get("/alliancestats", function(req, res) {
+	var thisFuncName = "reports.alliancestats[get]: ";
+	res.log(thisFuncName + 'ENTER');
+	
+	var db = req.db;
+	var aggCol = req.db.get('scoringdata');
+	var scoringLayoutCol = db.get("scoringlayout");
+	var currentCol = db.get("current");
+	var matchCol = db.get('matches');
+	// 2019-03-21, M.O'C: Utilize the currentaggranges
+	var currentAggCol = db.get("currentaggranges");
+	
+	var event_year = req.event.year;
+	var event_key = req.event.key;
+
+	if( !req.query.teams ){
+		return res.redirect("/?alert=Must specify comma-separated list of teams for reports/alliancestats");
+	}
+	var teams = req.query.teams;
+	var teamList = req.query.teams.split(',');
+	res.log(thisFuncName + 'teamList=' + JSON.stringify(teamList));
+
+	scoringLayoutCol.find({ "year": event_year }, {sort: {"order": 1}}, function(e, docs){
+		var scorelayout = docs;
+		var aggQuery = [];
+		aggQuery.push({ $match : { "team_key": {$in: teamList}, "event_key": event_key } });
+		var groupClause = {};
+		// group by individual teams
+		groupClause["_id"] = "$team_key";
+
+		for (var scoreIdx = 0; scoreIdx < scorelayout.length; scoreIdx++) {
+			var thisLayout = scorelayout[scoreIdx];
+			if (thisLayout.type == 'checkbox' || thisLayout.type == 'counter' || thisLayout.type == 'badcounter')
+			{
+				groupClause[thisLayout.id + "AVG"] = {$avg: "$data." + thisLayout.id};
+				groupClause[thisLayout.id + "MAX"] = {$max: "$data." + thisLayout.id};
+			}
+		}
+		aggQuery.push({ $group: groupClause });
+		res.log(thisFuncName + 'aggQuery=' + JSON.stringify(aggQuery));
+		
+		aggCol.aggregate(aggQuery, function(e, docs){
+			var aggresult = {};
+			if (docs)
+				aggresult = docs;
+			res.log(thisFuncName + 'aggresult=' + JSON.stringify(aggresult));
+
+			// Build a map of the result rows by team key
+			var aggRowsByTeam = {};
+			for (var resultIdx = 0; resultIdx < aggresult.length; resultIdx++)
+				aggRowsByTeam[ aggresult[resultIdx]["_id"] ] = aggresult[resultIdx];
+			res.log( thisFuncName + 'aggRowsByTeam[' + teamList[0] + ']=' + JSON.stringify(aggRowsByTeam[teamList[0]]) );
+
+			// Unspool N rows of aggregate results into tabular form
+			var avgTable = [];
+			var maxTable = [];
+
+			for (var scoreIdx = 0; scoreIdx < scorelayout.length; scoreIdx++) {
+				var thisLayout = scorelayout[scoreIdx];
+				if (thisLayout.type == 'checkbox' || thisLayout.type == 'counter' || thisLayout.type == 'badcounter') {
+					var avgRow = {};
+					var maxRow = {};
+					avgRow['key'] = thisLayout.id;
+					maxRow['key'] = thisLayout.id;
+					for (var teamIdx = 0; teamIdx < teamList.length; teamIdx++)
+					{
+						avgRow[teamList[teamIdx]] = (Math.round(aggRowsByTeam[teamList[teamIdx]][thisLayout.id + "AVG"] * 10)/10).toFixed(1);
+						maxRow[teamList[teamIdx]] = (Math.round(aggRowsByTeam[teamList[teamIdx]][thisLayout.id + "MAX"] * 10)/10).toFixed(1);
+					}
+					avgTable.push(avgRow);
+					maxTable.push(maxRow);
+				}
+			}
+			res.log(thisFuncName + 'avgTable=' + JSON.stringify(avgTable));
+			res.log(thisFuncName + 'maxTable=' + JSON.stringify(maxTable));
+
+			// read in the current agg ranges
+			currentAggCol.find({}, {}, function (e, docs) {
+				var currentAggRanges = [];
+				if (docs)
+					currentAggRanges = docs;
+
+				res.render("./reports/alliancestats", {
+					title: "Alliance Team Statistics",
+					teams: teams,
+					teamList: teamList,
+					currentAggRanges: currentAggRanges,
+					avgdata: avgTable,
+					maxdata: maxTable
+				});
+			});
+		});
+	});
+});
+
 router.get("/upcomingmatchmetrics", function(req, res) {
 	var thisFuncName = "reports.upcomingmatchmetrics[get]: ";
 	res.log(thisFuncName + 'ENTER');
@@ -590,6 +695,8 @@ router.get("/upcomingmatchmetrics", function(req, res) {
 	var scoringLayoutCol = db.get("scoringlayout");
 	var currentCol = db.get("current");
 	var matchCol = db.get('matches');
+	// 2019-03-21, M.O'C: Utilize the currentaggranges
+	var currentAggCol = db.get("currentaggranges");
 	
 	var event_year = req.event.year;
 	var event_key = req.event.key;
@@ -678,10 +785,18 @@ router.get("/upcomingmatchmetrics", function(req, res) {
 				
 					res.log(thisFuncName + 'aggTable=' + JSON.stringify(aggTable));
 				
-					res.render("./reports/upcomingmatchmetrics", {
-						title: "Metrics For Upcoming Match",
-						aggdata: aggTable,
-						match: match
+					// read in the current agg ranges
+					currentAggCol.find({}, {}, function (e, docs) {
+						var currentAggRanges = [];
+						if (docs)
+							currentAggRanges = docs;
+
+						res.render("./reports/upcomingmatchmetrics", {
+							title: "Metrics For Upcoming Match",
+							aggdata: aggTable,
+							currentAggRanges: currentAggRanges,
+							match: match
+						});
 					});
 				});
 			});
@@ -697,6 +812,8 @@ router.get("/metricsranked", function(req, res){
 	var aggCol = req.db.get('scoringdata');
 	var scoreCol = db.get("scoringlayout");
 	var currentCol = db.get("current");
+	// 2019-03-21, M.O'C: Utilize the currentaggranges
+	var currentAggCol = db.get("currentaggranges");
 	
 	var event_year = req.event.year;
 
@@ -793,9 +910,17 @@ router.get("/metricsranked", function(req, res){
 				}
 				res.log(thisFuncName + 'aggTable=' + JSON.stringify(aggTable));
 				
-				res.render("./reports/metricsranked", {
-					title: "Metrics For All Teams",
-					aggdata: aggTable
+				// read in the current agg ranges
+				currentAggCol.find({}, {}, function (e, docs) {
+					var currentAggRanges = [];
+					if (docs)
+						currentAggRanges = docs;
+
+					res.render("./reports/metricsranked", {
+						title: "Metrics For All Teams",
+						currentAggRanges: currentAggRanges,
+						aggdata: aggTable
+					});
 				});
 			});
 		});
@@ -911,6 +1036,8 @@ router.get("/metricintel*", function(req, res){
 	var db = req.db;
 	var aggCol = req.db.get('scoringdata');
 	var currentCol = db.get("current");
+	// 2019-03-21, M.O'C: Utilize the currentaggranges
+	var currentAggCol = db.get("currentaggranges");
 	
 	//
 	// Get the 'current' event from DB
@@ -976,10 +1103,18 @@ router.get("/metricintel*", function(req, res){
 			
 			//res.log(thisFuncName + 'aggdata=' + JSON.stringify(aggdata));
 			
-			res.render("./reports/metricintel", {
-				title: "Intel: " + metricKey,
-				aggdata: aggdata,
-				key: metricKey
+			// read in the current agg ranges
+			currentAggCol.find({}, {}, function (e, docs) {
+				var currentAggRanges = [];
+				if (docs)
+					currentAggRanges = docs;
+
+				res.render("./reports/metricintel", {
+					title: "Intel: " + metricKey,
+					aggdata: aggdata,
+					currentAggRanges: currentAggRanges,
+					key: metricKey
+				});
 			});
 		});
 	});	

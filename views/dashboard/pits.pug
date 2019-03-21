@@ -8,6 +8,7 @@ block content
 			th Assignee
 			th Team #
 			th Nickname
+			th Pic
 			each team in teams
 				if( user.name == team.primary )
 					- color = "gear-text-orange";
@@ -27,3 +28,5 @@ block content
 									span= team.team_key.substring(3)
 					td(class='w3-left-align theme-spacer')
 						h4(class=`${color}`) #{team.nickname}
+					td(class="theme-spacer")
+						img(src=`/uploads/responsive/${event_year}_${team.team_key}_sm.jpg` alt="" class="w3-image" style="max-height:80px;max-width:50px;")

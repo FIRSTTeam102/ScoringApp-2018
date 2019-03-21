@@ -279,13 +279,16 @@ router.get('/pits', function(req, res) {
 	if( !require('./checkauthentication')(req, res, 'scouting') ){
 		return res.log(thisFuncName + 'returning null');
 	}
-	var thisFuncName = "dashboard.puts[get]: ";
+	var thisFuncName = "dashboard.pits[get]: ";
 	res.log(thisFuncName + 'ENTER');
 
 	var db = req.db;
 	var scoutDataCol = db.get("scoutingdata");
 	var currentTeamsCol = req.db.get('currentteams');
 	
+	// are we asking for pictures?
+	var pics = req.query.pics;
+
 	// for later querying by event_key
 	var event_key = req.event.key;
 	
@@ -327,6 +330,7 @@ router.get('/pits', function(req, res) {
 			
 			res.render('./dashboard/pits', {
 				title: "Pit Scouting", 
+				pics: pics,
 				"teams": teams
 			});	
 		});

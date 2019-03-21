@@ -4,7 +4,7 @@
 		matches		[Object Array] Every match for current event, from the matches collection.
 	CALLED FROM
 		current.js	'/matches' '/resetmatches' '/updatematch' '/updatematches'
-extends layout
+extends ../layout
 block content
 	style html{overflow-x: visible;}
 	form#updatematches(name="updatematches" method="post" action="/admin/current/updatematches")

@@ -67,7 +67,7 @@ router.get("/", function(req, res) {
 						//Renders page through Jade.
 						res.log(thisFuncName + "RENDERING");
 						
-						res.render("./scoutingpairs", {
+						res.render("./admin/scoutingpairs", {
 							title: "Scouting Pairs",
 							prog: progTeam,
 							mech: mechTeam,
@@ -303,7 +303,7 @@ router.post("/generatematchallocations2", function(req, res) {
 			if (docs.length > 0)
 				eventId = docs[0].event;
 		if (eventId === noEventFound) {
-			return res.render('./adminindex', { 
+			return res.render('./admin/admin', { 
 				title: 'Admin pages',
 				current: eventId
 			});
@@ -572,7 +572,7 @@ router.post("/clearmatchallocations", function(req, res) {
 			if (docs.length > 0)
 				eventId = docs[0].event;
 		if (eventId === noEventFound) {
-			return res.render('./adminindex', { 
+			return res.render('./admin/admin', { 
 				title: 'Admin pages',
 				current: eventId
 			});
@@ -813,7 +813,7 @@ function generateMatchAllocations(req, res){
 			if (docs.length > 0)
 				eventId = docs[0].event;
 		if (eventId === noEventFound) {
-			return res.render('./adminindex', { 
+			return res.render('./admin/admin', { 
 				title: 'Admin pages',
 				current: eventId
 			});
@@ -865,7 +865,7 @@ function generateMatchAllocations(req, res){
 					res.log(thisFuncName + "Whoops, there was an error!");
 					res.log(thisFuncName + "matchArray=" + matchArray);
 					
-					res.render('./adminindex', { 
+					res.render('./admin/admin', { 
 						title: 'Admin pages',
 						current: eventId
 					});

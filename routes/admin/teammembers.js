@@ -24,7 +24,7 @@ router.get("/", function(req, res) {
 		}
 		teamMembers = docs;
 		
-		res.render("./members", { 
+		res.render("./admin/members", { 
 			title: "Team Members",
 			"members": teamMembers 
 		});
@@ -45,7 +45,7 @@ router.get("/present", function(req, res) {
 		
 		teammembers = docs;
 		
-		res.render("./present", {
+		res.render("./admin/present", {
 			title: "Assign Who Is Present",
 			"members": teammembers
 		});

@@ -5,7 +5,7 @@
 		events				[Object array] List of events in db, by key / year
 	CALLED FROM
 		externaldata.js		'/events'
-extends layout
+extends ../layout
 block content
 	style html{overflow-x: visible;}
 	form#updateForYear(name="updateForYear" method="post" action="/admin/data/events")

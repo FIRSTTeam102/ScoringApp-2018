@@ -23,7 +23,7 @@ router.get("/matches", function(req, res) {
 		}
 		matches = docs;
 		
-		res.render("./currentmatches", {
+		res.render("./admin/currentmatches", {
 			title: "Matches",
 			"matches": matches
 		});
@@ -97,7 +97,7 @@ router.post("/resetmatches", function(req, res) {
 			}
 			matches = docs;
 			
-			res.render("./currentmatches", {
+			res.render("./admin/currentmatches", {
 				title: "Matches",
 				"matches": matches
 			});
@@ -257,7 +257,7 @@ router.post("/updatematch", function(req, res) {
 											// Reinsert the updated values
 											currentAggCol.insert(aggMinMaxArray, function(e, docs) {
 												// And we're done!
-												res.render("./currentmatches", {
+												res.render("./admin/currentmatches", {
 													title: "Matches",
 													"matches": matches
 												});
@@ -326,7 +326,7 @@ router.post("/updatematches", function(req, res) {
 						res.log(thisFuncName + "Whoops, there was an error!")
 						res.log(thisFuncName + "data=" + data);
 						
-						res.render('./adminindex', { 
+						res.render('./admin/admin', { 
 							title: 'Admin pages',
 							current: eventId
 						});
@@ -343,7 +343,7 @@ router.post("/updatematches", function(req, res) {
 								matchCol.find({"event_key": eventId},{sort: {"time": 1}}, function(e, docs){
 									var matches = docs;
 									
-									res.render("./currentmatches", {
+									res.render("./admin/currentmatches", {
 										"matches": matches
 									});
 								});

@@ -42,7 +42,7 @@ router.get("/events", function(req, res) {
 			uniqueYears = docs.sort();
 			res.log(thisFuncName + "uniqueYears=" + uniqueYears);
 			
-			res.render("./events", {
+			res.render("./admin/events", {
 				title: "Events",
 				"events": events,
 				"years": uniqueYears,
@@ -50,9 +50,6 @@ router.get("/events", function(req, res) {
 			});
 		});
 	});
-	
-	// Send to Pug page to display
-	//res.render("./events?year=" + year);
 });
 
 /**
@@ -110,7 +107,7 @@ router.post("/events", function(req, res) {
 				res.log(thisFuncName + "data=" + data);
 				year = (new Date()).getFullYear();
 				
-				res.render("./events", {
+				res.render("./admin/events", {
 					title: "Events",
 					"years": uniqueYears,
 					"selectedYear": year
@@ -133,7 +130,7 @@ router.post("/events", function(req, res) {
 							eventCol.distinct("year", function(e, docs) {
 								uniqueYears = docs.sort();
 
-								res.render("./events", {
+								res.render("./admin/events", {
 									title: "Events",
 									"events": eventData,
 									"years": uniqueYears,
@@ -184,7 +181,7 @@ router.get("/matches", function(req, res) {
 		}
 		matches = docs;
 		
-		res.render("./matches", {
+		res.render("./admin/matches", {
 			title: "Matches",
 			"matches": matches
 		});
@@ -266,7 +263,7 @@ router.get("/teams", function(req, res) {
 		// Read all teams from DB
 		teamCol.find({},{sort: {"key": 1}}, function(e, teams){
 			//render page w/ all teams			
-			res.render("./teams", {
+			res.render("./admin/teams", {
 				title: "All Teams",
 				"teams": teams,
 				header: "All Teams in Database"
@@ -300,7 +297,7 @@ router.get("/teams", function(req, res) {
 			});
 			
 			//render page with sorted list of teams
-			res.render("./teams", {
+			res.render("./admin/teams", {
 				title: `Teams in ${req.event.name}`,
 				"teams": teams
 			});
@@ -357,7 +354,7 @@ router.post("/teams", function(req, res) {
 				res.log(thisFuncName + "data=" + data);
 				year = (new Date()).getFullYear();
 				
-				res.render("./events", {
+				res.render("./admin/events", {
 					title: "Events",
 					"years": uniqueYears,
 					"selectedYear": year
@@ -411,7 +408,7 @@ router.post("/teams", function(req, res) {
 						// Re-read and return all teams to client
 						teamCol.find({},{sort: {"key": 1}}, function(e, docs){
 						
-							res.render("./teams", {
+							res.render("./admin/teams", {
 								title: "Teams",
 								"teams": docs
 							});

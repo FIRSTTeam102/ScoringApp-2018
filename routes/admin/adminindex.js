@@ -15,7 +15,7 @@ router.get('/', function(req, res) {
 	if(req.query)
 		var alert = req.query.alert || null;
 	
-	res.render('./adminindex', { 
+	res.render('./admin/admin', { 
 		title: 'Admin pages',
 		current: req.event.key,
 		alert: alert

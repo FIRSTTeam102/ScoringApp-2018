@@ -161,6 +161,7 @@ router.get('/allianceselection', function(req, res){
 	// 2019-03-21, M.O'C: Utilize the currentaggranges
 	var currentAggCol = req.db.get("currentaggranges");
 	var rankCol = req.db.get("currentrankings");
+	var scoreDataCol = req.db.get('scoringdata');
 
 	rankCol.find(
 		{}, {}, function(e, rankings){
@@ -187,28 +188,38 @@ router.get('/allianceselection', function(req, res){
 					if(e || !scoreLayout[0])
 						return console.error(e || "Couldn't find scoringlayout in allianceselection".red);
 					
+					//initialize aggQuery
 					var aggQuery = [];
+					//add $match > event_key
 					aggQuery.push({ $match : { "event_key": event_key } });
+					//initialize groupClause
 					var groupClause = {};
-					// group teams for 1 row per team
+					//group teams for 1 row per team
 					groupClause["_id"] = "$team_key";
-
+					
+					//iterate through scoringlayout
 					for (var scoreIdx = 0; scoreIdx < scoreLayout.length; scoreIdx++) {
+						//pull this layout element from score layout
 						var thisLayout = scoreLayout[scoreIdx];
 						thisLayout.key = thisLayout.id;
 						scoreLayout[scoreIdx] = thisLayout;
+						//if it is a valid data type, add this layout's ID to groupClause
 						if (thisLayout.type == 'checkbox' || thisLayout.type == 'counter' || thisLayout.type == 'badcounter')
 							groupClause[thisLayout.id] = {$avg: "$data." + thisLayout.id};
 					}
+					//add $group > groupClause (Layout w/ data)
 					aggQuery.push({ $group: groupClause });
+					//add $sort > sort request
 					aggQuery.push({ $sort: { rank: 1 } });
 					
-					req.db.get('scoringdata').aggregate(aggQuery, function(e, aggArray){
+					//Aggregate with this query we made
+					scoreDataCol.aggregate(aggQuery, function(e, aggArray){
 						if(e || !aggArray[0])
 							return console.error(e || "Couldn't find scoringdata in allianceselection".red)
 						
 						// Rewrite data into display-friendly values
 						for (var aggIdx = 0; aggIdx < aggArray.length; aggIdx++) {
+							//get thisAgg
 							var thisAgg = aggArray[aggIdx];
 							for (var scoreIdx = 0; scoreIdx < scoreLayout.length; scoreIdx++) {
 								var thisLayout = scoreLayout[scoreIdx];

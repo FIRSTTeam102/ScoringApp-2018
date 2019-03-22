@@ -585,7 +585,8 @@ router.get("/teammatchintel*", function(req, res){
 				title: `Intel: ${matchType} ${matchNum} Team ${teamNum}`,
 				layout: layout,
 				data: data,
-				teammatch: teammatch
+				teammatch: teammatch,
+				teamKey: match_team_key.split("_")[2]
 			});
 		});
 	});

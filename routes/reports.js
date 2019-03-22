@@ -657,8 +657,11 @@ router.get("/alliancestats", function(req, res) {
 					maxRow['key'] = thisLayout.id;
 					for (var teamIdx = 0; teamIdx < teamList.length; teamIdx++)
 					{
-						avgRow[teamList[teamIdx]] = (Math.round(aggRowsByTeam[teamList[teamIdx]][thisLayout.id + "AVG"] * 10)/10).toFixed(1);
-						maxRow[teamList[teamIdx]] = (Math.round(aggRowsByTeam[teamList[teamIdx]][thisLayout.id + "MAX"] * 10)/10).toFixed(1);
+						if (aggRowsByTeam[teamList[teamIdx]])
+						{
+							avgRow[teamList[teamIdx]] = (Math.round(aggRowsByTeam[teamList[teamIdx]][thisLayout.id + "AVG"] * 10)/10).toFixed(1);
+							maxRow[teamList[teamIdx]] = (Math.round(aggRowsByTeam[teamList[teamIdx]][thisLayout.id + "MAX"] * 10)/10).toFixed(1);
+						}
 					}
 					avgTable.push(avgRow);
 					maxTable.push(maxRow);

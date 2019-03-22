@@ -194,6 +194,7 @@ functions.setupNodeRestClient = function(req, res, next){
 	//Get thebluealliance API key from db
 	passwordsCol.find({ name:"thebluealliance-args" }, function(e, args){
 		if(e || !args[0]){
+			res.log(e, true);
 			return res.status(500).send("couldn't find TBA args in db");
 		}
 		args = args[0];

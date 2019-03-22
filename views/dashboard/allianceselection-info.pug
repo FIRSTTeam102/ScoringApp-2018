@@ -4,7 +4,7 @@ if (aggdata)
 	for scoreItem in currentAggRanges
 		- aggRangeMap[scoreItem.key] = scoreItem;
 	br 
-	table(class="w3-table" id="metricTable")
+	table(class="w3-table w3-text-white" id="metricTable")
 		tr
 			th V
 			th Team
@@ -19,7 +19,7 @@ if (aggdata)
 					th(class="w3-right-align" onclick=`w3.sortHTML('#metricTable','.item', 'td:nth-child(${colIdx})')`)= result2
 					- colIdx++
 		for row in aggdata
-			tr(id=`row_${row._id}`)
+			tr(id=`row_${row._id}` style="background-color: #b0b0c057")
 				td(class="w3-center")= row.value
 				if (row.value == -1)
 					td(class="w3-center")
@@ -48,7 +48,7 @@ script.
 		if (!this.asc){rows = rows.reverse()}
 		for (var i = 0; i < rows.length; i++){table.append(rows[i])}
 		
-		prettifyTable();
+		//prettifyTable();
 	})
 	function comparer(index) {
 		return function(a, b) {

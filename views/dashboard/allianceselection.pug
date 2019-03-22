@@ -123,7 +123,7 @@ block content
 			grayOutRow( state.rankings[1] );
 			
 			//prettify table
-			prettifyTable();
+			//prettifyTable();
 			
 			$(".alliance-team").click(doAllianceTeamClick);
 			
@@ -389,13 +389,55 @@ block content
 			}).attr({
 				"selectable": "false"
 			});
+			
+			var children = $(`#row_${teamKey}`).children();
+			
+			let targetR = 240, targetG = 240, targetB = 255;
+			
+			for(var i = 3; i < children.length; i++){
+				
+				let thisStyle = $(children[i]).css("background-color").split(",");
+				let r = thisStyle[0].substring(thisStyle[0].indexOf("(")+1);
+				let g = thisStyle[1];
+				let b = thisStyle[2].substring(0, thisStyle[2].indexOf(")"));
+				
+				$(children[i]).attr({
+					"r": r,
+					"g": g,
+					"b": b
+				});
+				
+				r = lerp(r, targetR, 0.7);
+				g = lerp(g, targetG, 0.7);
+				b = lerp(b, targetB, 0.7);
+				
+				$(children[i]).attr({
+					"style": `background-color: rgba(${r}, ${g}, ${b}, 1); color:#000!important`
+				})
+			}
 		}
 		
 		function unHighlightRow(teamKey){
 			$(`#row_${teamKey}`).attr({
-				"selectable": "true"
+				"selectable" : "true",
+				"style" : "background-color: #b0b0c057;"
 			});
-			prettifyTable();
+			
+			var children = $(`#row_${teamKey}`).children();
+			
+			let targetR = 240, targetG = 240, targetB = 255;
+			
+			for(var i = 3; i < children.length; i++){
+				
+				let r = $(children[i]).attr("r");
+				let g = $(children[i]).attr("g");
+				let b = $(children[i]).attr("b");
+				
+				$(children[i]).attr({
+					"style": `background-color: rgba(${r}, ${g}, ${b}, 1);`
+				})
+			}
+			//prettifyTable();
 		}
 		
 		function grayOutRow(teamKey){
@@ -406,6 +448,30 @@ block content
 			}).attr({
 				"selectable": "false"
 			});
+			var children = $(`#row_${teamKey}`).children();
+			
+			let targetR = 0, targetG = 0, targetB = 0;
+			
+			for(var i = 3; i < children.length; i++){
+				
+				let thisStyle = $(children[i]).css("background-color").split(",");
+				let r = thisStyle[0].substring(thisStyle[0].indexOf("(")+1);
+				let g = thisStyle[1];
+				let b = thisStyle[2].substring(0, thisStyle[2].indexOf(")"));
+				
+				r = lerp(r, targetR, 0.8);
+				g = lerp(g, targetG, 0.8);
+				b = lerp(b, targetB, 0.8);
+				
+				$(children[i]).css({
+					"background-color": `rgba(${r}, ${g}, ${b}, 0.41)`,
+					"color": "#8d8d8dcf"
+				});
+			}
+		}
+		
+		function lerp(a, b, t) {
+			return (1-t)*a + t*b;
 		}
 		
 		function unGrayOutRow(teamKey){
@@ -413,7 +479,7 @@ block content
 			$(`#row_${teamKey}`).attr({
 				"selectable": "true"
 			});
-			prettifyTable();
+			//prettifyTable();
 		}
 		
 		function prettifyTable(){

@@ -11,12 +11,14 @@ block content
 	h6 <i>Click on an alliance to see individual team stats</i>
 	- var blueTeams = match.alliances.blue.team_keys[0].substring(3)+', '+match.alliances.blue.team_keys[1].substring(3)+', '+match.alliances.blue.team_keys[2].substring(3);
 	- var blueTeamKeys = match.alliances.blue.team_keys[0]+','+match.alliances.blue.team_keys[1]+','+match.alliances.blue.team_keys[2]
-	h4(class="gear-text-white")
-		a(href=`/reports/alliancestats?teams=${blueTeamKeys}`) <i>Blue: #{blueTeams}</i>
+	div(class="w3-section")
+		div(class="alliance-blue alliance-hover-blue w3-btn" style="min-width: 200px;")
+			a(href=`/reports/alliancestats?teams=${blueTeamKeys}`) <i>Blue: #{blueTeams}</i>
 	- var redTeams = match.alliances.red.team_keys[0].substring(3)+', '+match.alliances.red.team_keys[1].substring(3)+', '+match.alliances.red.team_keys[2].substring(3);
 	- var redTeamKeys = match.alliances.red.team_keys[0]+','+match.alliances.red.team_keys[1]+','+match.alliances.red.team_keys[2]
-	h4(class="gear-text-white")
-		a(href=`/reports/alliancestats?teams=${redTeamKeys}`) <i>Red: #{redTeams}</i>
+	div(class="w3-section")
+		div(class="alliance-red alliance-hover-red w3-btn" style="min-width: 200px;")
+			a(href=`/reports/alliancestats?teams=${redTeamKeys}`) <i>Red: #{redTeams}</i>
 	h6 <i>Click on a metric to compare event teams</i>
 	
 	if (aggdata)

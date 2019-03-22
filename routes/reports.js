@@ -686,8 +686,8 @@ router.get("/alliancestats", function(req, res) {
 	});
 });
 
-router.get("/upcomingmatchmetrics", function(req, res) {
-	var thisFuncName = "reports.upcomingmatchmetrics[get]: ";
+router.get("/matchmetrics", function(req, res) {
+	var thisFuncName = "reports.matchmetrics[get]: ";
 	res.log(thisFuncName + 'ENTER');
 	
 	var db = req.db;
@@ -703,7 +703,7 @@ router.get("/upcomingmatchmetrics", function(req, res) {
 	var matchKey = req.query.key;
 	
 	if( !matchKey ){
-		return res.redirect("/?alert=Must specify match key for reports/upcomingmatchmetrics");
+		return res.redirect("/?alert=Must specify match key for reports/matchmetrics");
 	}
 	res.log(`${thisFuncName} matchKey: ${matchKey}`);
 
@@ -791,7 +791,7 @@ router.get("/upcomingmatchmetrics", function(req, res) {
 						if (docs)
 							currentAggRanges = docs;
 
-						res.render("./reports/upcomingmatchmetrics", {
+						res.render("./reports/matchmetrics", {
 							title: "Metrics For Upcoming Match",
 							aggdata: aggTable,
 							currentAggRanges: currentAggRanges,

@@ -18,7 +18,7 @@ div(class="w3-row")
 				span #{matchPrefix.toUpperCase()} Match #{match.match_number}: 
 				span #{outcome}
 		div(class="w3-col s2")
-			a(href=`/reports/upcomingmatchmetrics?key=${match.key}`)
+			a(href=`/reports/matchmetrics?key=${match.key}`)
 				div(class="w3-padding-small w3-right-align w3-small gear-hover-white theme-rounded-br theme-rounded-tr" style="padding-right: 18px!important;")
 					i Compare alliances
 	div(class="w3-col s12 m0 w3-tiny") &nbsp;
@@ -29,7 +29,7 @@ div(class="w3-row")
 			- if (match.comp_level != 'qm') matchPrefix = "" + match.comp_level + "" + match.set_number + " ";
 			div(class="w3-padding") #{matchPrefix.toUpperCase()} Match #{match.match_number}
 			div(class="w3-padding") #{outcome}
-			a(href=`/reports/upcomingmatchmetrics?key=${match.key}`)
+			a(href=`/reports/matchmetrics?key=${match.key}`)
 				div(class="w3-padding-16 w3-small gear-hover-white theme-rounded-bottom") 
 					i Compare alliances
 	//-Alliance container

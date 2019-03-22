@@ -63,7 +63,7 @@ block content
 								span #{matchPrefix.toUpperCase()} Match #{match.match_number}
 								span  #{day} @ #{hour}:#{minute}
 						div(class="w3-col s2")
-							a(href=`/reports/upcomingmatchmetrics?key=${match.key}`)
+							a(href=`/reports/matchmetrics?key=${match.key}`)
 								div(class="w3-padding-small w3-right-align w3-small gear-hover-white theme-rounded-br theme-rounded-tr" style="padding-right: 18px!important;")
 									i Compare alliances
 					//-Title for medium screens
@@ -73,7 +73,7 @@ block content
 							- if (match.comp_level != 'qm') matchPrefix = "" + match.comp_level + "" + match.set_number + " ";
 							div(class="w3-padding") #{matchPrefix.toUpperCase()} Match #{match.match_number}
 							div(class="w3-padding")  #{day} @ #{hour}:#{minute}
-							a(href=`/reports/upcomingmatchmetrics?key=${match.key}`)
+							a(href=`/reports/matchmetrics?key=${match.key}`)
 								div(class="w3-padding-16 w3-small gear-hover-white theme-rounded-bottom") 
 									i Compare alliances
 					//-Alliances
@@ -159,7 +159,7 @@ block content
 												span(class="teamNo")=teamNo
 												span(class="rank gear-text-white") &nbsp[#{teamRanks['frc'+teamNo]}]
 						div(class="w3-left w3-padding w3-mobile")
-							a(href=`/reports/upcomingmatchmetrics?key=${match.key}`) <i>Click here to compare alliances</i>
+							a(href=`/reports/matchmetrics?key=${match.key}`) <i>Click here to compare alliances</i>
 					div(class="w3-rest")
 						//can be used for results later for anothah pug fiel
 	script.

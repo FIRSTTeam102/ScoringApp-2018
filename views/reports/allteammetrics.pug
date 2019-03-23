@@ -78,7 +78,7 @@ block content
 								- var valStyle = 'w3-right-align w3-text-white'
 								- if (row[item.key] == 0) valStyle = 'w3-right-align w3-text-gray'
 								if (aggRangeMap[item.key])
-									td(class=`${valStyle}` style=`background-color: rgb(${getValR(aggRangeMap[item.key].AVGmin, aggRangeMap[item.key].AVGmax, row[item.key + "MAX"])},${getValG(aggRangeMap[item.key].AVGmin, aggRangeMap[item.key].AVGmax, row[item.key + "MAX"])},${getValB(aggRangeMap[item.key].AVGmin, aggRangeMap[item.key].AVGmax, row[item.key + "MAX"])})`)= row[item.key + "MAX"]
+									td(class=`${valStyle}` style=`background-color: rgb(${getValR(aggRangeMap[item.key].MAXmin, aggRangeMap[item.key].MAXmax, row[item.key + "MAX"])},${getValG(aggRangeMap[item.key].MAXmin, aggRangeMap[item.key].MAXmax, row[item.key + "MAX"])},${getValB(aggRangeMap[item.key].MAXmin, aggRangeMap[item.key].MAXmax, row[item.key + "MAX"])})`)= row[item.key + "MAX"]
 								else
 									td(class=`${valStyle}`)= row[item.key + "MAX"]
 	else
@@ -99,7 +99,7 @@ block content
 			var max = document.getElementById('maxSect');
 				max.style.display = "block";
 		}
-		
+
 		function setValue(teamKey, value)
 		{
 			console.log("teamKey " + teamKey + ", value " + value);

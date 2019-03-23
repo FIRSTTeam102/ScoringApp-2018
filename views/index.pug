@@ -55,6 +55,8 @@ block content
 			h4(class="gear-text-white")=user.name
 			a(href="/dashboard")
 				div(class="gear-btn theme-link gear-hover-white w3-btn") Dashboard
+			a(href="/reports/allteammetrics")
+				div(class="gear-btn theme-link gear-hover-white w3-btn") All Team Metrics
 			if( user.subteam == "support" || user.subteam == "exec" )
 				a(href="/admin")
 					div(class="gear-btn theme-link gear-hover-white w3-btn") Admin Index

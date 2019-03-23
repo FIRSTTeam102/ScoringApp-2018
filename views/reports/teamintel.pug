@@ -132,6 +132,15 @@ block content
 				border-color: #dfe1e9!important;
 			}
 		h2(class="gear-text-white") Previous matches
+
+		if (matches && matches.length > 0)		
+			each match in matches
+				if (match.scoringdata && user)
+					each element in scorelayout
+						case element.type
+							when "textblock"
+								if (match.scoringdata[element.id])
+									h5(class="gear-text-white") #{element.label} <strong>#{match.scoringdata[element.id]}</strong>
 		
 		if (matches && matches.length > 0)		
 			h6 <i>Click team number for match scouting details</i>

@@ -10,8 +10,21 @@ const useragent = require('express-useragent');	//for info on connected users
 const colors = require('colors');					//for pretty debugging
 const monk = require("monk");						//Monk for connecting to db
 const useFunctions = require('./useFunctions');		//Functions inside separate module for app.use
+const fs = require("fs");
 
-var db = monk("localhost:27017/local");			//Local db on localhost
+//check if we have a db user file
+var hasDBUserFile = fs.existsSync(".dbuser");
+var db;
+
+if(hasDBUserFile){
+	var dbUser = JSON.parse(fs.readFileSync(".dbuser", {"encoding": "utf8"}));
+	console.log(dbUser);
+	console.log(`${dbUser.username}:${dbUser.password}@localhost:27017/app`);	
+	db = monk(`${dbUser.username}:${dbUser.password}@localhost:27017/app`);	
+}
+else{
+	db = monk("localhost:27017/app");			//Local db on localhost without authentication
+}
 var client = new Client();						//Creates node-rest-client.
 
 var app = express();							//Creates app.

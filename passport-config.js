@@ -2,8 +2,20 @@ var passport = require('passport');
 var bcrypt = require('bcrypt');					//bcrypt for password encryption
 var LocalStrategy = require('passport-local').Strategy; //strategy for passport
 var monk = require('monk');
-var db = monk("localhost:27017/local");
 
+const fs = require("fs");
+
+//check if we have a db user file
+var hasDBUserFile = fs.existsSync(".dbuser");
+var db;
+
+if(hasDBUserFile){
+        var dbUser = JSON.parse(fs.readFileSync(".dbuser", {"encoding": "utf8"}));
+        db = monk(`${dbUser.username}:${dbUser.password}@localhost:27017/app`);
+}
+else{
+        db = monk("localhost:27017/app");                       //Local db on localhost without authentication
+}
 
 //Configure local strategy for use by Passport.
 passport.use(new LocalStrategy(

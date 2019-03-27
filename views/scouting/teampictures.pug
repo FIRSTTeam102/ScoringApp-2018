@@ -1,40 +1,23 @@
-//- extends ../layout
-
-//- block content
-//-	 h2(class="gear-text-white") Teams with robot pictures
-//-	 h6 <i>This is a work in progress</i>
-//-	 table(class="w3-table")
-//-		 tr
-//-			 th Rank
-//-			 th Team
-//-			 th Picture
-//-			 th Origin?
-//-		 tr
-//-			 td(class="gear-text-white w3-center")= rankings
-//-			 td(class="w3-text-light-gray w3-center")= `${team_key}`
-//-				 //-a(href=`/reports/teamintel?team=${team_key}`)= team_key.substring(3)
-//-			 td(src=`/uploads/responsive/${event_year}_${team_key}_sm.jpg` alt="" class="w3-image" style="max-height:350px;")
-
 extends ../layout
 
 block content
-	if (rankings)
+	if (teams)
 		h2(class="gear-text-white") Current event rankings
 		h6 <i>Click on a team to see intel on that team</i>
 		table(class="w3-table")
 			tr
-				th Rank
-				th Team
+				th Team #
+				th Team Name
 				th Picture
 				th Origin
-			each team in rankings
+			each team in teams
 				tr
-					td(class="gear-text-white w3-center")= team.rank
 					td(class="w3-text-light-gray w3-center")
-						a(href=`/reports/teamintel?team=${team.team_key}`)= team.team_key.substring(3)
+						a(href=`/reports/teamintel?team=${team.key}`)= team.team_number
+					td(class="gear-text-white w3-center")= team.nickname
 					td
-						img(src=`/uploads/responsive/${event_year}_${team.team_key}_sm.jpg` alt="[No image available]" class="w3-image" style="max-height:350px;")
-					td(class="w3-text-light-gray w3-center") Origin (need help finding this)
+						img(src=`/uploads/responsive/${event_year}_${team.key}_sm.jpg` alt="[No image available]" class="w3-image" style="max-height:350px;")
+					td(class="w3-text-light-gray w3-center") Origin?
 	else
-		h2(class="gear-text-white") <i>There are no rankings in the system yet</i>
+		h2(class="gear-text-white") <i>There is no team info in the system yet</i>
 		h6 Please check back later

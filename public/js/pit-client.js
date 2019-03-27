@@ -14,9 +14,20 @@ $(function(){
 			dataKey: "matchFormData",
 			callback: function(){
 				console.log("Callback called from match-client.js");
-				window.location.href="/dashboard"
+				
+				setTimeout(function(){
+					window.location.href="/dashboard";
+				}, 1000);
 			}
 		};
+		
+		//create screen darkener
+		darkener = document.createElement("div");
+		darkener.classList.add("canvas");
+		darkener.classList.add("theme-darkener");
+		document.body.appendChild(darkener);
+		//create card to say sending data
+		createNotificationCard("Submitting pit data...");
 		
 		submitData(toSubmit.url, toSubmit.dataKey, toSubmit.callback);
 	});

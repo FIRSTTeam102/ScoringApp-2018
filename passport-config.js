@@ -76,7 +76,32 @@ passport.use(new LocalStrategy(
 	}));
 
 function compare( password, hash, user, done ){
-	
+
+	/*
+	// M.O'C, 2019-03-20: Keep commented out! This shows passwords in plaintext.
+	////// console.log('passport-config.compare(): password=' + JSON.stringify(password) + ", hash=" + JSON.stringify(hash) + ", user=" + JSON.stringify(user));
+	// Since bcrypt doesn't work on Mr. O'C's laptop (?!?), putting in goofy not-too-insecure workaround code
+	// UPDATE: bcrypt 3.x.x doesn't work, but bcrypt 2.0.1 works
+	if (user && ('Mr. O\'C' == user.name))
+	{
+		var passwordJavaHash = javahash( password );
+		console.log('passport-config.compare(): passwordJavaHash=' + passwordJavaHash);
+
+		// hardcoded hash of Mr. O'C's password
+		if (passwordJavaHash == 3147700968839)
+		{
+			console.log(user);
+			return done(null, user);
+		}
+		else
+		{
+			return done(null, false, {
+				alert: "Invalid password."
+			});
+		}
+	}
+	*/
+
 	//Compare hash to entered password
 	bcrypt.compare( password, hash, function(err, output){
 		
@@ -101,7 +126,18 @@ function compare( password, hash, user, done ){
 		}
 	});
 }
-	
+
+function javahash( password ) {
+	// M.O'C, 2019-03-20: Replicating from Java source String.hashCode()	
+    var h = 0;
+    if (password.length > 0) {
+        for (var i = 0; i < password.length; i++) {
+            h = 31 * h + password.charCodeAt(i);
+        }
+    }
+	return h;
+}
+
 // Creates the data necessary to store in the session cookie
 passport.serializeUser(function(user, done) {
 	//if we switch to mongoose, change to done(null, user.id);

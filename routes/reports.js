@@ -690,6 +690,66 @@ router.get("/alliancestats", function(req, res) {
 	});
 });
 
+router.get("/matchdata", function(req, res) {
+	var thisFuncName = "reports.matchmetrics[get]: ";
+	res.log(thisFuncName + 'ENTER');
+	
+	var db = req.db;
+	var scoringCol = req.db.get('scoringdata');
+	var scoringLayoutCol = db.get("scoringlayout");
+	var currentAggCol = db.get("currentaggranges");
+	var matchCol = db.get('matches');
+
+	var event_year = req.event.year;
+	var event_key = req.event.key;
+	var matchKey = req.query.key;
+
+	if( !matchKey ){
+		return res.redirect("/?alert=Must specify match key for reports/matchmetrics");
+	}
+	res.log(`${thisFuncName} matchKey: ${matchKey}`);
+
+	// get the specified match object
+	matchCol.find({"key": matchKey}, {}, function (e, docs) {
+		var match = {};
+		if (docs && docs[0])
+			match = docs[0];
+			
+		res.log(`${thisFuncName} match: ${JSON.stringify(match)}`);
+	
+		// get the scoring data for the match
+		scoringCol.find({"match_key": matchKey}, {}, function (e, docs) {
+			var matches = [];
+			if (docs)
+				matches = docs;
+
+			res.log(`${thisFuncName} matches: ${JSON.stringify(matches)}`);
+
+			// get the scoring layout
+			scoringLayoutCol.find({ "year": event_year }, {sort: {"order": 1}}, function(e, docs){
+				var scoreLayout = docs;
+
+				res.log(`${thisFuncName} scoreLayout: ${JSON.stringify(scoreLayout)}`);
+
+				// read in the current agg ranges
+				currentAggCol.find({}, {}, function (e, docs) {
+					var currentAggRanges = [];
+					if (docs)
+						currentAggRanges = docs;
+
+					res.render("./reports/matchdata", {
+						title: "Scoring Data For Match",
+						scoreLayout: scoreLayout,
+						currentAggRanges: currentAggRanges,
+						matches: matches,
+						match: match
+					});
+				});
+			});			
+		});
+	});
+});
+
 router.get("/matchmetrics", function(req, res) {
 	var thisFuncName = "reports.matchmetrics[get]: ";
 	res.log(thisFuncName + 'ENTER');
@@ -726,7 +786,7 @@ router.get("/matchmetrics", function(req, res) {
 		// "autoScaleAVG": {$avg: "$data.autoScale"},
 		// "teleScaleAVG": {$avg: "$data.teleScale"},
 		//  } }
-		// ] );						
+		// ] );
 		scoringLayoutCol.find({ "year": event_year }, {sort: {"order": 1}}, function(e, docs){
 			var scorelayout = docs;
 			var aggQuery = [];

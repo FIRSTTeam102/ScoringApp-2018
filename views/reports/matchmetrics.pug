@@ -21,7 +21,7 @@ block content
 			a(href=`/reports/alliancestats?teams=${blueTeamKeys}`) <i>Blue: #{blueTeams}</i>
 	- var allTeamKeys = match.alliances.red.team_keys[0]+','+match.alliances.red.team_keys[1]+','+match.alliances.red.team_keys[2]+',0,'+match.alliances.blue.team_keys[0]+','+match.alliances.blue.team_keys[1]+','+match.alliances.blue.team_keys[2]
 	a(href=`/reports/alliancestats?teams=${allTeamKeys}`)
-		h6 <i>Click here to compare BOTH teams</i>
+		h6 <b>Click here to compare BOTH teams</b>
 	h6 <i>Click on a metric to compare event teams</i>
 	
 	if (aggdata)

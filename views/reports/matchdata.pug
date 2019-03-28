@@ -10,14 +10,14 @@ block content
 		- matchMap[matchItem.team_key] = matchItem;
 
 	//- h2(class="gear-text-white") Statistics for teams</br>#{teams.replace(/,/g, ', ').replace(/frc/g, '')}
-	h2(class="gear-text-white") Match data
+	h2(class="gear-text-white") Match data for match ##{match.match_number}
 	h6 <i>Click on a team number for intel on that team</i>
 	h6 <i>Click on a metric to compare all event teams</i>
 	
 	if (matches)
 		table(class="w3-table")
 			tr
-				th Metric (Avg)
+				th Metric
 				for team in match.alliances.red.team_keys
 					th(class="w3-right-align gear-text-white")
 						u
@@ -53,5 +53,7 @@ block content
 								else
 									td(class=`${valueCol}`)= matchMap[team].data[item.id]
 		p
+		a(href=('/reports/matchmetrics?key=' + match.key)) <b>Click here to see comparative metrics for these alliances</b>
+		p
 
-	a(href='/reports/metricsranked') Click here to see overall ranked event data
+	a(href='/reports/metricsranked') <b>Click here to see overall ranked event data</b>

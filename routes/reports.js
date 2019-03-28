@@ -999,6 +999,7 @@ router.get("/metrics", function(req, res){
 	var aggCol = req.db.get('scoringdata');
 	var scoreCol = db.get("scoringlayout");
 	var currentCol = db.get("current");
+	var currentAggCol = db.get("currentaggranges");
 	
 	var event_year = req.event.year;
 
@@ -1077,9 +1078,17 @@ router.get("/metrics", function(req, res){
 				}
 				//res.log(thisFuncName + 'aggTable=' + JSON.stringify(aggTable));
 				
-				res.render("./reports/metrics", {
-					title: "Metrics For All Teams",
-					aggdata: aggTable
+				// read in the current agg ranges
+				currentAggCol.find({}, {}, function (e, docs) {
+					var currentAggRanges = [];
+					if (docs)
+						currentAggRanges = docs;
+
+					res.render("./reports/metrics", {
+						title: "Metrics For All Teams",
+						currentAggRanges: currentAggRanges,
+						aggdata: aggTable
+					});
 				});
 			});
 		});

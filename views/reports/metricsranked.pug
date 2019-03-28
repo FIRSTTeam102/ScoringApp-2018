@@ -6,7 +6,7 @@ block content
 	for scoreItem in currentAggRanges
 		- aggRangeMap[scoreItem.key] = scoreItem;
 
-	h2(class="gear-text-white") Statistical summary of ALL teams
+	h2(class="gear-text-white") Top teams per metric
 	h6 <i>Click on a metric to compare individual teams</i>
 	h6 <i>Click on a team to jump to team intel</i>
 	
@@ -33,5 +33,6 @@ block content
 					else
 						td(class=`${avgCol}`)= agg.avg
 		p
-		a(class="gear-btn theme-submit w3-btn" href='/reports/metrics') Click here to see overall aggregated event data
+		-// class="gear-btn theme-submit w3-btn" 
+		a(href='/reports/metrics') <b>Click here to see overall aggregated event data</b>
 

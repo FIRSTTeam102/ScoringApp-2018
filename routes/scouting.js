@@ -267,87 +267,26 @@ router.post('/submitpit', function(req, res) {
 });
 
 //For \views\scouting\teampictures.pug
-router.get('/teampictures', function(req, res) {///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+router.get('/teampictures', function(req, res) {
 
-	/*
-	var thisUser = { name: "James G." };
-	
-	var thisFuncName = "scouting.match*[get]: ";
-	res.log(thisFuncName + 'ENTER');
-	
-	var db = req.db;
-	var scoringLayoutCol = db.get("scoringlayout");
-	var currentteamsCol = db.get("currentteams");
-	var scoringDataCol = db.get("scoringdata");
-	var rankCol = db.get("currentrankings");
-	var event_year = req.event.year;
-	var thisUser = "James G."; //So I don't have to sign in every time
-	var thisUserName = thisUser.name;
-	var key = req.query.key;
-
-	res.log(`${thisFuncName}- key: ${key} user: ${thisUserName}`);
-	currentteamsCol.find({}, {}, function(e, docs){});
-	//check if there is already data for this match
-	scoringDataCol.find({"year" : event_year, "key": key}, {sort: {"order": 1}}, function(e, scoringdata){
-		
-		//scouting answers for this match are initialized as null for visibility
-		var answers = null;
-		
-		if( scoringdata && scoringdata[0] ){
-			
-			//if we have data for this match, 
-			var data = scoringdata[0].data;
-			if(data){
-				res.log(`${thisFuncName}- data: ${JSON.stringify(scoringdata[0].data)}`);
-				//set answers to data if exists
-				answers = data;
-			}
-			else{
-				res.log(`${thisFuncName}- no data for this match`)
-			}
-		}
-		
-		rankCol.find({}, {sort: {rank: 1}}, function(e, docs) {
-			var rankings = null;
-			if (docs && docs.length > 0)
-				rankings = docs;
-		
-		//load layout
-		scoringLayoutCol.find({ "year": event_year }, {sort: {"order": 1}}, function(e, docs){
-			var layout = docs;
-			//render page
-			res.render("./scouting/teampictures", {
-				title: "Team Robot Pictures",
-				layout: layout,
-				answers: answers,
-				team_key: key,
-				rankings: rankings
-			});
-		});
-	});
-});*/
-
-
-	var thisFuncName = "reports.rankings[get]: ";
+	var thisFuncName = "scouting.teampictures[get]: ";
 		res.log(thisFuncName + 'ENTER');
 		
 		var db = req.db;
-		var rankCol = db.get("currentrankings");
+		var teamCol = db.get("currentteams");
 		
-		rankCol.find({}, {sort: {rank: 1}}, function(e, docs) {
-			var rankings = null;
+		teamCol.find({}, {sort: {team_number: 1}}, function(e, docs) {
+			var teams = [];
 			if (docs && docs.length > 0)
-				rankings = docs;
+				teams = docs;
 
 			//res.log(thisFuncName + 'rankings=' + JSON.stringify(rankings));
 			
 			res.render("./scouting/teampictures", {
 				title: "Team Pictures",
-				rankings: rankings
+				teams: teams
 			});
 		});
-
-
 });
 /////////////////////////////////////////
 /////////////////////////////////////////

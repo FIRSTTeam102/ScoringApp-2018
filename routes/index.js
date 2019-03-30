@@ -33,7 +33,8 @@ router.post('/webhook', function(req, res){
 				res.sendStatus(200);
 				break;
 			case "ping":
-				res.sendStatus(200).send("pong!");
+				res.sendStatus(200);
+				break;
 		}
 	}
 });
@@ -44,7 +45,7 @@ function updateRankings(req, res){
 	var client = req.client;
 	var args = req.tbaRequestArgs;
 	
-	var eventId = req.event.key;
+	var event_key = req.event.key;
 	
 	// While we're here - Get the latest ranking (& OPR data...? maybe not?)
 	// https://www.thebluealliance.com/api/v3/event/2018njfla/rankings
@@ -53,7 +54,7 @@ function updateRankings(req, res){
 	// Delete the current rankings
 	rankCol.remove({}, function(e, docs) {
 		// Reload the rankings from TBA
-		var rankingUrl = "https://www.thebluealliance.com/api/v3/event/" + eventId + "/rankings";
+		var rankingUrl = "https://www.thebluealliance.com/api/v3/event/" + event_key + "/rankings";
 		res.log(thisFuncName + "rankingUrl=" + rankingUrl);
 	
 		client.get(rankingUrl, args, function (data, response) {
@@ -99,7 +100,7 @@ function updateMatch(req, res){
 	//if data is an object, proceed
 	if(typeof(data) == "object"){
 		
-		res.log(`Match update pushed for ${data.match_key}`, true);
+		res.log(`Match update pushed for ${data.match.match_key}`, true);
 		
 		// stick it in an array so the insert will work later
 		var match = data;
@@ -108,7 +109,7 @@ function updateMatch(req, res){
 		// Now, insert the new object
 		matchCol.insert(array, function(e, docs) {
 			// Then read all the matches back in order
-			matchCol.find({"event_key": eventId},{sort: {"time": 1}}, function(e, docs){
+			matchCol.find({"event_key": event_key},{sort: {"time": 1}}, function(e, docs){
 				var matches = docs;
 				
 				// 2019-03-21, M.O'C: Adding in recalculation of aggregation data

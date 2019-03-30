@@ -2,6 +2,28 @@ var express = require('express');
 var router = express.Router();
 
 /**
+ * TBA Webhooks test
+ * @url /webhook
+ */
+router.get('/webhook', function(req, res){
+	console.log("got a get request to webhook");
+	console.log(req.query);
+	//$2b$05$E5bhUSxNH5nAbrlHVLmyXeohhAngKMqp5pgiN/QBXhadN7dsp8bi.
+	res.send(200);
+});
+ 
+/**
+ * TBA Webhooks test
+ * @url (POST) /webhook
+ */
+router.post('/webhook', function(req, res){
+	console.log("got a post request to webhook");
+	console.log(req.body);
+	//$2b$05$E5bhUSxNH5nAbrlHVLmyXeohhAngKMqp5pgiN/QBXhadN7dsp8bi.
+	res.send(200);
+});
+
+/**
  * Main homepage.
  * @url /
  * @view /index

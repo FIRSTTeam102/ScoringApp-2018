@@ -6,12 +6,12 @@ block content
 		h6 <i>Click on a team to see intel on that team</i>
 		table(class="w3-table")
 			tr
-				th Rank
-				th Team
-				th W-L-T
-				th DQ
-				th Play
-				th RP
+				th(class="w3-center theme-spacer") Rank
+				th(class="w3-center theme-spacer") Team
+				th(class="w3-center theme-spacer") W-L-T
+				th(class="w3-center theme-spacer") DQ
+				th(class="w3-center theme-spacer") Matches
+				th(class="w3-center theme-spacer") RP
 			each team in rankings
 				tr
 					td(class="gear-text-white w3-center")= team.rank

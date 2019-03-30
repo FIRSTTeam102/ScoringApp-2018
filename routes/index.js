@@ -24,12 +24,14 @@ router.post('/webhook', function(req, res){
 	//if there is data in the request, proceed
 	if(req.body && req.body != {}){
 		console.log("body: "+typeof(req.body));
-		console.log("type: "+typeof(req.body.message_type));
+		console.log("message_type: "+typeof(req.body.message_type));
 		console.log("message_data: "+typeof(req.body.message_data));
 		switch(req.body.message_type){
 			case "match_score":
 				updateMatch(req, res);
 				break;
+			case "ping":
+				res.sendStatus(200).send("pong!");
 		}
 	}
 	
@@ -39,9 +41,45 @@ router.post('/webhook', function(req, res){
 
 function updateRankings(req, res){
 	
+	// REST client for accessing TBA
+	var client = req.client;
+	var args = req.tbaRequestArgs;
+	
+	var eventId = req.event.key;
+	
+	// While we're here - Get the latest ranking (& OPR data...? maybe not?)
+	// https://www.thebluealliance.com/api/v3/event/2018njfla/rankings
+	// https://www.thebluealliance.com/api/v3/event/2018njfla/oprs (?)
+
+	// Delete the current rankings
+	rankCol.remove({}, function(e, docs) {
+		// Reload the rankings from TBA
+		var rankingUrl = "https://www.thebluealliance.com/api/v3/event/" + eventId + "/rankings";
+		res.log(thisFuncName + "rankingUrl=" + rankingUrl);
+	
+		client.get(rankingUrl, args, function (data, response) {
+			var rankinfo = JSON.parse(data);
+			var rankArr = [];
+			if (rankinfo)
+				rankArr = rankinfo.rankings;
+			
+			var rankMap = {};
+			for (var rankIdx = 0; rankIdx < rankArr.length; rankIdx++) {
+				//res.log(thisFuncName + 'rankIdx=' + rankIdx + ', team_key=' + rankings[rankIdx].team_key + ', rank=' + rankings[rankIdx].rank);
+				rankMap[rankArr[rankIdx].team_key] = rankArr[rankIdx];
+			}
+			
+			// Insert into DB
+			rankCol.insert(rankArr, function(e, docs) {
+				if(e) console.error(e);
+			});
+		});
+	});
 }
 
 function updateMatch(req, res){
+	
+	res.log("inside updateMatch function");
 	
 	var db = req.db;
 	var matchCol = db.get("matches");

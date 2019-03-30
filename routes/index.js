@@ -81,6 +81,8 @@ function updateMatch(req, res){
 	
 	//2019-03-30 JL: Copying from current/updatematch for webhook handling
 	
+	var thisFuncName = "index.webhook[post]: updateMatch: ";
+	
 	var db = req.db;
 	var matchCol = db.get("matches");
 	var rankCol = db.get("currentrankings");
@@ -137,7 +139,7 @@ function updateMatch(req, res){
 					}
 					aggQuery.push({ $group: groupClause });
 					aggQuery.push({ $sort: { _id: 1 } });
-					res.log(thisFuncName + 'aggQuery=' + JSON.stringify(aggQuery));
+					//res.log(thisFuncName + 'aggQuery=' + JSON.stringify(aggQuery));
 
 					// Run the aggregation!
 					aggCol.aggregate(aggQuery, function(e, docs){
@@ -145,8 +147,8 @@ function updateMatch(req, res){
 						if (docs)
 							aggArray = docs;
 							
-						res.log(rankMap);
-
+						//res.log(rankMap);
+						
 						var aggMinMaxArray = [];
 
 						// Cycle through & build a map of min/max values per scoring type per aggregation

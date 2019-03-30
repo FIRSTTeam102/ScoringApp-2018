@@ -23,6 +23,9 @@ router.post('/webhook', function(req, res){
 	
 	//if there is data in the request, proceed
 	if(req.body && req.body != {}){
+		console.log("body: "+typeof(req.body));
+		console.log("type: "+typeof(req.body.message_type));
+		console.log("message_data: "+typeof(req.body.message_data));
 		switch(req.body.message_type){
 			case "match_score":
 				updateMatch(req, res);

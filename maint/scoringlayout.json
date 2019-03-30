@@ -28,6 +28,7 @@
 {"year" : 2019, "order": "4020", "type": "checkbox", "label": "Died during the match (or never started)?", "id": "diedDuringMatch"}
 {"year" : 2019, "order": "4021", "type": "checkbox", "label": "Recovered from freeze?", "id": "recoveredFromFreeze"}
 {"year" : 2019, "order": "4025", "type": "spacer"}
+{"year" : 2019, "order": "4027", "type": "checkbox", "label": "Outstanding performance? (if so, definitely explain why!)", "id": "outstandingPerformance"}
 {"year" : 2019, "order": "4030", "type": "textblock", "label":"Other comments and notes:", "id":"otherNotes"}
 
 {"year" : 2018, "order":"1000","type":"h2","label":"Autonomous","id":"autolabel"}

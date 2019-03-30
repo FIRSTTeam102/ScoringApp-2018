@@ -97,7 +97,7 @@ function updateMatch(req, res){
 	
 	var data = req.body.message_data;
 	res.log("data:");
-	res.log(data);
+	res.log(JSON.stringify(data, null, 4));
 	
 	//if data is an object, proceed
 	if(typeof(data) == "object"){
@@ -180,12 +180,12 @@ function updateMatch(req, res){
 								thisMinMax['VARmin'] = VARmin; thisMinMax['VARmax'] = VARmax;
 								thisMinMax['MAXmin'] = MAXmin; thisMinMax['MAXmax'] = MAXmax;
 
-								res.log(thisFuncName + 'thisMinMax=' + JSON.stringify(thisMinMax));
+								//res.log(thisFuncName + 'thisMinMax=' + JSON.stringify(thisMinMax));
 
 								aggMinMaxArray.push(thisMinMax);
 							}
 						}
-						console.log(thisFuncName + 'aggMinMaxArray=' + JSON.stringify(aggMinMaxArray));
+						//res.log(thisFuncName + 'aggMinMaxArray=' + JSON.stringify(aggMinMaxArray));
 
 						// Delete the current agg ranges
 						currentAggCol.remove({}, function(e, docs) {
@@ -193,6 +193,7 @@ function updateMatch(req, res){
 							currentAggCol.insert(aggMinMaxArray, function(e, docs) {
 								// And we're done!
 								//2019-03-30 JL: No page-rendering necessary, for a bot sent us this req
+								console.log("finished");
 							});
 						});
 					});

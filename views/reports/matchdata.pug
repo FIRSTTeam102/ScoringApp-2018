@@ -1,6 +1,10 @@
 extends ../layout
 
 block content
+	style.
+		html{
+			overflow: visible;
+		}
 	include templates/heatmap
 	- var aggRangeMap = [];
 	for scoreItem in currentAggRanges
@@ -10,14 +14,14 @@ block content
 		- matchMap[matchItem.team_key] = matchItem;
 
 	//- h2(class="gear-text-white") Statistics for teams</br>#{teams.replace(/,/g, ', ').replace(/frc/g, '')}
-	h2(class="gear-text-white") Match data
+	h2(class="gear-text-white") Match data for match ##{match.match_number}
 	h6 <i>Click on a team number for intel on that team</i>
 	h6 <i>Click on a metric to compare all event teams</i>
 	
 	if (matches)
 		table(class="w3-table")
 			tr
-				th Metric (Avg)
+				th Metric
 				for team in match.alliances.red.team_keys
 					th(class="w3-right-align gear-text-white")
 						u
@@ -34,7 +38,7 @@ block content
 					when "badcounter"
 						tr
 							- var text = item.id; var result1 = text.replace( /([A-Z])/g, " $1" ); var result2 = result1.charAt(0).toUpperCase() + result1.slice(1)
-							- var abbrSplit = result2.split(" "); var abbr = ""; for (abbrIdx = 0; abbrIdx < abbrSplit.length; abbrIdx++) abbr = abbr + abbrSplit[abbrIdx].charAt(0); result2 = abbr;
+							-// var abbrSplit = result2.split(" "); var abbr = ""; for (abbrIdx = 0; abbrIdx < abbrSplit.length; abbrIdx++) abbr = abbr + abbrSplit[abbrIdx].charAt(0); result2 = abbr;
 							td(class="w3-text-light-gray w3-small")
 								a(href=`/reports/metricintel?key=${item.id}`)= result2
 							for team in match.alliances.red.team_keys
@@ -53,5 +57,6 @@ block content
 								else
 									td(class=`${valueCol}`)= matchMap[team].data[item.id]
 		p
+		a(class="gear-btn theme-link w3-btn" href=('/reports/matchmetrics?key=' + match.key)) <b>Comparative metrics for these alliances</b>
 
-	a(href='/reports/metricsranked') Click here to see overall ranked event data
+	a(class="gear-btn theme-link w3-btn" href='/reports/metricsranked') <b>Overall ranked event data</b>

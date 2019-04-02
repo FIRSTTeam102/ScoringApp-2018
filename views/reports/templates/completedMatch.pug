@@ -18,13 +18,13 @@ div(class="w3-row")
 				span #{matchPrefix.toUpperCase()} Match #{match.match_number}: 
 				span #{outcome}
 		div(class="w3-col s6")
-			a(href=`/reports/matchmetrics?key=${match.key}`)
+			a(href=`/reports/matchdata?key=${match.key}`)
 				div(class="w3-padding w3-small w3-border-right w3-border-top w3-border-gray gear-hover-white theme-rounded-bl")
-					i Compare alliances
+					i Scout data
 		div(class="w3-col s6")
 			a(href=`/reports/matchintel?key=${match.key}`)
 				div(class="w3-padding w3-small w3-border-top w3-border-gray gear-hover-white theme-rounded-br")
-					i Match outcome
+					i FIRST data
 	div(class="w3-col s12 m0 w3-tiny") &nbsp;
 	//-Title for medium screens
 	div(class="w3-col s0 m3 w3-padding-small")
@@ -34,13 +34,13 @@ div(class="w3-row")
 			div(class="w3-padding") #{matchPrefix.toUpperCase()} Match #{match.match_number}
 			div(class="w3-padding") #{outcome}
 			div(class="w3-col m6")
-				a(href=`/reports/matchmetrics?key=${match.key}`)
+				a(href=`/reports/matchdata?key=${match.key}`)
 					div(class="w3-padding-16 w3-small w3-border-right w3-border-top w3-border-gray gear-hover-white theme-rounded-bl") 
-						i Compare alliances
+						i Scout data
 			div(class="w3-col m6")
 				a(href=`/reports/matchintel?key=${match.key}`)
 					div(class="w3-padding-16 w3-small w3-border-top w3-border-gray gear-hover-white theme-rounded-br") 
-						i Match outcome
+						i FIRST data
 	//-Alliance container
 	div(class="w3-col s12 m9 w3-padding-small")
 		//- set shorthands for each team key

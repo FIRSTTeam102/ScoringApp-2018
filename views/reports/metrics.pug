@@ -1,7 +1,12 @@
 extends ../layout
 
 block content
-	h2(class="gear-text-white") Statistical summary of ALL teams
+	include templates/heatmap
+	- var aggRangeMap = [];
+	for scoreItem in currentAggRanges
+		- aggRangeMap[scoreItem.key] = scoreItem;
+
+	h2(class="gear-text-white") Statistical summary across ALL teams
 	h6 <i>Click on a metric to compare individual teams</i>
 	
 	if (aggdata)
@@ -19,14 +24,26 @@ block content
 						a(href=`/reports/metricintel?key=${agg.key}`)= result2
 					- var minCol = 'w3-right-align w3-text-white'
 					- if (agg.min == 0) minCol = 'w3-right-align w3-text-gray'
-					td(class=`${minCol}`)= agg.min
+					if (aggRangeMap[agg.key])
+						td(class=`${minCol}` style=`background-color: rgb(${getValR(aggRangeMap[agg.key].MINmin, aggRangeMap[agg.key].MINmax, agg.min)},${getValG(aggRangeMap[agg.key].MINmin, aggRangeMap[agg.key].MINmax, agg.min)},${getValB(aggRangeMap[agg.key].MINmin, aggRangeMap[agg.key].MINmax, agg.min)})`)= agg.min
+					else
+						td(class=`${minCol}`)= agg.min
 					- var avgCol = 'w3-right-align w3-text-white'
 					- if (agg.avg == 0) avgCol = 'w3-right-align w3-text-gray'
-					td(class=`${avgCol}`)= agg.avg
+					if (aggRangeMap[agg.key])
+						td(class=`${avgCol}` style=`background-color: rgb(${getValR(aggRangeMap[agg.key].AVGmin, aggRangeMap[agg.key].AVGmax, agg.avg)},${getValG(aggRangeMap[agg.key].AVGmin, aggRangeMap[agg.key].AVGmax, agg.avg)},${getValB(aggRangeMap[agg.key].AVGmin, aggRangeMap[agg.key].AVGmax, agg.avg)})`)= agg.avg
+					else
+						td(class=`${avgCol}`)= agg.avg
 					- var varCol = 'w3-right-align w3-text-white'
 					- if (agg.var == 0) varCol = 'w3-right-align w3-text-gray'
-					td(class=`${avgCol}`)= agg.var
+					if (aggRangeMap[agg.key])
+						td(class=`${varCol}` style=`background-color: rgb(${getValR(aggRangeMap[agg.key].VARmin, aggRangeMap[agg.key].VARmax, agg.var)},${getValG(aggRangeMap[agg.key].VARmin, aggRangeMap[agg.key].VARmax, agg.var)},${getValB(aggRangeMap[agg.key].VARmin, aggRangeMap[agg.key].VARmax, agg.var)})`)= agg.var
+					else
+						td(class=`${varCol}`)= agg.var
 					- var maxCol = 'w3-right-align w3-text-white'
 					- if (agg.max == 0) maxCol = 'w3-right-align w3-text-gray'
-					td(class=`${maxCol}`)= agg.max
+					if (aggRangeMap[agg.key])
+						td(class=`${maxCol}` style=`background-color: rgb(${getValR(aggRangeMap[agg.key].MAXmin, aggRangeMap[agg.key].MAXmax, agg.max)},${getValG(aggRangeMap[agg.key].MAXmin, aggRangeMap[agg.key].MAXmax, agg.max)},${getValB(aggRangeMap[agg.key].MAXmin, aggRangeMap[agg.key].MAXmax, agg.max)})`)= agg.max
+					else
+						td(class=`${maxCol}`)= agg.max
 

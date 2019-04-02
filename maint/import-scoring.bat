@@ -1,2 +1,2 @@
-mongo local --eval "db.scoringlayout.remove({});"
-mongoimport --db local --collection scoringlayout --file scoringlayout.json
+mongo app --eval "db.scoringlayout.remove({});"
+mongoimport --db app --collection scoringlayout --file scoringlayout.json

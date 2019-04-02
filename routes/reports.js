@@ -690,8 +690,68 @@ router.get("/alliancestats", function(req, res) {
 	});
 });
 
+router.get("/teamdata", function(req, res) {
+	var thisFuncName = "reports.teamdata[get]: ";
+	res.log(thisFuncName + 'ENTER');
+
+	var db = req.db;
+	var scoringCol = req.db.get('scoringdata');
+	var scoringLayoutCol = db.get("scoringlayout");
+	var currentAggCol = db.get("currentaggranges");
+	var teamCol = db.get('currentteams');
+
+	var event_year = req.event.year;
+	var event_key = req.event.key;
+	var teamKey = req.query.key;
+
+	if( !teamKey ){
+		return res.redirect("/?alert=Must specify team key for reports/teamdata");
+	}
+	res.log(`${thisFuncName} teamKey: ${teamKey}`);
+
+	// get the specified team object
+	teamCol.find({"key": teamKey}, {}, function (e, docs) {
+		var team = {};
+		if (docs && docs[0])
+			team = docs[0];
+			
+		res.log(`${thisFuncName} team: ${JSON.stringify(team)}`);
+	
+		// get the scoring data for the matches
+		scoringCol.find({"team_key": teamKey, "year": event_year, "event_key": event_key}, {sort: {"match_number": -1}}, function (e, docs) {
+			var matches = [];
+			if (docs)
+				matches = docs;
+
+			res.log(`${thisFuncName} matches: ${JSON.stringify(matches)}`);
+
+			// get the scoring layout
+			scoringLayoutCol.find({ "year": event_year }, {sort: {"order": 1}}, function(e, docs){
+				var scoreLayout = docs;
+
+				res.log(`${thisFuncName} scoreLayout: ${JSON.stringify(scoreLayout)}`);
+
+				// read in the current agg ranges
+				currentAggCol.find({}, {}, function (e, docs) {
+					var currentAggRanges = [];
+					if (docs)
+						currentAggRanges = docs;
+
+					res.render("./reports/teamdata", {
+						title: "Scoring Data For Team",
+						layout: scoreLayout,
+						currentAggRanges: currentAggRanges,
+						matches: matches,
+						team: team
+					});
+				});
+			});			
+		});
+	});
+});
+
 router.get("/matchdata", function(req, res) {
-	var thisFuncName = "reports.matchmetrics[get]: ";
+	var thisFuncName = "reports.matchdata[get]: ";
 	res.log(thisFuncName + 'ENTER');
 	
 	var db = req.db;
@@ -705,7 +765,7 @@ router.get("/matchdata", function(req, res) {
 	var matchKey = req.query.key;
 
 	if( !matchKey ){
-		return res.redirect("/?alert=Must specify match key for reports/matchmetrics");
+		return res.redirect("/?alert=Must specify match key for reports/matchdata");
 	}
 	res.log(`${thisFuncName} matchKey: ${matchKey}`);
 
@@ -999,6 +1059,7 @@ router.get("/metrics", function(req, res){
 	var aggCol = req.db.get('scoringdata');
 	var scoreCol = db.get("scoringlayout");
 	var currentCol = db.get("current");
+	var currentAggCol = db.get("currentaggranges");
 	
 	var event_year = req.event.year;
 
@@ -1077,9 +1138,17 @@ router.get("/metrics", function(req, res){
 				}
 				//res.log(thisFuncName + 'aggTable=' + JSON.stringify(aggTable));
 				
-				res.render("./reports/metrics", {
-					title: "Metrics For All Teams",
-					aggdata: aggTable
+				// read in the current agg ranges
+				currentAggCol.find({}, {}, function (e, docs) {
+					var currentAggRanges = [];
+					if (docs)
+						currentAggRanges = docs;
+
+					res.render("./reports/metrics", {
+						title: "Metrics For All Teams",
+						currentAggRanges: currentAggRanges,
+						aggdata: aggTable
+					});
 				});
 			});
 		});

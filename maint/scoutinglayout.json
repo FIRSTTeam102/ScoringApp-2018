@@ -1,5 +1,10 @@
 {"year": 2019, "order": "1000", "type": "h2", "label": "Robot construction", "id": "labelRobotConstruction"}
 {"year": 2019, "order": "1010", "type": "textblock", "label": "Describe the robot's drive train:", "id": "constructionDriveTrain"}
+{"year": 2019, "order": "1499", "type": "spacer"}
+{"year": 2019, "order": "1500", "type": "h2", "label": "Controls", "id": "labelControls"}
+{"year": 2019, "order": "1510", "type": "multiselect", "label": "What kind of controls does the driver use?", 
+	"options": ["Game controller (Xbox/PS4/etc.)", "One joystick", "Two joysticks", "Other"], "id": "controlsType"}
+{"year": 2019, "order": "1520", "type": "textblock", "label": "Other info: Any special notes on driving? Are there operator controls? What does the operator use? Etc.", "id": "controlsInfo"}
 {"year": 2019, "order": "1999", "type": "spacer"}
 {"year": 2019, "order": "2000", "type": "h2", "label": "Sandstorm period", "id": "labelSandstorm"}
 {"year": 2019, "order": "2010", "type": "checkbox", "label": "Do they use Autonomous code?", "id": "sandstormUseAuto"}

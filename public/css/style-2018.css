@@ -49,6 +49,9 @@ a{
 	cursor: pointer;
 }
 
+.img-chart-small{padding-left:80px!important;}  /*|\\\\\\\\\\\\\\\\\\\\\\\\\\|*/
+.img-chart-medium{padding-left:130px!important;}/*||||See teampictures.pug||||*/
+.img-chart-big{padding-left:150px!important;}   /*|//////////////////////////|*/
 .gear-red,.gear-hover-red:hover{color:#fff!important;background-color:#EC0D00!important}
 .gear-blue,.gear-hover-blue:hover{color:#fff!important;background-color:#2623B8!important}
 .gear-white,.gear-hover-white:hover{color:#1E1E23!important;background-color:#f2f2f8!important}

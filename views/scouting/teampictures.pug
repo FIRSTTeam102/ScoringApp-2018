@@ -1,23 +1,25 @@
-extends ../layout
 
+extends ../layout
 block content
 	if (teams)
 		h2(class="gear-text-white") Current event rankings
 		h6 <i>Click on a team to see intel on that team</i>
 		table(class="w3-table")
 			tr
-				th Team #
-				th Team Name
-				th Picture
-				th Origin
+				th(class="img-chart-small") Team #
+				th(class="img-chart-medium") Team Name
+				th(class="img-chart-small") Picture
+				th(class="img-chart-big") Origin
 			each team in teams
 				tr
-					td(class="w3-text-light-gray w3-center")
-						a(href=`/reports/teamintel?team=${team.key}`)= team.team_number
-					td(class="gear-text-white w3-center")= team.nickname
+					td(class="w3-text-light-gray w3-center")= team.team_number
+					td(class="gear-text-white w3-center")
+						a(href=`/reports/teamintel?team=${team.key}`)= team.nickname
 					td
-						img(src=`/uploads/responsive/${event_year}_${team.key}_sm.jpg` alt="[No image available]" class="w3-image" style="max-height:350px;")
-					td(class="w3-text-light-gray w3-center") Origin?
+						//-if (`/uploads/responsive/${event_year}_${team.key}_lg.jpg`)
+						a(href=`/uploads/responsive/${event_year}_${team.key}_lg.jpg`)
+							img(src=`/uploads/responsive/${event_year}_${team.key}_sm.jpg` alt="[No image available]" class="w3-image" style="max-height:350px;")
+					td(class="w3-text-light-gray w3-center") #{team.city}, #{team.state_prov}
 	else
 		h2(class="gear-text-white") <i>There is no team info in the system yet</i>
 		h6 Please check back later

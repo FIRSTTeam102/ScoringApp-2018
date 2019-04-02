@@ -59,12 +59,14 @@ router.post('/setcurrent', function(req, res) {
 				
 				var currentTeams = JSON.parse(teamsData);
 				
-				if(!currentTeams){
-					return res.status(500).send("didn't get teams list");
-				}
-				
 				//delete contents of currentteams
 				currentTeamsCol.remove({},function(){
+					
+					//2019-4-01 JL: Moved !currentTeams check to AFTER currentTeamsCol was emptied.
+					
+					if(!currentTeams){
+						return res.redirect(`/admin?alert=Set current event ${eventId} successfully but NO TEAMS WERE ADDED TO THE SYSTEM`);
+					}
 					
 					//insert teams into currentteams
 					currentTeamsCol.insert(currentTeams, function(){
@@ -73,21 +75,29 @@ router.post('/setcurrent', function(req, res) {
 						
 						client.get(rankingsUrl, args, function(rankData, response){
 							
-							//get rankings
-							var currentRankings = JSON.parse(rankData).rankings;
-							
 							//clear currentrankings
-							rankCol.remove({},function(){
+							rankCol.remove({}, function () {
 								
-								//now, insert rankings whether it's empty or not
-								rankCol.insert(currentRankings, function(){
+								//2019-04-1 JL: page now checks if rankings exist so server doesn't crash
+								//if rankdata exists, insert, otherwise don't
+								if (rankData && rankData != "null" && rankData[0]) {
 									
-									res.redirect(`/admin?alert=Set current event ${eventId} successfuly and got list of teams/rankings for event ${eventId} successfully.`);
-								})
+									//get rankings
+									var currentRankings = JSON.parse(rankData).rankings;
+									
+									//now, insert rankings whether it's empty or not
+									rankCol.insert(currentRankings, function () {
+										
+										res.redirect(`/admin?alert=Set current event ${eventId} successfuly and got list of teams/rankings for event ${eventId} successfully.`);
+									});
+								}
+								//if rankings don't exist, redirect w/o rankings info
+								else{
+									res.redirect(`/admin?alert=Set current event ${eventId} successfully and got list of teams for event ${eventId} successfully. NO RANKINGS HAVE BEEN RETRIEVED.`)
+								}
 							});
 						});
-						
-						});
+					});
 				})
 			});
 		});

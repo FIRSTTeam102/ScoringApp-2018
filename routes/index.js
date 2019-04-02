@@ -115,6 +115,8 @@ function updateMatch(req, res){
 		
 			// Now, insert the new object
 			matchCol.insert(array, function(e, docs) {
+				if(e)console.log(e);
+				
 				// Then read all the matches back in order
 				
 				matchCol.find({"event_key": event_key},{sort: {"time": 1}}, function(e, docs){

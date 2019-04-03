@@ -52,7 +52,17 @@ for(var i in process.argv){
 			console.log("Debug");
 			app.debug = true;
 			break;
+		case "-production":
+		case "--production":
+			app.production = true;
 	}
+}
+
+
+//PUG CACHING (if dev is NOT enabled or production IS enabled)
+if(!app.isDev || app.production){
+	console.log("Production")
+	process.env.NODE_ENV = "production";
 }
 
 //Boilerplate setup

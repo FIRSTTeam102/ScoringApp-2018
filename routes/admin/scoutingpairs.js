@@ -254,7 +254,7 @@ router.post("/generatematchallocations2", function(req, res) {
 	var activeTeamKey = 'frc102';
 	
 	// Gap between matches equal to or over this value means a "major" gap (e.g., lunch, overnight, etc.)
-	var matchGapBreakThreshold = 15 * 60;  // 12 minutes, in seconds
+	var matchGapBreakThreshold = 30 * 60;  // 30 minutes, in seconds
 	// Size of match blocks to be scouted - scouts will do this many matches in a row
 	var matchBlockSize = 5;  // default
 	res.log(thisFuncName + 'req.body.blockSize=' + req.body.blockSize);

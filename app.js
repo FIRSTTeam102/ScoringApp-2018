@@ -27,33 +27,50 @@ else{
 }
 var client = new Client();						//Creates node-rest-client.
 
-var app = express();							//Creates app.
+//isDev is typically used as a locals var in view engine.
+//debug is used for logging.
+//production is used to cache pug views.
+var isDev = false, debug = false, production = false;
 
-/* Checks process arguments.
+/* Check process arguments.
 	If -dev or --dev, isDev = true.
 	If -debug or --debug, debug = true.
 	If -d or --d, both = true.
 */
-app.isDev = false; //isDev is typically used as a locals var in view engine.
-app.debug = false; //debug is used for logging.
 for(var i in process.argv){
 	switch(process.argv[i]){
 		case "-dev":
 		case "--dev":
 			console.log("Dev");
-			app.isDev = true;
+			isDev = true;
 			break;
 		case "-d":
 		case "--d":
 			console.log("Dev");
-			app.isDev = true;
+			isDev = true;
 		case "-debug":
 		case "--debug":
 			console.log("Debug");
-			app.debug = true;
+			debug = true;
 			break;
+		case "-production":
+		case "--production":
+			production = true;
 	}
 }
+
+//PUG CACHING (if dev is NOT enabled or production IS enabled)
+if(!isDev || app.production){
+	console.log("Production");
+	process.env.NODE_ENV = "production";
+}
+
+//Create app.
+var app = express();
+
+//set app's bools to these arguments
+app.isDev = isDev; 
+app.debug = debug; 
 
 //Boilerplate setup
 app.set('views', path.join(__dirname, 'views'));

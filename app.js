@@ -60,7 +60,7 @@ for(var i in process.argv){
 }
 
 //PUG CACHING (if dev is NOT enabled or production IS enabled)
-if(!isDev || app.production){
+if(!isDev || production){
 	console.log("Production");
 	process.env.NODE_ENV = "production";
 }

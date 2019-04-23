@@ -48,10 +48,11 @@
 }
 
 /* Tooltip container */
-.tooltip {
-	position: relative;
-	display: inline-block;
-	border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+.w3-tooltip {
+	/*display: inline-block;*/
+	
+	/* Disable link highlighting */
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
 /* Tooltip text */
@@ -70,10 +71,16 @@
 	bottom: 125%;
 	left: 50%;
 	margin-left: -180px;
+	margin-top: -12px;
 
 	/* Fade in tooltip */
 	opacity: 0;
 	transition: opacity 0.3s;
+}
+
+.w3-tooltip .w3-tooltiptext:hover {
+	outline:none;
+	text-decoration:none;
 }
 
 /* Tooltip arrow */
@@ -142,6 +149,6 @@
 	.w3-tooltip .w3-tooltiptext{
 		width: 100%;
 		margin-left: 0px;
-		left: 0px; 
+		/*left: 0px; */
 	}
 }

@@ -43,14 +43,14 @@ block content
 					//-isRed for setting thick border of alliance div when a team is selected
 					- if( teamKey.substring(3) == team ) isRed = true;
 				
-				- //get date crap
+				- //get date info
 				- var date = new Date( match.time * 1000 )
 				- if (match.predicted_time) date = new Date( match.predicted_time * 1000 );
 				- var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 				- var day = days[date.getDay()];
 				- var hour = date.getHours();
 				- var minute = date.getMinutes();
-				- //make minute crap 2 digits
+				- //make minute 2 digits
 				- minute = (minute.toString().length==1) ? "0".concat(minute.toString()) : minute;
 				
 				div(class="w3-row")

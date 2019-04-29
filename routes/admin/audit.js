@@ -144,7 +144,7 @@ router.get('/bymatch', async function(req, res){
 	var eventId = req.event.key;
 	
 	// Get the *min* time of the as-yet-unresolved matches [where alliance scores are still -1]
-	var matches = utilities.find("matches", {event_key: eventId, "alliances.red.score": -1}, {sort: {"time": 1}});
+	var matches = await utilities.find("matches", {event_key: eventId, "alliances.red.score": -1}, {sort: {"time": 1}});
 	
 	// 2018-03-13, M.O'C - Fixing the bug where dashboard crashes the server if all matches at an event are done
 	var earliestTimestamp = 9999999999;

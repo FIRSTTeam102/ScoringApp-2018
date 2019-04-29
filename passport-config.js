@@ -1,5 +1,5 @@
 var passport = require('passport');
-var bcrypt = require('bcrypt');					//bcrypt for password encryption
+var bcrypt = require('bcryptjs');					//bcrypt for password encryption
 var LocalStrategy = require('passport-local').Strategy; //strategy for passport
 var monk = require('monk');
 

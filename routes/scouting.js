@@ -266,8 +266,8 @@ router.post('/submitpit', function(req, res) {
 	});
 });
 
-//For \views\scouting\teampictures.pug
-router.get('/teampictures', function(req, res) {
+//For \views\scouting\teampictures.pug///////////////////////////////////////////////////
+router.get('/teampictures', async function(req, res) {
 
 	var thisFuncName = "scouting.teampictures[get]: ";
 		res.log(thisFuncName + 'ENTER');
@@ -277,7 +277,7 @@ router.get('/teampictures', function(req, res) {
 		
 		var event_year = req.event.year;
 
-		teamCol.find({}, {sort: {team_number: 1}}, function(e, docs) {
+		await teamCol.find({}, {sort: {team_number: 1}}, function(e, docs) {
 			var teams = [];
 			if (docs && docs.length > 0)
 				teams = docs;
@@ -292,7 +292,6 @@ router.get('/teampictures', function(req, res) {
 				}
 				else {teams[i].hasPicture = false;}
 			}
-			//res.log(thisFuncName + 'rankings=' + JSON.stringify(rankings));
 			
 			res.render("./scouting/teampictures", {
 				title: "Team Pictures",

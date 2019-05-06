@@ -14,7 +14,7 @@ router.get('/', async function(req, res) {
 	//Prepare an alert. (Used w/ url /?alert=(alert))
 	if(req.query)
 		var alert = req.query.alert || null;
-	var teams = await utilities.find("currentteams", /*Copied from line below: */{},{sort:{team_number: 1}});
+	var teams = await utilities.find("currentteams", {},{sort:{team_number: 1}});
 	//Also copied from this file
 	if(!teams || !teams[0]){
 		res.log(e || "No teams listed yet");

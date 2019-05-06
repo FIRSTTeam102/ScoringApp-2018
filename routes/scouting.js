@@ -1,5 +1,7 @@
 var express = require('express');
 var router = express.Router();
+//from audit.js; gets utilities variable
+const utilities = require("../utilities");
 
 router.get('/match*', function(req, res) {
 	
@@ -277,7 +279,24 @@ router.get('/teampictures', async function(req, res) {
 		
 		var event_year = req.event.year;
 
-		await teamCol.find({}, {sort: {team_number: 1}}, function(e, docs) {
+		var teamPrms = await utilities.find("currentteams", {}, {sort: {team_number: 1}})
+		var fs = require("fs");
+		var path = require("path");
+		var UPLOAD_PATH = path.resolve(__dirname, '..', process.env.AVATAR_STORAGE) + "\\";
+		for (var i = 0; i < teamPrms.length; i++) {
+			var team = teamPrms[i];
+				//console.log(`${UPLOAD_PATH}\\responsive\\${event_year}_${team.key}_sm.jpg`);
+			if (fs.existsSync(`${UPLOAD_PATH}\\responsive\\${event_year}_${team.key}_sm.jpg`)) {
+				teamPrms[i].hasPicture = true;
+			}
+			else {teamPrms[i].hasPicture = false;}
+		}
+		
+		res.render("./scouting/teampictures", {
+			title: "Team Pictures",
+			teams: teamPrms
+		});
+		/*teamCol.find({}, {sort: {team_number: 1}}, function(e, docs) {
 			var teams = [];
 			if (docs && docs.length > 0)
 				teams = docs;
@@ -297,7 +316,7 @@ router.get('/teampictures', async function(req, res) {
 				title: "Team Pictures",
 				teams: teams
 			});
-		});
+		});*/
 });
 /////////////////////////////////////////
 /////////////////////////////////////////

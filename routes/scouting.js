@@ -93,7 +93,8 @@ router.post('/match/submit', function(req, res) {
 
 	// Get the 'layout' so we know types of data elements
 	var scoreCol = req.db.get("scoringlayout");
-	scoreCol.find({}, {sort: {"order": 1}}, function(e, docs){
+	var sCPrms = utilities.find("currentteams", {}, {sort: {"order": 1}});
+	/*scoreCol.find({}, {sort: {"order": 1}}, function(e, docs){
 		var layout = docs;
 		var layoutTypeById = {};
 		//res.log(thisFuncName + "layout=" + JSON.stringify(layout));
@@ -134,7 +135,7 @@ router.post('/match/submit', function(req, res) {
 				return res.send({status: 500, message: e});
 			return res.send({message: "Submitted data successfully.", status: 200});
 		});
-	});
+	});*/
 });
 
 router.post('/submitmatch', function(req, res) {
@@ -190,6 +191,7 @@ router.get('/pit*', function(req, res) {
 		var layout = docs;
 
 		//pasted code
+
 		pitCol.find({ "event_key" : event_key, "team_key" : teamKey }, {}, function(e, docs){
 			var pitData = null;
 			if (docs && docs[0])

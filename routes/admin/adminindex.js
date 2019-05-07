@@ -6,7 +6,7 @@ var router = express.Router();
  * @url /admin/
  * @views /adminindex
  */
-router.get('/', function(req, res) {
+router.get('/', async function(req, res) {
 	if( !require('../checkauthentication')(req, res, 'admin') ){
 		return null;
 	}

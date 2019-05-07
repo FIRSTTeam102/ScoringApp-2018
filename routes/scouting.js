@@ -63,7 +63,7 @@ router.get('/match*', function(req, res) {
 	});
 });
 
-router.post('/match/submit', function(req, res) {
+router.post('/match/submit', async function(req, res) {
 	
 	/** We need to do this eventually for security. Commented out of fear that scouters may be logged out while scouting (by accident)
 	//auth
@@ -92,8 +92,46 @@ router.post('/match/submit', function(req, res) {
 	//res.log(thisFuncName + 'matchData=' + JSON.stringify(matchData));
 
 	// Get the 'layout' so we know types of data elements
-	var scoreCol = req.db.get("scoringlayout");
-	var sCPrms = utilities.find("currentteams", {}, {sort: {"order": 1}});
+	var layout = await utilities.find("scoringlayout", {}, {sort: {"order": 1}});
+	var layoutTypeById = {};
+	//res.log(thisFuncName + "layout=" + JSON.stringify(layout));
+	for (var property in layout) {
+		if (layout.hasOwnProperty(property)) {
+			//res.log(thisFuncName + layout[property].id + " is a " + layout[property].type);
+			layoutTypeById[layout[property].id] = layout[property].type;
+		}
+	}
+
+	// Process input data, convert to numeric values
+	for (var property in matchData) {
+		var thisType = layoutTypeById[property];
+		//res.log(thisFuncName + property + " :: " + matchData[property] + " ~ is a " + thisType);
+		if ('counter' == thisType || 'badcounter' == thisType) {
+			//res.log(thisFuncName + "...converting " + matchData[property] + " to a number");
+			var newVal = -1;
+			if (matchData[property]) {
+				var parseVal = parseInt(matchData[property]);
+				if (!isNaN(parseVal))
+					newVal = parseVal;
+			}
+			matchData[property] = newVal;
+		}
+		if ('checkbox' == thisType) {
+			//res.log(thisFuncName + "...converting " + matchData[property] + " to a boolean 1/0 number");
+			var newVal = (matchData[property] == "true" || matchData[property] == true) ? 1 : 0;
+			matchData[property] = newVal;
+		}
+	}
+	res.log(thisFuncName + "matchData(UPDATED)=" + JSON.stringify(matchData));
+
+	// Post modified data to DB
+	var matchCol = req.db.get('scoringdata');
+	//no update function in utilities (yet)
+	matchCol.update( { "match_team_key" : match_team_key }, { $set: { "data" : matchData, "actual_scorer": thisUserName, useragent: req.shortagent } }, function(e, docs){
+		if(e)
+			return res.send({status: 500, message: e});
+		return res.send({message: "Submitted data successfully.", status: 200});
+	});
 	/*scoreCol.find({}, {sort: {"order": 1}}, function(e, docs){
 		var layout = docs;
 		var layoutTypeById = {};

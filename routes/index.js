@@ -260,8 +260,15 @@ router.get("/logout", function(req, res) {
 	//Logs out user with message
 	req.logout();
 	
+	//destroy session
+	req.session.destroy(function (err) {
+		if (err) { return next(err); }
+		//Redirect user
+		res.redirect('/')
+	});
+	
 	//Redirects user
-	res.redirect('/')
+	//res.redirect('/')
 });
 
 module.exports = router;

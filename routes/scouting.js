@@ -1,5 +1,7 @@
 var express = require('express');
 var router = express.Router();
+//from audit.js; gets utilities variable
+const utilities = require("../utilities");
 
 router.get('/match*', function(req, res) {
 	
@@ -61,7 +63,7 @@ router.get('/match*', function(req, res) {
 	});
 });
 
-router.post('/match/submit', function(req, res) {
+router.post('/match/submit', async function(req, res) {
 	
 	/** We need to do this eventually for security. Commented out of fear that scouters may be logged out while scouting (by accident)
 	//auth
@@ -90,8 +92,47 @@ router.post('/match/submit', function(req, res) {
 	//res.log(thisFuncName + 'matchData=' + JSON.stringify(matchData));
 
 	// Get the 'layout' so we know types of data elements
-	var scoreCol = req.db.get("scoringlayout");
-	scoreCol.find({}, {sort: {"order": 1}}, function(e, docs){
+	var layout = await utilities.find("scoringlayout", {}, {sort: {"order": 1}});
+	var layoutTypeById = {};
+	//res.log(thisFuncName + "layout=" + JSON.stringify(layout));
+	for (var property in layout) {
+		if (layout.hasOwnProperty(property)) {
+			//res.log(thisFuncName + layout[property].id + " is a " + layout[property].type);
+			layoutTypeById[layout[property].id] = layout[property].type;
+		}
+	}
+
+	// Process input data, convert to numeric values
+	for (var property in matchData) {
+		var thisType = layoutTypeById[property];
+		//res.log(thisFuncName + property + " :: " + matchData[property] + " ~ is a " + thisType);
+		if ('counter' == thisType || 'badcounter' == thisType) {
+			//res.log(thisFuncName + "...converting " + matchData[property] + " to a number");
+			var newVal = -1;
+			if (matchData[property]) {
+				var parseVal = parseInt(matchData[property]);
+				if (!isNaN(parseVal))
+					newVal = parseVal;
+			}
+			matchData[property] = newVal;
+		}
+		if ('checkbox' == thisType) {
+			//res.log(thisFuncName + "...converting " + matchData[property] + " to a boolean 1/0 number");
+			var newVal = (matchData[property] == "true" || matchData[property] == true) ? 1 : 0;
+			matchData[property] = newVal;
+		}
+	}
+	res.log(thisFuncName + "matchData(UPDATED)=" + JSON.stringify(matchData));
+
+	// Post modified data to DB
+	var matchCol = req.db.get('scoringdata');
+	//no update function in utilities (yet)
+	matchCol.update( { "match_team_key" : match_team_key }, { $set: { "data" : matchData, "actual_scorer": thisUserName, useragent: req.shortagent } }, function(e, docs){
+		if(e)
+			return res.send({status: 500, message: e});
+		return res.send({message: "Submitted data successfully.", status: 200});
+	});
+	/*scoreCol.find({}, {sort: {"order": 1}}, function(e, docs){
 		var layout = docs;
 		var layoutTypeById = {};
 		//res.log(thisFuncName + "layout=" + JSON.stringify(layout));
@@ -132,7 +173,7 @@ router.post('/match/submit', function(req, res) {
 				return res.send({status: 500, message: e});
 			return res.send({message: "Submitted data successfully.", status: 200});
 		});
-	});
+	});*/
 });
 
 router.post('/submitmatch', function(req, res) {
@@ -188,6 +229,7 @@ router.get('/pit*', function(req, res) {
 		var layout = docs;
 
 		//pasted code
+
 		pitCol.find({ "event_key" : event_key, "team_key" : teamKey }, {}, function(e, docs){
 			var pitData = null;
 			if (docs && docs[0])
@@ -266,8 +308,8 @@ router.post('/submitpit', function(req, res) {
 	});
 });
 
-//For \views\scouting\teampictures.pug
-router.get('/teampictures', function(req, res) {
+//For \views\scouting\teampictures.pug///////////////////////////////////////////////////
+router.get('/teampictures', async function(req, res) {
 
 	var thisFuncName = "scouting.teampictures[get]: ";
 		res.log(thisFuncName + 'ENTER');
@@ -277,7 +319,24 @@ router.get('/teampictures', function(req, res) {
 		
 		var event_year = req.event.year;
 
-		teamCol.find({}, {sort: {team_number: 1}}, function(e, docs) {
+		var teamPrms = await utilities.find("currentteams", {}, {sort: {team_number: 1}})
+		var fs = require("fs");
+		var path = require("path");
+		var UPLOAD_PATH = path.resolve(__dirname, '..', process.env.AVATAR_STORAGE) + "\\";
+		for (var i = 0; i < teamPrms.length; i++) {
+			var team = teamPrms[i];
+				//console.log(`${UPLOAD_PATH}\\responsive\\${event_year}_${team.key}_sm.jpg`);
+			if (fs.existsSync(`${UPLOAD_PATH}\\responsive\\${event_year}_${team.key}_sm.jpg`)) {
+				teamPrms[i].hasPicture = true;
+			}
+			else {teamPrms[i].hasPicture = false;}
+		}
+		
+		res.render("./scouting/teampictures", {
+			title: "Team Pictures",
+			teams: teamPrms
+		});
+		/*teamCol.find({}, {sort: {team_number: 1}}, function(e, docs) {
 			var teams = [];
 			if (docs && docs.length > 0)
 				teams = docs;
@@ -292,13 +351,12 @@ router.get('/teampictures', function(req, res) {
 				}
 				else {teams[i].hasPicture = false;}
 			}
-			//res.log(thisFuncName + 'rankings=' + JSON.stringify(rankings));
 			
 			res.render("./scouting/teampictures", {
 				title: "Team Pictures",
 				teams: teams
 			});
-		});
+		});*/
 });
 /////////////////////////////////////////
 /////////////////////////////////////////

@@ -69,6 +69,38 @@ utilities.find = async function(collection, parameters, options){
 	return data;
 }
 
+
+/**
+ * Asynchronous "remove" function to a collection specified in first parameter.
+ * @param collection [String] Collection to remove from.
+ * @param parameters [Object] Query parameters (Element/s to remove).
+ */
+utilities.remove = async function(collection, parameters){
+	
+	//If the collection is not specified and is not a String, throw an error.
+	//This would obly be caused by a programming error.
+	if(typeof(collection) != "string"){
+		throw new Error("Collection must be specified.");
+	}
+	//If query parameters are not set, create an empty object for the DB call.
+	if(!parameters){
+		var parameters = {};
+	}
+	//If parameters exists and is not an object, throw an error. 
+	if(typeof(parameters) != "object"){
+		throw new Error("Utilities.find Error: Parameters must be of type object");
+	}
+	
+	//Get collection
+	var Col = db.get(collection);
+	//Remove in collection with parameters
+	var writeResult;
+	writeResult = await Col.remove(parameters);
+	
+	//return writeResult
+	return writeResult;
+}
+
 /**
  * Asynchronous request to TheBlueAlliance. Requires a URL ending to execute correctly.
  * @param {string} url ENDING of URL, after "https://.../api/v3/"

@@ -6,7 +6,7 @@ var router = express.Router();
  * @url /admin/
  * @views /adminindex
  */
-router.get('/', async function(req, res) {
+router.get('/', function(req, res) {
 	if( !require('../checkauthentication')(req, res, 'admin') ){
 		return null;
 	}
@@ -22,9 +22,6 @@ router.get('/', async function(req, res) {
 	});
 });
 
-/**
- * 
- */
 router.get('/backup', async function(req, res){
 	
 	var times = [];
@@ -170,6 +167,8 @@ router.get('/generatedata', function(req, res) {
 	
 	// for later querying by event_key
 	var eventId = req.event.key;
+	
+	//  Async/await this  //////////////////////
 	
 	// Get the *min* time of the as-yet-unresolved matches [where alliance scores are still -1]
 	matchCol.find({ event_key: eventId, "alliances.red.score": -1 },{sort: {"time": 1}}, function(e, docs){

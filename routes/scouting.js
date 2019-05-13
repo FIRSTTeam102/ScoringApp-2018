@@ -313,7 +313,7 @@ router.post('/submitpit', function(req, res) {
 	var db = req.db;
     var pitCol = db.get('scoutingdata');
 	var event_key = req.event.key;
-	
+	//save for later async
 	pitCol.update( { "event_key" : event_key, "team_key" : teamKey }, { $set: { "data" : pitData, "actual_scouter": thisUserName } }, function(e, docs){
 		res.redirect("/dashboard");
 	});

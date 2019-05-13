@@ -1,5 +1,8 @@
 const monk = require("monk");
 const fs = require("fs");
+//set up node rest client
+const Client = require('node-rest-client').Client;
+const client = new Client();
 
 var utilities = module.exports =  {};
 
@@ -102,6 +105,33 @@ utilities.remove = async function(collection, parameters){
 }
 
 /**
+ * Asynchronous "insert" function to a collection specified in first parameter.
+ * @param collection [String] Collection to insert into.
+ * @param parameters [Any] Element or array of elements to insert
+ */
+utilities.insert = async function(collection, elements){
+	
+	//If the collection is not specified and is not a String, throw an error.
+	//This would obly be caused by a programming error.
+	if(typeof(collection) != "string"){
+		throw new Error("Collection must be specified.");
+	}
+	//If query parameters are not set, create an empty object for the DB call.
+	if(!elements){
+		throw new Error("Must contain an element or array of elements to insert.");
+	}
+	
+	//Get collection
+	var Col = db.get(collection);
+	//Insert in collection
+	var writeResult;
+	writeResult = await Col.insert(elements);
+	
+	//return writeResult
+	return writeResult;
+}
+
+/**
  * Asynchronous request to TheBlueAlliance. Requires a URL ending to execute correctly.
  * @param {string} url ENDING of URL, after "https://.../api/v3/"
  * @return {Promise} Promise; Resolves when client receives a request from TBA
@@ -111,8 +141,10 @@ utilities.requestTheBlueAliance = async function(url){
 	//Setup our request URL, including specified URL ending parameter
 	var requestURL = "https://www.thebluealliance.com/api/v3/" + url;
 	
+	console.log(requestURL);
+	
 	//Get TBA key
-	var tbaKey = await getTBAKey();
+	var tbaKey = await utilities.getTBAKey();
 	
 	//Create promise first
 	var thisPromise = new Promise(function(resolve, reject){

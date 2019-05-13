@@ -202,7 +202,7 @@ router.post('/submitmatch', function(req, res) {
 	});
 });
 
-router.get('/pit*', function(req, res) {
+router.get('/pit*', async function(req, res) {
 	//auth
 	if(!require('./checkauthentication')(req, res))
 		return null;
@@ -224,7 +224,7 @@ router.get('/pit*', function(req, res) {
 	var scoutCol = db.get("scoutinglayout");
 	var pitCol = req.db.get('scoutingdata'); //for pitcol.find()
 	
-	
+	//async-ify this maybe
 	scoutCol.find({ "year": event_year }, {sort: {"order": 1}}, function(e, docs){
 		var layout = docs;
 

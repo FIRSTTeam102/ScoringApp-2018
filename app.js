@@ -80,12 +80,35 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+var mongoose = require('mongoose');
+ 
+mongoose.connect('mongodb://localhost/sessions', {useNewUrlParser: true});
+
 //Session
 app.use(session({
+	secret: 'sfl44-dfjl-436gg-dsfdf',
+	resave: true,
+	saveUninitialized: true,
+    cookie: { maxAge: 2628000000 },
+    store: new (require('express-sessions'))({
+        storage: 'mongodb',
+        instance: mongoose, // optional
+        host: 'localhost', // optional
+        port: 27017, // optional
+        db: 'sessions', // optional
+        collection: 'sessions', // optional
+        expire: 86400 // optional
+    })
+}))
+
+//Session
+/*
+app.use(session({
 	secret: 'marcus night',
-	resave: false,
+	resave: true,
 	saveUninitialized: true
 }));
+*/
 //User agent for logging
 app.use(useragent.express());
 

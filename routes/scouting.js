@@ -224,27 +224,38 @@ router.get('/pit*', async function(req, res) {
 	var scoutCol = db.get("scoutinglayout");
 	var pitCol = req.db.get('scoutingdata'); //for pitcol.find()
 	
-	//async-ify this maybe
-	scoutCol.find({ "year": event_year }, {sort: {"order": 1}}, function(e, docs){
-		var layout = docs;
 
-		//pasted code
-
-		pitCol.find({ "event_key" : event_key, "team_key" : teamKey }, {}, function(e, docs){
-			var pitData = null;
-			if (docs && docs[0])
-				if (docs[0].data)
-					pitData = docs[0].data;
-
-			//res.log(layout);
-			res.render("./scouting/pit", {
-				title: "Pit Scouting",
-				layout: layout,
-				pitData: pitData, 
-				key: teamKey
-			});
-		});
+	var layout = await utilities.find("scoutinglayout", { "year": event_year }, {sort: {"order": 1}});
+	var returnPitData = await utilities.find("scoutingdata", { "year": event_year }, {sort: {"order": 1}});
+	var pitData = null;
+	if (docs && docs[0])
+		if (docs[0].data)
+			pitData = docs[0].data;
+	res.render("./scouting/pit", {
+		title: "Pit Scouting",
+		layout: layout,
+		pitData: pitData, 
+		key: teamKey
 	});
+	// scoutCol.find({ "year": event_year }, {sort: {"order": 1}}, function(e, docs){
+	// 	var layout = docs;
+
+	// 	//pasted code
+	// 	pitCol.find({ "event_key" : event_key, "team_key" : teamKey }, {}, function(e, docs){
+	// 		var pitData = null;
+	// 		if (docs && docs[0])
+	// 			if (docs[0].data)
+	// 				pitData = docs[0].data;
+
+	// 		//res.log(layout);
+	// 		res.render("./scouting/pit", {
+	// 			title: "Pit Scouting",
+	// 			layout: layout,
+	// 			pitData: pitData, 
+	// 			key: teamKey
+	// 		});
+	// 	});
+	// });
 });
 
 router.post('/pit/submit', function(req, res){

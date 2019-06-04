@@ -1,3 +1,7 @@
+/////////////////////////////////////////
+//// up-to-date asynced on 05/13/2019////
+/////////////////////////////////////////
+
 var express = require('express');
 var router = express.Router();
 //from audit.js; gets utilities variable
@@ -202,7 +206,7 @@ router.post('/submitmatch', function(req, res) {
 	});
 });
 
-router.get('/pit*', function(req, res) {
+router.get('/pit*', async function(req, res) {
 	//auth
 	if(!require('./checkauthentication')(req, res))
 		return null;
@@ -224,27 +228,38 @@ router.get('/pit*', function(req, res) {
 	var scoutCol = db.get("scoutinglayout");
 	var pitCol = req.db.get('scoutingdata'); //for pitcol.find()
 	
-	
-	scoutCol.find({ "year": event_year }, {sort: {"order": 1}}, function(e, docs){
-		var layout = docs;
 
-		//pasted code
-
-		pitCol.find({ "event_key" : event_key, "team_key" : teamKey }, {}, function(e, docs){
-			var pitData = null;
-			if (docs && docs[0])
-				if (docs[0].data)
-					pitData = docs[0].data;
-
-			//res.log(layout);
-			res.render("./scouting/pit", {
-				title: "Pit Scouting",
-				layout: layout,
-				pitData: pitData, 
-				key: teamKey
-			});
-		});
+	var layout = await utilities.find("scoutinglayout", { "year": event_year }, {sort: {"order": 1}});
+	var returnPitData = await utilities.find("scoutingdata", { "year": event_year }, {sort: {"order": 1}});
+	var pitData = null;
+	if (docs && docs[0])
+		if (docs[0].data)
+			pitData = docs[0].data;
+	res.render("./scouting/pit", {
+		title: "Pit Scouting",
+		layout: layout,
+		pitData: pitData, 
+		key: teamKey
 	});
+	// scoutCol.find({ "year": event_year }, {sort: {"order": 1}}, function(e, docs){
+	// 	var layout = docs;
+
+	// 	//pasted code
+	// 	pitCol.find({ "event_key" : event_key, "team_key" : teamKey }, {}, function(e, docs){
+	// 		var pitData = null;
+	// 		if (docs && docs[0])
+	// 			if (docs[0].data)
+	// 				pitData = docs[0].data;
+
+	// 		//res.log(layout);
+	// 		res.render("./scouting/pit", {
+	// 			title: "Pit Scouting",
+	// 			layout: layout,
+	// 			pitData: pitData, 
+	// 			key: teamKey
+	// 		});
+	// 	});
+	// });
 });
 
 router.post('/pit/submit', function(req, res){
@@ -302,7 +317,7 @@ router.post('/submitpit', function(req, res) {
 	var db = req.db;
     var pitCol = db.get('scoutingdata');
 	var event_key = req.event.key;
-	
+	//save for later async
 	pitCol.update( { "event_key" : event_key, "team_key" : teamKey }, { $set: { "data" : pitData, "actual_scouter": thisUserName } }, function(e, docs){
 		res.redirect("/dashboard");
 	});

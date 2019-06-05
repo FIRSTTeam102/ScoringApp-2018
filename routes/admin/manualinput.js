@@ -5,7 +5,7 @@ var utilities = require('../../utilities');
 router.get('/teams', async function(req, res){
 	
 	//Get list of currentteams
-	var teamsArray = await utilities.find("currentteams");
+	var teamsArray = await utilities.find("currentteams", {}, {sort: {"team_number": 1}});
 	
 	res.render('./manualinput/teams', {
 		title: "Manually Input Teams",
@@ -46,7 +46,6 @@ router.post('/teams', async function(req, res){
 		teamInfoArray[i] = await tbaPromiseArray[i];
 	}
 	
-	res.log(teamInfoArray);
 	res.log(`Done with TBA call in ${Date.now() - startTime} ms`);
 	
 	//Go through teamInfoArray and splice out any item that contains errors
@@ -56,28 +55,42 @@ router.post('/teams', async function(req, res){
 		if(thisTeamInfo.Errors){
 			res.log("Going to remove: " + JSON.stringify(thisTeamInfo));
 			teamInfoArray.splice(i, 1);
+			i--;
 		}
 	}
 	
-	var itemsToSpliceOut = [];
+	var teamInfoNoDuplicates = [];
 	
-	//Verify that there are no duplicates.
+	//Rebuild array without duplicates.
 	for(var i = 0; i < teamInfoArray.length; i++){
 		
+		//grab team info to check for dupes
 		var thisTeamInfo = teamInfoArray[i];
 		var thisTeamNum = thisTeamInfo.team_number;
 		
-		//go through array again
-		for(var j = 0; j < teamInfoArray.length; j++){
-			//we don't want to compare team to itself
-			if(i != j){
-				var thatTeamInfo = teamInfoArray[j];
-				var thatTeamNum = thatTeamInfo.team_number;
-				if(thisTeamNum == thatTeamNum){
-					//add this item to array
-					itemsToSpliceOut = j;
-				}
+		let didFindDuplicate = false;
+		
+		res.log("================");
+		res.log("CHECKING TEAM " + thisTeamNum);
+		
+		for(var j = 0; j < teamInfoNoDuplicates.length; j++){
+			
+			//grab team info to compare
+			var thatTeamInfo = teamInfoArray[j];
+			var thatTeamNum = thatTeamInfo.team_number;
+			
+			res.log("CMP: " + thatTeamNum);
+			
+			//if duplicat exists, set true
+			if(thisTeamNum == thatTeamNum){
+				didFindDuplicate = true;
+				res.log("MATCH: Removing duplicate " + thisTeamNum + " from team list", true);
 			}
+		}
+		//Add to new array if no duplicates exist.
+		if(!didFindDuplicate){
+			teamInfoNoDuplicates.push(thisTeamInfo);
+			res.log("PUSHING " + thisTeamNum);
 		}
 	}
 	
@@ -86,7 +99,7 @@ router.post('/teams', async function(req, res){
 	await utilities.remove("currentteams");
 	
 	//Now, insert into currentteams.
-	await utilities.insert("currentteams", teamInfoArray);
+	await utilities.insert("currentteams", teamInfoNoDuplicates);
 	
 	//Redirect with success message.
 	res.redirect('/admin?alert=Input teams successfully.');

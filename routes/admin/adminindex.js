@@ -91,8 +91,8 @@ router.post('/setcurrent', async function(req, res) {
 	var teamsUrl = `event/${eventId}/teams`;
 	var rankingsUrl = `event/${eventId}/rankings`;
 	
-	var promiseForTeams = utilities.requestTheBlueAliance(teamsUrl);
-	var promiseForRankings = utilities.requestTheBlueAliance(rankingsUrl);
+	var promiseForTeams = utilities.requestTheBlueAlliance(teamsUrl);
+	var promiseForRankings = utilities.requestTheBlueAlliance(rankingsUrl);
 	
 	//Delete contents of currentTeams
 	await utilities.remove("currentteams");
@@ -113,8 +113,12 @@ router.post('/setcurrent', async function(req, res) {
 	
 	//Await TBA request for rankings
 	var rankingsResponse = await promiseForRankings;
+	
+	res.log(rankingsResponse);
 		
-	if (rankingsResponse && rankingsResponse != "null") {
+	if (rankingsResponse && rankingsResponse != "null" 
+		&& rankingsResponse.rankings && rankingsResponse.rankings != "null") {
+		
 		//get rankings array
 		var rankings = rankingsResponse.rankings;
 		

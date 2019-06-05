@@ -136,7 +136,7 @@ utilities.insert = async function(collection, elements){
  * @param {string} url ENDING of URL, after "https://.../api/v3/"
  * @return {Promise} Promise; Resolves when client receives a request from TBA
  */
-utilities.requestTheBlueAliance = async function(url){
+utilities.requestTheBlueAlliance = async function(url){
 	
 	//Setup our request URL, including specified URL ending parameter
 	var requestURL = "https://www.thebluealliance.com/api/v3/" + url;

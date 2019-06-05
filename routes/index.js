@@ -17,7 +17,7 @@ router.get('/', async function(req, res) {
 	var teams = await utilities.find("currentteams", {},{sort:{team_number: 1}});
 	//Also copied from this file
 	if(!teams || !teams[0]){
-		res.log(e || "No teams listed yet");
+		res.log("No teams listed yet");
 		return res.render('./index', { 
 			title: 'Home',
 			alert: alert

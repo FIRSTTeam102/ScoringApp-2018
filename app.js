@@ -168,7 +168,7 @@ app.use("/admin/teammembers", teammembers);
 app.use('/admin/data', externaldata);
 app.use('/admin/current', current);
 app.use('/admin/audit', scoutingaudit);
-app.use('/manualinput', manualinput);
+app.use('/admin/manualinput', manualinput);
 app.use('/image', image);
 
 // catch 404 and forward to error handler

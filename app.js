@@ -90,8 +90,8 @@ var db;
 if(hasDBUserFile){
 	//if there is a .dbuser file, connect with the user inside that file
 	var dbUser = JSON.parse(fs.readFileSync(".dbuser", {"encoding": "utf8"}));
-	console.log(`mongodb://${dbUser.username}:${dbUser.password}@localhost/sessions`);
-	mongoose.connect(`mongodb://${dbUser.username}:${dbUser.password}@localhost/sessions`, {});
+	console.log(`mongodb://${dbUser.username}:${dbUser.password}@localhost/sessions?authSource=app&w=1`);
+	mongoose.connect(`mongodb://${dbUser.username}:${dbUser.password}@localhost/sessions?authSource=app&w=1`, {});
 }
 else{
 	//if there is no .dbuser, then connect without username and password.

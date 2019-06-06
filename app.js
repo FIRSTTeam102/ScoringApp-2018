@@ -90,6 +90,7 @@ var db;
 if(hasDBUserFile){
 	//if there is a .dbuser file, connect with the user inside that file
 	var dbUser = JSON.parse(fs.readFileSync(".dbuser", {"encoding": "utf8"}));
+	console.log(`mongodb://${dbUser.username}:${dbUser.password}@localhost/sessions`);
 	mongoose.connect(`mongodb://${dbUser.username}:${dbUser.password}@localhost/sessions`, {useNewUrlParser: true});
 }
 else{

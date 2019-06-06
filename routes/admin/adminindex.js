@@ -5,7 +5,7 @@ const router = express.Router();
 /**
  * Admin index page. Provides links to all admin functionality.
  * @url /admin/
- * @views /adminindex
+ * @views /admin/adminindex
  */
 router.get('/', function(req, res) {
 	if( !require('../checkauthentication')(req, res, 'admin') ){

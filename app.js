@@ -81,8 +81,21 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 var mongoose = require('mongoose');
- 
-mongoose.connect('mongodb://localhost/sessions', {useNewUrlParser: true});
+
+//check if we have a db user file
+var hasDBUserFile = fs.existsSync(".dbuser");
+var db;
+
+//Connect to mongoose for session storage
+if(hasDBUserFile){
+	//if there is a .dbuser file, connect with the user inside that file
+	var dbUser = JSON.parse(fs.readFileSync(".dbuser", {"encoding": "utf8"}));
+	mongoose.connect(`mongodb://${dbUser.username}:${dbUser.password}@localhost/sessions`, {useNewUrlParser: true});
+}
+else{
+	//if there is no .dbuser, then connect without username and password.
+	mongoose.connect('mongodb://localhost/sessions', {useNewUrlParser: true}); //Local connection w/o authentication
+}
 
 //Session
 app.use(session({

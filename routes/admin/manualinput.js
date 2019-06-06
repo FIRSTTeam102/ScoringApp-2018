@@ -2,7 +2,15 @@ var express = require('express');
 var router = express.Router();
 var utilities = require('../../utilities');
 
+/**
+ * Admin page to manually input/edit list of teams at an event (w/o TBA).
+ * @url /admin/manualinput/teams
+ * @views manualinput/teams
+ */
 router.get('/teams', async function(req, res){
+	if( !require('../checkauthentication')(req, res, 'admin') ){
+		return null;
+	}
 	
 	//Get list of currentteams
 	var teamsArray = await utilities.find("currentteams", {}, {sort: {"team_number": 1}});
@@ -13,7 +21,15 @@ router.get('/teams', async function(req, res){
 	});
 });
 
+/**
+ * POST method to retrieve manually updated list of teams.
+ * @url /admin/manualinput/teams
+ * @redirect /admin
+ */
 router.post('/teams', async function(req, res){
+	if( !require('../checkauthentication')(req, res, 'admin') ){
+		return null;
+	}
 	
 	res.log(req.body);
 	
@@ -105,6 +121,11 @@ router.post('/teams', async function(req, res){
 	res.redirect('/admin?alert=Input teams successfully.');
 });
 
+/**
+ * POST Method that fetches info on a team from TheBlueAlliance.
+ * @param team_number Team number to fetch
+ * @return [Object] Team info from TBA. If the team is invalid, object contains only an array named "Errors".
+ */
 router.post('/api/team', async function(req, res){
 	
 	if(!req.body.team_number){
@@ -134,9 +155,12 @@ router.post('/api/team', async function(req, res){
 /**
  * Manual input for correcting each match, if TBA is not accessible.
  * @url /manualinput/matches
- * @
+ * @views manualinput/matches
  */
 router.get('/matches', function(req, res) {
+	if( !require('../checkauthentication')(req, res, 'admin') ){
+		return null;
+	}
 	
 	var thisFuncName = "manualinputs.matches[get]: ";
 	res.log(thisFuncName + 'ENTER');
@@ -164,6 +188,10 @@ router.get('/matches', function(req, res) {
  * 
  */
 router.post('/matches', function(req, res){
+	if( !require('../checkauthentication')(req, res, 'admin') ){
+		return null;
+	}
+	
 	res.send(req.body);
 });
 module.exports = router;

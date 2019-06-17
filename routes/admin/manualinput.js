@@ -16,7 +16,7 @@ router.get('/teams', async function(req, res){
 	var teamsArray = await utilities.find("currentteams", {}, {sort: {"team_number": 1}});
 	
 	res.render('./manualinput/teams', {
-		title: "Manually Input Teams",
+		title: "Edit List of Teams",
 		teams: teamsArray
 	});
 });
@@ -153,35 +153,35 @@ router.post('/api/team', async function(req, res){
 });
 
 /**
+ * Manual input for inputtnig match schedule, if TBA is not accessible.
+ * @url /manualinput/matchschedule
+ * @views manualinput/matchschedule
+ */
+router.get('/matchschedule', async function(req, res){
+	
+	res.render('./manualinput/matchschedule', {
+		title: "Enter Match Schedule"
+	});
+});
+
+/**
  * Manual input for correcting each match, if TBA is not accessible.
  * @url /manualinput/matches
  * @views manualinput/matches
  */
-router.get('/matches', function(req, res) {
+router.get('/matches', async function(req, res) {
 	if( !require('../checkauthentication')(req, res, 'admin') ){
 		return null;
 	}
 	
-	var thisFuncName = "manualinputs.matches[get]: ";
-	res.log(thisFuncName + 'ENTER');
-	
-	var matchCol = req.db.get('matches');
-	
 	var event_key = req.event.key;
-	res.log(thisFuncName + 'event_key=' + event_key);
-
-	// Match history info
-	//matchCol.find({"alliances.red.score": { $ne: -1}, "event_key" : event_key}, {sort: {time: -1}}, function (e, docs) {
-	matchCol.find({"event_key" : event_key}, {sort: {time: 1}}, function (e, docs) {
-		var matches = docs;
-		
-		res.render("./manualinput/matches", {
-			title: "Matches",
-			matches: matches
-		});
-	});	
 	
-//res.send('Hello World')
+	var matches = await utilities.find("matches", {"event_key": event_key}, {sort: {time: 1}});
+	
+	res.render("./manualinput/matches", {
+		title: "Input Match Outcomes",
+		matches: matches
+	});
 });
 
 /** POST method for 
@@ -194,4 +194,5 @@ router.post('/matches', function(req, res){
 	
 	res.send(req.body);
 });
+
 module.exports = router;

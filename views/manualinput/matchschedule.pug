@@ -58,11 +58,20 @@ block content
 					input(class="w3-input theme-input w3-no-border theme-inline-padding" type="number" placeholder="Day" name=`EventDateDay` id="EventDateDay")
 				div(class="w3-col m2 w3-padding-small")
 					input(class="w3-input theme-input w3-no-border theme-inline-padding" type="number" placeholder="Year" name=`EventDateYear` id="EventDateYear")
+			//-To prevent from cluttering view, populate EventDay inside of script
+			if matches && matches[0]
+				- var date = new Date(matches[0].time * 1000);
+				script $("#EventDateMonth").val(#{date.getMonth()}); $("#EventDateDay").val(#{date.getDay()}); $("#EventDateYear").val(#{date.getFullYear()});
+				script console.log(`#{date}`);
 		//-Container for all matches
 		div(class="w3-section w3-auto" id="MatchTable")
 			div(class="w3-col")
 				//-Automatically include 2 matchSchedInputs
 				- var row_number = 1;
+				each match in matches
+					- if (match.comp_level == "qm")
+						include templates/matchscheduleinput
+						- row_number++;
 				include templates/matchscheduleinput
 				- row_number++;
 				include templates/matchscheduleinput

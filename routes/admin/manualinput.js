@@ -158,9 +158,21 @@ router.post('/api/team', async function(req, res){
  * @views manualinput/matchschedule
  */
 router.get('/matchschedule', async function(req, res){
+	if( !require('../checkauthentication')(req, res, 'admin') ){
+		return null;
+	}
+	
+	var thisFuncName = "[GET] /admin/manualinput/matchschedule => ";
+	
+	var event_key = req.event.key;
+	
+	res.log(`${thisFuncName} Getting matches`);
+	
+	var matches = await utilities.find("matches", {"event_key": event_key});
 	
 	res.render('./manualinput/matchschedule', {
-		title: "Enter Match Schedule"
+		title: "Enter Match Schedule",
+		matches: matches
 	});
 });
 

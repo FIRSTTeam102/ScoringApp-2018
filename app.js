@@ -100,6 +100,10 @@ else{
 }
 
 //Session
+/*
+//As it is written here, there is a critical bug.
+//When one user signs in on one device, EVERY user on EVERY device becomes signed in for that user.
+//Must be fixed.
 app.use(session({
 	secret: 'sfl44-dfjl-436gg-dsfdf',
 	resave: true,
@@ -115,15 +119,14 @@ app.use(session({
         expire: 86400 // optional
     })
 }))
-
+*/
 //Session
-/*
 app.use(session({
 	secret: 'marcus night',
 	resave: true,
 	saveUninitialized: true
 }));
-*/
+
 //User agent for logging
 app.use(useragent.express());
 

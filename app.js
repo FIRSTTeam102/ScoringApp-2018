@@ -76,8 +76,9 @@ app.debug = debug;
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(bodyParser.json({limit: '50kb'}));
+app.use(bodyParser.urlencoded({ limit: '50kb', extended: true, parameterLimit: 5000}));
 app.use(express.static(path.join(__dirname, 'public')));
 
 var mongoose = require('mongoose');

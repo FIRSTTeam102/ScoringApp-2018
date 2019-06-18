@@ -24,24 +24,66 @@ block content
 		.TimeInput:focus{
 			outline: 0!important;
 		}
-	div(class="w3-section w3-auto" id="MatchTable")
-		- var row_number = 1;
-		include templates/matchscheduleinput
-		- row_number++;
-		include templates/matchscheduleinput
-		- row_number++;
-		div(class="w3-col w3-padding" id=`MatchAddOne_${row_number}`)
-			div(class="w3-col m3 l2") &nbsp;
-			div(class="w3-col m3 l2 w3-margin-top")
-				div(class="w3-left")
-					div(class="w3-btn MatchAddRow" onclick="addNewMatchRow()") 
-						span(class="w3-xlarge") +
+	form(id="ManualInputMatchSchedule" action="/admin/manualinput/matchschedule" method="post")
+		//-Event date
+		div(class="w3-section w3-auto")
+			div(class="w3-col")
+				div(class="w3-col m4 w3-padding-small")
+					div(class="gear-label theme-inline-padding")
+						label Day of Event:
+				div(class="w3-col m2 w3-padding-small")
+					select(class="w3-input theme-input w3-no-border theme-inline-padding" type="multiselect" name="EventDateWeekDay" id="EventDateWeekDay")
+						option(value="0") Sunday
+						option(value="1") Monday
+						option(value="2") Tuesday
+						option(value="3") Wednesday
+						option(value="4") Thursday
+						option(value="5") Friday
+						option(value="6" selected) Saturday
+				div(class="w3-col m2 w3-padding-small")
+					select(class="w3-input theme-input w3-no-border theme-inline-padding" type="multiselect" name="EventDateMonth" id="EventDateMonth")
+						option(value="0") January
+						option(value="1") February
+						option(value="2") March
+						option(value="3") April
+						option(value="4") May
+						option(value="5") June
+						option(value="6") July
+						option(value="7") August
+						option(value="8") September
+						option(value="9") October
+						option(value="10") November
+						option(value="11") December
+				div(class="w3-col m1 w3-padding-small")
+					input(class="w3-input theme-input w3-no-border theme-inline-padding" type="number" placeholder="Day" name=`EventDateDay` id="EventDateDay")
+				div(class="w3-col m2 w3-padding-small")
+					input(class="w3-input theme-input w3-no-border theme-inline-padding" type="number" placeholder="Year" name=`EventDateYear` id="EventDateYear")
+		//-Container for all matches
+		div(class="w3-section w3-auto" id="MatchTable")
+			div(class="w3-col")
+				//-Automatically include 2 matchSchedInputs
+				- var row_number = 1;
+				include templates/matchscheduleinput
+				- row_number++;
+				include templates/matchscheduleinput
+				- row_number++;
+				//-+ button to add new match
+				div(class="w3-col w3-padding" id=`MatchAddOne_${row_number}`)
+					div(class="w3-col m3 l2") &nbsp;
+					div(class="w3-col m3 l2 w3-margin-top")
+						div(class="w3-left")
+							div(class="w3-btn MatchAddRow" onclick="addNewMatchRow()") 
+								span(class="w3-xlarge") +
+		div(class="w3-section w3-auto")
+			button(class="w3-btn theme-submit" type="submit") Submit
 	//-Current row that the user can input a match for. Declared up here so we can change row_number to "Model" down below.
 	script var currentMatchRow = #{row_number - 1};
 	div(class="w3-hide")
+		//-Model match sched input for duplicating with JS
 		div(id="MatchRowModel")
 			- row_number = "Model";
 			include templates/matchscheduleinput
+		//-Model + btn for duplicating with JS	
 		div(id="MatchAddOneModel")
 			div(class="w3-col w3-padding" id=`MatchAddOne_${row_number}`)
 				div(class="w3-col m3 l2") &nbsp;
@@ -50,11 +92,14 @@ block content
 						div(class="w3-btn MatchAddRow" onclick="addNewMatchRow()") 
 							span(class="w3-xlarge") +
 	script.
-		
+		//handlers for match input
 		$(".RedTeam3").on("change", onChangeMatchInput);
 		$(".TimeInput").on("keydown", onKeydownTimeInput);
 		
 		var isCtrlCmdPressedDown = false;
+		//eventDate is a Date object, of the correct day but of 0 hours/minutes/seconds.
+		//Set at onChangeDateInput
+		var eventDate = null;
 		
 		//Toggle isCtrlCmdPressedDown to disable parseDate when a ctrl command is sent
 		$(document).on("keydown", function(evt){
@@ -70,6 +115,24 @@ block content
 				console.log("Keyup: ctrlCmd set false");
 			}
 		});
+		
+		//handlers for event date
+		$("#EventDateYear").on("change", onChangeDateInput);
+		$("#EventDateMonth").on("change", onChangeDateInput);
+		$("#EventDateDay").on("change", onChangeDateInput);
+		$("#EventDateWeekDay").on("change", onChangeDateInput);
+		
+		function onChangeDateInput(evt){
+			//var d = new Date(year, month, day, hours, minutes, seconds, milliseconds);
+			
+			var year = $("#EventDateYear").val();
+			var month = $("#EventDateMonth").val();
+			var day = $("#EventDateDay").val();
+			
+			//set eventDate
+			eventDate = new Date(year, month, day);
+			console.log(eventDate); 
+		}
 		
 		function onKeydownTimeInput(evt){
 			
@@ -92,35 +155,54 @@ block content
 				else{
 					var timeString = inputElement.value;
 				}
-				console.log(timeString);
+				
 				parseTime(timeString, function(err, date){
 					if(err){
 						console.log(err);
 						//add error class (red border)
 						$(inputElement).addClass("error");
 					}
+					//If we successfully get a date
 					else if(date){
-						console.log(date);
-						//remove error class
+						//remove error class (red border)
 						$(inputElement).removeClass("error");
+						
+						//log date
+						console.log(date);
+						//Put date's value into hidden element SchedTime_#
+						var row_number = inputElement.name.split("_")[1];
+						$(`#SchedTime_${row_number}`).val(date.valueOf());
 					}
 				});
 			}
 		}
+		
+		//parseTime function from somewhere on stackoverflow
 		function parseTime( t, callback ) {
-			var d = new Date();
-			var time = t.match( /(\d+)(?::(\d\d))?\s*(p?)/ );
 			
-			if(time){
-				d.setHours( parseInt( time[1]) + (time[3] ? 12 : 0) );
-				d.setMinutes( parseInt( time[2]) || 0 );
-				callback(null, d);
+			if(eventDate){
+				//Create new date obj, from eventDate
+				var d = new Date(eventDate.valueOf());
+				
+				var time = t.match( /(\d+)(?::(\d\d))?\s*(p?)/ );
+				
+				if(time){
+					d.setHours( parseInt( time[1]) + (time[3] ? 12 : 0) );
+					d.setMinutes( parseInt( time[2]) || 0 );
+					callback(null, d);
+				}
+				else{
+					callback("Couldn't parse time.", 0);
+				}
 			}
 			else{
-				callback("Couldn't parse time.", 0);
+				//If eventDate is not set, automatically send error.
+				alert("Event date is not set.");
+				callback("Event date is not set.", 0);
 			}
 		}
 		
+		//Handler for matchInput change
 		function onChangeMatchInput(){
 			var thisMatchRow = this.name.split("_")[1];
 			
@@ -131,6 +213,7 @@ block content
 			}
 		}
 		
+		//Add new match row
 		function addNewMatchRow(){
 			currentMatchRow++;
 			
@@ -165,4 +248,5 @@ block content
 			
 			//Update onchange handlers
 			$(".RedTeam3").on("change", onChangeMatchInput);
+			$(".TimeInput").on("keydown", onKeydownTimeInput);
 		}

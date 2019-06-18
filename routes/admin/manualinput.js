@@ -164,6 +164,135 @@ router.get('/matchschedule', async function(req, res){
 	});
 });
 
+router.post('/matchschedule', async function(req, res){
+	/*
+		"actual_time": "",
+		"alliances": {
+			"blue": {
+				"score": -1,
+				"team_keys": [
+					"frc5684",
+					"frc4454",
+					"frc5401"
+				]
+			},
+			"red": {
+				"score": -1,
+				"team_keys": [
+					"frc1807",
+					"frc2539",
+					"frc2559"
+				]
+			}
+		},
+		"comp_level": "f",
+		"event_key": "2019pahat",
+		"key": "2019pahat_f1m1",
+		"match_number": 1,
+		"post_result_time": 1551646484,
+		"predicted_time": 1551646323,
+		"set_number": 1,
+		"time": 1551644760,
+		"winning_alliance": ""
+	*/
+	
+	var event_key = req.event.key;
+	
+	//Cycle through body and assemble an array of matches.
+	//Array of matches
+	var matchArray = [];
+	//Current match row (*_1, *_2, *_3 etc; the number is idx + 1)
+	var idx = 0;
+	
+	for(var elementName in req.body){
+		//if this input elem. name is a match row (Names are split by Name_#)
+		if(elementName.split("_")[1]){
+			//update idx to the # in element name minus 1
+			idx = parseInt(elementName.split("_")[1]) - 1;
+			//if no match obj has been created in matchArray, create one
+			if(!matchArray[idx]){
+				matchArray[idx] = {};
+			}
+			//grab this match obj
+			var thisMatch = matchArray[idx];
+			//add this element to match obj
+			var nameMinusNumber = elementName.split("_")[0]
+			thisMatch[nameMinusNumber] = req.body[elementName];
+		}
+	}
+	
+	res.log(matchArray);
+	
+	//We now have an array, comprised of every user match input, separated by each match.
+	//We need to rearrange the data to fit our database needs.
+	
+	//First, filter matchArray to trash any matches that don't have complete data.
+	var matchArrayFiltered = [];
+	
+	for(var i = 0; i < matchArray.length; i++){
+		var match = matchArray[i];
+		
+		if(match.BlueTeam1 && match.BlueTeam2 && match.BlueTeam3 &&
+			match.RedTeam1 && match.RedTeam2 && match.RedTeam3 && match.SchedTime != -1){
+				//If all elements exist and are populated, and time is not -1
+				matchArrayFiltered.push(match);
+		}
+	}
+	
+	res.log(matchArrayFiltered);
+	
+	//Now, we can rearrange our data.
+	var matchArrayFormatted = [];
+	
+	for(var i = 0; i < matchArrayFiltered.length; i++){
+		
+		var match = matchArrayFiltered[i];
+		//Time is in seconds, not ms: divide by 1000
+		match.SchedTime = parseInt( match.SchedTime / 1000 );
+		//Create formatted match thing
+		matchArrayFormatted[i] = {
+			"actual_time": "",
+			"alliances": {
+				"blue": {
+					"score": -1,
+					"team_keys": [
+						"frc" + match.BlueTeam1,
+						"frc" + match.BlueTeam2,
+						"frc" + match.BlueTeam3
+					]
+				},
+				"red": {
+					"score": -1,
+					"team_keys": [
+						"frc" + match.RedTeam1,
+						"frc" + match.RedTeam2,
+						"frc" + match.RedTeam3
+					]
+				}
+			},
+			"comp_level": "qm", //only support qualifying matches
+			"event_key": event_key,
+			"key": `${event_key}_qm${i + 1}`, //2019pahat_qm1 (# is i+1) 
+			"match_number": i + 1,
+			"post_result_time": match.SchedTime, //idk what all this time stuff is, just gonna set it to sched time
+			"predicted_time": match.SchedTime,
+			"set_number": 1,
+			"time": match.SchedTime,
+			"winning_alliance": ""
+		}
+	}
+	
+	res.log(matchArrayFormatted);
+	
+	//Remove matches from db
+	await utilities.remove("matches", {"event_key": event_key});
+	
+	//now insert matches into db
+	await utilities.insert("matches", matchArrayFormatted);
+	
+	res.redirect('./matchschedule');
+})
+
 /**
  * Manual input for correcting each match, if TBA is not accessible.
  * @url /manualinput/matches

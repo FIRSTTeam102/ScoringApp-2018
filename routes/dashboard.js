@@ -378,7 +378,7 @@ router.get('/matches', function(req, res) {
 
 	// Get the *min* time of the as-yet-unresolved matches [where alliance scores are still -1]
 	matchCol.find({ event_key: eventId, "alliances.red.score": -1 },{sort: {"time": 1}}, function(e, matches){
-
+		
 		// 2018-03-13, M.O'C - Fixing the bug where dashboard crashes the server if all matches at an event are done
 		var earliestTimestamp = 9999999999;
 		if (matches && matches[0])

@@ -230,11 +230,8 @@ router.get('/pit*', async function(req, res) {
 	
 
 	var layout = await utilities.find("scoutinglayout", { "year": event_year }, {sort: {"order": 1}});
-	var returnPitData = await utilities.find("scoutingdata", { "year": event_year }, {sort: {"order": 1}});
-	var pitData = null;
-	if (docs && docs[0])
-		if (docs[0].data)
-			pitData = docs[0].data;
+	var pitData = await utilities.find("scoutingdata", { "year": event_year }, {sort: {"order": 1}});
+	
 	res.render("./scouting/pit", {
 		title: "Pit Scouting",
 		layout: layout,

@@ -28,7 +28,6 @@ block content
 		img(src=`/uploads/responsive/${event_year}_${key}a_sm.jpg` alt="" class="w3-image" style="max-height:100px;")
 		img(src=`/uploads/responsive/${event_year}_${key}b_sm.jpg` alt="" class="w3-image" style="max-height:100px;")
 		img(src=`/uploads/responsive/${event_year}_${key}c_sm.jpg` alt="" class="w3-image" style="max-height:100px;")
-	//-JS 
 	form#imageform(action=`/image/upload?team_key=${key}` method="post" enctype="multipart/form-data" name="imageform")
 		input#teamimage(type="file", name="avatarfield")
 		input#returnurl(type="hidden", name="returnurl", value="")

@@ -373,8 +373,6 @@ router.post('/matches', async function(req, res){
 		
 		//Modify winning alliance
 		match.winning_alliance = userInputThisMatch.WinningAlliance;
-		//Modify blue score
-		match.alliances.blue.score = userInputThisMatch.BlueScore;
 		
 		//If score_brakdown has not yet been created, create it now.
 		if(!match.score_breakdown){
@@ -384,10 +382,12 @@ router.post('/matches', async function(req, res){
 			};
 		}
 		
-		match.score_breakdown.blue.totalPoints = userInputThisMatch.BlueScore;
+		//Modify blue score
+		match.alliances.blue.score = ( isNaN(parseInt(userInputThisMatch.BlueScore)) || userInputThisMatch.BlueScore == 0) ? -1 : parseInt(userInputThisMatch.BlueScore);
+		match.score_breakdown.blue.totalPoints = ( isNaN(parseInt(userInputThisMatch.BlueScore)) || userInputThisMatch.BlueScore == 0) ? -1 : parseInt(userInputThisMatch.BlueScore);
 		//Modify red score
-		match.alliances.red.score = userInputThisMatch.RedScore;
-		match.score_breakdown.red.totalPoints = userInputThisMatch.RedScore;
+		match.alliances.red.score = ( isNaN(parseInt(userInputThisMatch.RedScore)) || userInputThisMatch.RedScore == 0) ? -1 : parseInt(userInputThisMatch.RedScore);
+		match.score_breakdown.red.totalPoints = ( isNaN(parseInt(userInputThisMatch.RedScore)) || userInputThisMatch.RedScore == 0) ? -1 : parseInt(userInputThisMatch.RedScore);
 		//Modify blue RPs
 		match.score_breakdown.blue.habDockingRankingPoint = ( userInputThisMatch.BlueHabDock == 'on' ) ? true : false;
 		match.score_breakdown.blue.completeRocketRankingPoint = ( userInputThisMatch.BlueCompletedRocket == 'on' ) ? true : false;

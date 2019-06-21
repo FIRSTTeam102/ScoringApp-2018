@@ -74,12 +74,12 @@ block content
 							//-ranking points
 							div(class="w3-col s6" style="margin-top: -10px;")
 								label(for=`BlueHabDock_${match.key}`) Hab 
-								if match.score_breakdown.blue.habDockingRankingPoint
+								if match.score_breakdown && match.score_breakdown.blue.habDockingRankingPoint
 									input(type="checkbox" class="w3-check alliance-blue" name=`BlueHabDock_${match.key}` id=`BlueHabDock_${match.key}` checked)
 								else
 									input(type="checkbox" class="w3-check alliance-blue" name=`BlueHabDock_${match.key}` id=`BlueHabDock_${match.key}`)
 								label(for=`BlueCompletedRocket_${match.key}`) &nbsp;  Rocket 
-								if match.score_breakdown.blue.completeRocketRankingPoint
+								if match.score_breakdown && match.score_breakdown.blue.completeRocketRankingPoint
 									input(type="checkbox" class="w3-check alliance-blue" name=`BlueCompletedRocket_${match.key}` id=`BlueCompletedRocket_${match.key}` checked)
 								else 
 									input(type="checkbox" class="w3-check alliance-blue" name=`BlueCompletedRocket_${match.key}` id=`BlueCompletedRocket_${match.key}`)
@@ -98,12 +98,12 @@ block content
 							//-ranking points
 							div(class="w3-col s6" style="margin-top: -10px;")
 								label(for=`RedHabDock_${match.key}`) Hab 
-								if match.score_breakdown.red.habDockingRankingPoint
+								if match.score_breakdown && match.score_breakdown.red.habDockingRankingPoint
 									input(type="checkbox" class="w3-check alliance-red" name=`RedHabDock_${match.key}` id=`RedHabDock_${match.key}` checked)
 								else
 									input(type="checkbox" class="w3-check alliance-red" name=`RedHabDock_${match.key}` id=`RedHabDock_${match.key}`)
 								label(for=`RedCompletedRocket_${match.key}`) &nbsp;  Rocket 
-								if match.score_breakdown.red.completeRocketRankingPoint
+								if match.score_breakdown && match.score_breakdown.red.completeRocketRankingPoint
 									input(type="checkbox" class="w3-check alliance-red" name=`RedCompletedRocket_${match.key}` id=`RedCompletedRocket_${match.key}` checked)
 								else 
 									input(type="checkbox" class="w3-check alliance-red" name=`RedCompletedRocket_${match.key}` id=`RedCompletedRocket_${match.key}`)

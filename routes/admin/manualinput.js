@@ -315,13 +315,16 @@ router.get('/matches', async function(req, res) {
 		return null;
 	}
 	
+	var alert = req.query.alert ? req.query.alert : null;
+	
 	var event_key = req.event.key;
 	
 	var matches = await utilities.find("matches", {"event_key": event_key}, {sort: {time: 1}});
 	
 	res.render("./manualinput/matches", {
 		title: "Input Match Outcomes",
-		matches: matches
+		matches: matches,
+		alert: alert
 	});
 });
 
@@ -372,6 +375,15 @@ router.post('/matches', async function(req, res){
 		match.winning_alliance = userInputThisMatch.WinningAlliance;
 		//Modify blue score
 		match.alliances.blue.score = userInputThisMatch.BlueScore;
+		
+		//If score_brakdown has not yet been created, create it now.
+		if(!match.score_breakdown){
+			match.score_breakdown = {
+				blue: {},
+				red: {}
+			};
+		}
+		
 		match.score_breakdown.blue.totalPoints = userInputThisMatch.BlueScore;
 		//Modify red score
 		match.alliances.red.score = userInputThisMatch.RedScore;
@@ -394,7 +406,8 @@ router.post('/matches', async function(req, res){
 	var endTime = Date.now();
 	res.log(`Done in ${endTime - startTime} ms`);
 	
-	res.redirect('/admin/manualinput/matches');
+	//Redirect to updatematches page with success alert.
+	res.redirect('/admin/manualinput/matches?alert=Updated match successfully.');
 });
 
 module.exports = router;

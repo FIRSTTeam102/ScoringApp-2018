@@ -328,12 +328,73 @@ router.get('/matches', async function(req, res) {
 /** POST method for 
  * 
  */
-router.post('/matches', function(req, res){
+router.post('/matches', async function(req, res){
 	if( !require('../checkauthentication')(req, res, 'admin') ){
 		return null;
 	}
 	
-	res.send(req.body);
+	
+	var event_key = req.event.key;
+	
+	//Get list of matches from the database.
+	var matches = await utilities.find("matches", {"event_key": event_key}, {sort: {time: 1}});
+	
+	var startTime = Date.now();
+	
+	//Build array of each match, from user input
+	var userInputGrouped = {};
+	
+	//go through body and group every piece of data
+	for(var elementName in req.body){
+		//console.log(`${elementName}: ${req.body[elementName]}`);
+		var elementContents = req.body[elementName];
+		
+		//match key 2019mrcmp_qm1
+		var thisMatchKey = elementName.split("_")[1] + "_" + elementName.split("_")[2];
+		//e.g. BlueCompletedRocket or WinningAlliance
+		var thisElementType = elementName.split("_")[0];
+		
+		//if a match does not exist already, create new obj
+		if( !userInputGrouped[thisMatchKey] ){
+			userInputGrouped[thisMatchKey] = {};
+		}
+		//add contents to grouped match info
+		userInputGrouped[thisMatchKey][thisElementType] = elementContents;
+	}
+	
+	for(var i in matches){
+		var match = matches[i];
+		var match_key = match.key;
+		
+		var userInputThisMatch = userInputGrouped[match_key];
+		
+		//Modify winning alliance
+		match.winning_alliance = userInputThisMatch.WinningAlliance;
+		//Modify blue score
+		match.alliances.blue.score = userInputThisMatch.BlueScore;
+		match.score_breakdown.blue.totalPoints = userInputThisMatch.BlueScore;
+		//Modify red score
+		match.alliances.red.score = userInputThisMatch.RedScore;
+		match.score_breakdown.red.totalPoints = userInputThisMatch.RedScore;
+		//Modify blue RPs
+		match.score_breakdown.blue.habDockingRankingPoint = ( userInputThisMatch.BlueHabDock == 'on' ) ? true : false;
+		match.score_breakdown.blue.completeRocketRankingPoint = ( userInputThisMatch.BlueCompletedRocket == 'on' ) ? true : false;
+		//Modify red RPs
+		match.score_breakdown.red.habDockingRankingPoint = ( userInputThisMatch.RedHabDock == 'on' ) ? true : false;
+		match.score_breakdown.red.completeRocketRankingPoint = ( userInputThisMatch.RedCompletedRocket == 'on' ) ? true : false;
+	}
+	
+	
+	//Remove matches
+	await utilities.remove("matches", {"event_key": event_key});
+	
+	//Now, insert updated list of matches
+	await utilities.insert("matches", matches);
+	
+	var endTime = Date.now();
+	res.log(`Done in ${endTime - startTime} ms`);
+	
+	res.redirect('/admin/manualinput/matches');
 });
 
 module.exports = router;

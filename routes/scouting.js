@@ -224,13 +224,12 @@ router.get('/pit*', async function(req, res) {
 		return;
 	}
 
-	var db = req.db;
-	var scoutCol = db.get("scoutinglayout");
-	var pitCol = req.db.get('scoutingdata'); //for pitcol.find()
-	
-
 	var layout = await utilities.find("scoutinglayout", { "year": event_year }, {sort: {"order": 1}});
-	var pitData = await utilities.find("scoutingdata", { "year": event_year }, {sort: {"order": 1}});
+	var pitData = await utilities.find("scoutingdata", { "event_key" : event_key, "team_key" : teamKey }, {sort: {"order": 1}});
+	//get just the data
+	pitData = pitData[0].data;
+	
+	res.log(thisFuncName + "pitData: " + JSON.stringify(pitData));
 	
 	res.render("./scouting/pit", {
 		title: "Pit Scouting",

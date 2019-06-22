@@ -406,6 +406,203 @@ router.post('/matches', async function(req, res){
 	var endTime = Date.now();
 	res.log(`Done in ${endTime - startTime} ms`);
 	
+	//// Recalculate rankings
+	/*
+		"dq" : 0,
+		"extra_stats" : [ 24 ],   // RP
+		"matches_played" : 10,
+		"qual_average" : null,
+		"rank" : 1,
+		"record" : {
+			"losses" : 1,
+			"ties" : 1,
+			"wins" : 8 },
+		"sort_orders" : [ 2.4, 261, 100, 141, 141, 0 ],
+		"team_key" : "frc1708"
+	*/
+
+	// Build an array of objects, one per team
+	var teamsArray = await utilities.find("currentteams", {}, {sort: {"team_number": 1}});
+	mapTeamToOrder = {};
+	rankArray = [];
+	for (var i in teamsArray) {
+		var team = teamsArray[i];
+		thisRank = {
+			"dq": 0,
+			"extra_stats": [0],
+			"qual_average": null,
+			"record": {
+				"losses": 0,
+				"ties": 0,
+				"wins": 0 },
+			"sort_orders": [0, 0, 0],
+			"team_key": team.key,
+			"team_number": team.team_number };
+		rankArray.push(thisRank);
+		mapTeamToOrder[team.key] = i;
+	}
+	console.log("DEBUG: rankArray=" + JSON.stringify(rankArray));
+	console.log("DEBUG: mapTeamToOrder=" + JSON.stringify(mapTeamToOrder));
+	console.log("DEBUG: frc102=" + JSON.stringify(mapTeamToOrder["frc102"]));
+
+	// Go through every match, updating the rank array
+	for (var i in matches) {
+		var thisMatch = matches[i];
+
+		if (thisMatch.alliances.red.score != -1) {
+			//console.log("DEBUG: match=" + JSON.stringify(thisMatch));
+			/*
+			match={
+				"alliances":{
+					"blue":{
+						"score":41,
+						"team_keys":["frc677","frc5740","frc7670"]},
+					"red":{
+						"score":52,
+						"team_keys":["frc102","frc117","frc48"]}},
+				"match_number":56,
+				"score_breakdown":{
+					"blue":{
+						"totalPoints":41,
+						"habDockingRankingPoint":false,
+						"completeRocketRankingPoint":false},
+					]"red":{
+						"totalPoints":52,
+						"habDockingRankingPoint":true,
+						"completeRocketRankingPoint":false}},
+				"set_number":1,
+				"winning_alliance":"red"}
+			*/
+			// alliances
+			var redRP = 0;
+			var blueRP = 0;
+			var redWin = 0; var blueWin = 0; var isTie = 0;
+			if (thisMatch.winning_alliance == "red") { redRP = 2; redWin = 1; }
+			if (thisMatch.winning_alliance == "blue") { blueRP = 2; blueWin = 1; }
+			if (thisMatch.winning_alliance == "") { redRP = 1; blueRP = 1; isTie = 1; }
+			if (thisMatch.score_breakdown.red.habDockingRankingPoint) redRP++;
+			if (thisMatch.score_breakdown.red.completeRocketRankingPoint) redRP++;
+			if (thisMatch.score_breakdown.blue.habDockingRankingPoint) blueRP++;
+			if (thisMatch.score_breakdown.blue.completeRocketRankingPoint) blueRP++;
+			var redScore = thisMatch.alliances.red.score;
+			var blueScore = thisMatch.alliances.blue.score;
+
+			// red
+			for (var j in thisMatch.alliances.red.team_keys) {
+				var thisTeamKey = thisMatch.alliances.red.team_keys[j];
+				var thisRankIndex = mapTeamToOrder[thisTeamKey];
+				if (rankArray[thisRankIndex]) {
+					var currentRP = 0; if (rankArray[thisRankIndex].RP) currentRP = rankArray[thisRankIndex].RP;
+					var currentMatchesPlayed = 0; if (rankArray[thisRankIndex].matches_played) currentMatchesPlayed = rankArray[thisRankIndex].matches_played;
+					var currentWins = 0; var currentLosses = 0; var currentTies = 0;
+					if (rankArray[thisRankIndex].record) {
+						if (rankArray[thisRankIndex].record.wins) currentWins = rankArray[thisRankIndex].record.wins;
+						if (rankArray[thisRankIndex].record.losses) currentLosses = rankArray[thisRankIndex].record.losses;
+						if (rankArray[thisRankIndex].record.ties) currentTies = rankArray[thisRankIndex].record.ties;
+					}
+					var currentPointsFor = 0; if (rankArray[thisRankIndex].pointsFor) currentPointsFor = rankArray[thisRankIndex].pointsFor;
+					var currentPointsAgainst = 0; if (rankArray[thisRankIndex].pointsAgainst) currentPointsAgainst = rankArray[thisRankIndex].pointsAgainst;
+
+					currentRP += redRP; var thisRankValueArray = []; thisRankValueArray.push(currentRP);
+					currentMatchesPlayed++;
+					currentWins += redWin;
+					currentLosses += blueWin;
+					currentTies += isTie;
+					currentPointsFor += redScore;
+					currentPointsAgainst += blueScore;
+					var thisSortOrders = [];
+					thisSortOrders.push(currentRP/currentMatchesPlayed);
+					thisSortOrders.push(currentPointsFor);
+					thisSortOrders.push(currentPointsAgainst);
+
+					rankArray[thisRankIndex].matches_played = currentMatchesPlayed;
+					rankArray[thisRankIndex].extra_stats = thisRankValueArray;
+					rankArray[thisRankIndex].record = {};
+					rankArray[thisRankIndex].record.wins = currentWins;
+					rankArray[thisRankIndex].record.losses = currentLosses;
+					rankArray[thisRankIndex].record.ties = currentTies;
+					rankArray[thisRankIndex].sort_orders = thisSortOrders;
+
+					rankArray[thisRankIndex].RP = currentRP;
+					rankArray[thisRankIndex].pointsFor = currentPointsFor;
+					rankArray[thisRankIndex].pointsAgainst = currentPointsAgainst;
+				}
+			}
+
+			// blue
+			for (var j in thisMatch.alliances.blue.team_keys) {
+				var thisTeamKey = thisMatch.alliances.blue.team_keys[j];
+				var thisRankIndex = mapTeamToOrder[thisTeamKey];
+				if (rankArray[thisRankIndex]) {
+					var currentRP = 0; if (rankArray[thisRankIndex].RP) currentRP = rankArray[thisRankIndex].RP;
+					var currentMatchesPlayed = 0; if (rankArray[thisRankIndex].matches_played) currentMatchesPlayed = rankArray[thisRankIndex].matches_played;
+					var currentWins = 0; var currentLosses = 0; var currentTies = 0;
+					if (rankArray[thisRankIndex].record) {
+						if (rankArray[thisRankIndex].record.wins) currentWins = rankArray[thisRankIndex].record.wins;
+						if (rankArray[thisRankIndex].record.losses) currentLosses = rankArray[thisRankIndex].record.losses;
+						if (rankArray[thisRankIndex].record.ties) currentTies = rankArray[thisRankIndex].record.ties;
+					}
+					var currentPointsFor = 0; if (rankArray[thisRankIndex].pointsFor) currentPointsFor = rankArray[thisRankIndex].pointsFor;
+					var currentPointsAgainst = 0; if (rankArray[thisRankIndex].pointsAgainst) currentPointsAgainst = rankArray[thisRankIndex].pointsAgainst;
+
+					currentRP += blueRP; var thisRankValueArray = []; thisRankValueArray.push(currentRP);
+					currentMatchesPlayed++;
+					currentWins += blueWin;
+					currentLosses += redWin;
+					currentTies += isTie;
+					currentPointsFor += blueScore;
+					currentPointsAgainst += redScore;
+					var thisSortOrders = [];
+					var rpRatio = currentRP/currentMatchesPlayed;
+					thisSortOrders.push(rpRatio);
+					thisSortOrders.push(currentPointsFor);
+					thisSortOrders.push(currentPointsAgainst);
+
+					rankArray[thisRankIndex].matches_played = currentMatchesPlayed;
+					rankArray[thisRankIndex].extra_stats = thisRankValueArray;
+					rankArray[thisRankIndex].record = {};
+					rankArray[thisRankIndex].record.wins = currentWins;
+					rankArray[thisRankIndex].record.losses = currentLosses;
+					rankArray[thisRankIndex].record.ties = currentTies;
+					rankArray[thisRankIndex].sort_orders = thisSortOrders;
+
+					rankArray[thisRankIndex].RP = currentRP;
+					//rankArray[thisRankIndex].rpPerMatch = rpRatio;
+					rankArray[thisRankIndex].pointsFor = currentPointsFor;
+					rankArray[thisRankIndex].pointsAgainst = currentPointsAgainst;
+				}
+			}
+		}
+	}
+	console.log("DEBUG: rankArray=" + JSON.stringify(rankArray));
+
+	// comparator for rankings - generally, higher numbers means 'lower' rank #
+	var compareRankings = function(a,b) {
+		if (a.sort_orders && b.sort_orders) {
+			if (a.sort_orders[0] < b.sort_orders[0]) return 1;
+			if (a.sort_orders[0] > b.sort_orders[0]) return -1;
+			if (a.sort_orders[1] < b.sort_orders[1]) return 1;
+			if (a.sort_orders[1] > b.sort_orders[1]) return -1;
+			if (a.sort_orders[2] < b.sort_orders[2]) return 1;
+			if (a.sort_orders[2] > b.sort_orders[2]) return -1;
+		}
+		// final tiebreaker - inverted (lower team #s -> higher rank)
+		return a.team_number - b.team_number;		
+	}
+	// sort the rankings
+	var sortedRankArray = rankArray.sort(compareRankings);
+	// add in the rank values
+	for (var i in sortedRankArray) {
+		sortedRankArray[i].rank = parseInt(i) + 1;
+	}
+	console.log("DEBUG: sortedRankArray=" + JSON.stringify(sortedRankArray));
+
+	//Remove rankings
+	await utilities.remove("currentrankings", {});
+
+	//Now, insert updated rankings
+	await utilities.insert("currentrankings", sortedRankArray);
+
 	//Redirect to updatematches page with success alert.
 	res.redirect('/admin/manualinput/matches?alert=Updated match successfully.');
 });
